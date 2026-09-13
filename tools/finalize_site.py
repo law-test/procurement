@@ -9,7 +9,7 @@ ROOT = Path(__file__).resolve().parents[1]
 def finalize(root=ROOT):
     root = Path(root)
     urls = []
-    for path in sorted(root.rglob('*.html')):
+    for path in sorted(root.rglob('*.html'), key=lambda p: p.relative_to(root).as_posix()):
         if any(part.startswith('.') or part in ('node_modules', 'tests', 'tools') for part in path.relative_to(root).parts):
             continue
         text = path.read_text(encoding='utf-8')

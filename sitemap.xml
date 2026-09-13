@@ -1,8 +1,6 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <urlset xmlns="http://www.sitemaps.org/schemas/sitemap/0.9">
   <url><loc>https://jodal.pro/about/</loc></url>
-  <url><loc>https://jodal.pro/c/etc/</loc></url>
-  <url><loc>https://jodal.pro/c/</loc></url>
   <url><loc>https://jodal.pro/c/P.1.1/</loc></url>
   <url><loc>https://jodal.pro/c/P.1.2/</loc></url>
   <url><loc>https://jodal.pro/c/P.1.3/</loc></url>
@@ -75,6 +73,8 @@
   <url><loc>https://jodal.pro/c/W3.4.1/</loc></url>
   <url><loc>https://jodal.pro/c/W3.4.2/</loc></url>
   <url><loc>https://jodal.pro/c/W3.4.3/</loc></url>
+  <url><loc>https://jodal.pro/c/etc/</loc></url>
+  <url><loc>https://jodal.pro/c/</loc></url>
   <url><loc>https://jodal.pro/cbt/</loc></url>
   <url><loc>https://jodal.pro/drill/</loc></url>
   <url><loc>https://jodal.pro/errata/</loc></url>
