@@ -2,10 +2,12 @@
 # -*- coding: utf-8 -*-
 """사이트 페이지를 파일 하나로 합친다(CSS·JS·데이터 인라인).
 채팅에서 내려받아 더블클릭으로 열어 보기 위한 것. 서버 없이 동작한다."""
-import json, os, re
+import json, os, posixpath, re
+from pathlib import Path
 
-OUT = os.environ.get("PPM_OUT", "/home/claude/procurement")
-DST = os.environ.get("PPM_PACK", "/mnt/user-data/outputs/미리보기")
+OUT = os.environ.get("PPM_OUT", str(Path(__file__).resolve().parents[1]))
+# Keep exports outside the site so a later sitemap/build cannot publish them.
+DST = os.environ.get("PPM_PACK", str(Path(OUT).resolve().parent / (Path(OUT).name + "-preview")))
 
 NAME = {
     "index.html":        "학습방.html",
@@ -25,7 +27,7 @@ NAME = {
     "links/index.html":   "바로가기.html",
     "errata/index.html":  "교재대조표.html",
 }
-EMBED_SUBJ = ["law", "plan", "contract"]     # 필기 3과목
+EMBED_SUBJ = ["law", "plan", "contract", "practice"]
 
 
 def read(p):
@@ -34,14 +36,15 @@ def read(p):
 
 def inline_assets(s, depth):
     up = "../" * depth
-    for css in ("site.css", "study.css"):
+    for css in sorted(p.name for p in (Path(OUT) / "assets").glob("*.css")):
         tag = '<link rel="stylesheet" href="%sassets/%s"/>' % (up, css)
         if tag in s:
             s = s.replace(tag, "<style>\n%s\n</style>" % read("assets/" + css))
-    for js in ("site.js", "study.js", "quiz.js", "cards.js", "report.js"):
+    for js in sorted(p.name for p in (Path(OUT) / "assets").glob("*.js")):
         tag = '<script src="%sassets/%s"></script>' % (up, js)
         if tag in s:
-            s = s.replace(tag, "<script>\n%s\n</script>" % read("assets/" + js))
+            code = re.sub(r"</script", r"<\\/script", read("assets/" + js), flags=re.I)
+            s = s.replace(tag, '<script data-packed-src="assets/%s">\n%s\n</script>' % (js, code))
     return s
 
 
@@ -68,17 +71,21 @@ def map_target(src, href):
     path, suffix = href[:cut], href[cut:]
     if not path:
         return None
-    full = os.path.normpath(os.path.join(os.path.dirname(src), path))
+    # Site URLs always use POSIX separators, even when packing on Windows.
+    full = posixpath.normpath(posixpath.join(posixpath.dirname(src), path))
     if full == ".":
         full = ""
     if full.startswith(("assets", "data")) or full.startswith(".."):
         return None
+    exported = full if full.endswith(".html") else full + "/index.html"
+    if exported in NAME:
+        return NAME[exported] + suffix
     if full.endswith("/index.html"):
         full = full[: -len("/index.html")]
     if full in ROOTMAP:
         return ROOTMAP[full] + suffix
-    if full == "c" or full.startswith("c/"):
-        return "익히기_목차.html" + suffix
+    if full.startswith("c/"):
+        return "https://jodal.pro/" + full.rstrip("/") + "/" + suffix
     return None
 
 
@@ -90,27 +97,37 @@ def fix_links(s, src):
 
 
 def embed_data(s):
-    """외우기·모의시험이 fetch 없이 돌게 데이터를 넣는다."""
-    quiz = {k: json.load(open(os.path.join(OUT, "data", "quiz.%s.json" % k), encoding="utf-8"))
-            for k in EMBED_SUBJ}
-    cards = {k: json.load(open(os.path.join(OUT, "data", "cards.%s.json" % k), encoding="utf-8"))
-             for k in EMBED_SUBJ}
-    s = s.replace(
-        'return fetch("../data/quiz." + slug + ".json").then(function (r) { return r.json(); })',
-        'return Promise.resolve(window.__PPM_QUIZ__[slug] || {n:0,items:[]})')
-    s = s.replace(
-        'return fetch("../data/cards." + slug + ".json").then(function (r) { return r.json(); })',
-        'return Promise.resolve(window.__PPM_CARDS__[slug] || {n:0,cards:[]})')
-    s = s.replace('    { s: "공공조달 관리실무", slug: "practice", exam: "실기", n: 0 }\n', '')
-    s = s.replace('{ s: "공공계약관리", slug: "contract", exam: "필기", n: 30 },\n', '{ s: "공공계약관리", slug: "contract", exam: "필기", n: 30 }\n')
+    """Adapt the public loading API after quiz.js; never patch its implementation."""
+    datasets = {kind + "." + slug: json.loads(read("data/%s.%s.json" % (kind, slug)))
+                for kind in ("quiz", "cards") for slug in EMBED_SUBJ}
+    # Prevent a data string from closing the surrounding HTML script element.
+    encoded = json.dumps(datasets, ensure_ascii=False).replace("<", "\\u003c")
     inject = """
-<script>
-/* 단독 파일용: 데이터를 내려받지 않고 파일 안에서 읽는다. 필기 3과목만 들어 있다. */
-window.__PPM_QUIZ__ = %s;
-window.__PPM_CARDS__ = %s;
+<script data-packed-data="true">
+(function () {
+  var data = %s;
+  function load(kind, slug) {
+    var key = kind + '.' + slug;
+    if (!Object.prototype.hasOwnProperty.call(data, key)) return Promise.reject(new Error('이 파일에 없는 과목입니다.'));
+    return Promise.resolve(data[key]);
+  }
+  window.PPMQ.loadQuiz = function (slug) { return load('quiz', slug); };
+  window.PPMQ.loadCards = function (slug) { return load('cards', slug); };
+  // Answer explanations create concept links after the static export pass.
+  document.addEventListener('click', function (event) {
+    var link = event.target.closest && event.target.closest('a');
+    if (link && (link.getAttribute('href') || '').indexOf('../c/') === 0) {
+      link.href = 'https://jodal.pro/' + link.getAttribute('href').slice(3);
+    }
+  });
+})();
 </script>
-""" % (json.dumps(quiz, ensure_ascii=False), json.dumps(cards, ensure_ascii=False))
-    return s.replace("</head>", inject + "</head>", 1)
+""" % encoded
+    pattern = r'(<script data-packed-src="assets/quiz\.js">[\s\S]*?</script>)'
+    s, count = re.subn(pattern, lambda match: match[1] + inject, s, count=1)
+    if count != 1:
+        raise ValueError("Cannot embed study data: packed quiz.js was not found")
+    return s
 
 
 def main():
@@ -126,7 +143,7 @@ def main():
         s = fix_links(s, src)
         if src in ("drill/index.html", "cbt/index.html"):
             s = embed_data(s)
-            s = s.replace("</h1>", "</h1><p class=\"note\">이 파일은 미리보기용 단독 판입니다. 필기 3과목만 들어 있고, 실기 실무는 사이트에서 볼 수 있습니다.</p>", 1)
+            s = s.replace("</h1>", "</h1><p class=\"note\">미리보기용 단독 판입니다. 필기·실기 연습 데이터가 들어 있습니다. 포함되지 않은 개념 페이지와 공식 출처는 인터넷 연결이 필요합니다.</p>", 1)
         p = os.path.join(DST, name)
         open(p, "w", encoding="utf-8").write(s)
         made.append((name, len(s.encode("utf-8"))))
