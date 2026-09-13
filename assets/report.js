@@ -7,6 +7,7 @@
   var GH = "https://github.com/law-test/procurement/issues/new";
   var NAMEKEY = "ppm.reporter.v1";
   var stash = [], box = null, cur = null;
+  var opener = null, priorOverflow = "", session = 0, pending = false;
 
   function esc(s) {
     return String(s == null ? "" : s)
@@ -33,25 +34,26 @@
     box.className = "rep-mask";
     box.hidden = true;
     box.innerHTML =
-      '<div class="rep-box" role="dialog" aria-modal="true" aria-labelledby="repH">' +
+      '<div class="rep-box" role="dialog" aria-modal="true" aria-labelledby="repH" aria-describedby="repHelp">' +
       '  <div class="rep-head"><b id="repH">오류 신고</b>' +
       '    <button class="rep-x" type="button" aria-label="닫기">×</button></div>' +
       '  <div class="rep-what"></div>' +
-      '  <label class="rep-l">어디가 잘못됐습니까<span class="rep-req">필수</span></label>' +
-      '  <textarea class="rep-t" id="repQuote" rows="3" maxlength="2000"' +
+      '  <label class="rep-l" for="repQuote">어디가 잘못됐습니까<span class="rep-req">필수</span></label>' +
+      '  <textarea class="rep-t" id="repQuote" rows="3" maxlength="2000" required aria-describedby="repMsg"' +
       '    placeholder="틀린 문장을 그대로 붙여 주세요"></textarea>' +
-      '  <label class="rep-l">맞는 내용은 무엇입니까</label>' +
+      '  <label class="rep-l" for="repFix">맞는 내용은 무엇입니까</label>' +
       '  <textarea class="rep-t" id="repFix" rows="2" maxlength="2000"' +
       '    placeholder="아는 만큼만 적어 주셔도 됩니다"></textarea>' +
-      '  <label class="rep-l">근거</label>' +
+      '  <label class="rep-l" for="repEv">근거</label>' +
       '  <input class="rep-i" id="repEv" maxlength="1000"' +
       '    placeholder="법령 조문, 공고 제목과 날짜, 교재 판본과 쪽"/>' +
-      '  <label class="rep-l">이름 (비워 두면 익명)</label>' +
-      '  <input class="rep-i" id="repName" maxlength="24" placeholder="익명"/>' +
-      '  <div class="rep-msg" id="repMsg"></div>' +
+      '  <div id="repNameRow"><label class="rep-l" for="repName">이름 (선택 · 이 브라우저에 기억합니다)</label>' +
+      '  <input class="rep-i" id="repName" maxlength="24" autocomplete="nickname" placeholder="비워 두면 익명"/></div>' +
+      '  <p class="rep-note" id="repHelp"></p>' +
+      '  <div class="rep-msg" id="repMsg" role="status" aria-live="polite"></div>' +
       '  <div class="rep-btns">' +
       '    <button class="btn" type="button" id="repSend">보내기</button>' +
-      '    <button class="btn ghost" type="button" id="repGh">GitHub에 남기기</button>' +
+      '    <button class="btn ghost" type="button" id="repGh">GitHub에서 작성</button>' +
       '    <button class="btn ghost" type="button" id="repCancel">닫기</button>' +
       '  </div>' +
       '  <p class="rep-note">확인해서 고치고, 무엇이 어떻게 바뀌었는지 <a href="#" class="rep-news">소식</a>에 적습니다.</p>' +
@@ -64,7 +66,19 @@
     box.querySelector("#repGh").onclick = github;
     box.onclick = function (e) { if (e.target === box) close(); };
     document.addEventListener("keydown", function (e) {
-      if (e.key === "Escape" && box && !box.hidden) close();
+      if (!box || box.hidden) return;
+      if (e.key === "Escape") { e.preventDefault(); close(); return; }
+      if (e.key !== "Tab") return;
+      var focusable = Array.prototype.filter.call(box.querySelectorAll('button:not([disabled]), input:not([disabled]), textarea:not([disabled]), a[href]'), function (el) {
+        return !el.closest("[hidden]");
+      });
+      var first = focusable[0], last = focusable[focusable.length - 1];
+      if (!first) return;
+      if (e.shiftKey && (document.activeElement === first || focusable.indexOf(document.activeElement) < 0)) {
+        e.preventDefault(); last.focus();
+      } else if (!e.shiftKey && (document.activeElement === last || focusable.indexOf(document.activeElement) < 0)) {
+        e.preventDefault(); first.focus();
+      }
     });
     var a = box.querySelector(".rep-news");
     if (a) a.setAttribute("href", upTo() + "news/");
@@ -81,6 +95,11 @@
   function open(o) {
     cur = o || {};
     build();
+    session++;
+    if (box.hidden) {
+      opener = document.activeElement;
+      priorOverflow = document.documentElement.style.overflow;
+    }
     var what = box.querySelector(".rep-what");
     var bits = [];
     if (cur.kindLabel) bits.push(esc(cur.kindLabel));
@@ -93,16 +112,28 @@
     box.querySelector("#repFix").value = "";
     box.querySelector("#repEv").value = "";
     box.querySelector("#repName").value = savedName();
+    box.querySelector("#repQuote").removeAttribute("aria-invalid");
+    var direct = !!cfg();
+    box.querySelector("#repNameRow").hidden = !direct;
+    box.querySelector("#repGh").hidden = !direct;
+    box.querySelector("#repSend").textContent = direct ? "신고 보내기" : "GitHub에서 신고 작성";
+    box.querySelector("#repHelp").textContent = direct
+      ? "신고 내용과 선택한 이름이 운영자에게 전송됩니다. GitHub에서 작성하면 내용과 계정명이 공개됩니다. 연락처 등 개인정보는 적지 마세요."
+      : "GitHub에 로그인한 뒤 내용을 확인하고 제출해 주세요. 제출한 신고 내용과 GitHub 계정명은 공개됩니다. 연락처 등 개인정보는 적지 마세요.";
+    setPending(pending);
     msg("", "");
     box.hidden = false;
     document.documentElement.style.overflow = "hidden";
-    setTimeout(function () { box.querySelector("#repQuote").focus(); }, 30);
+    box.querySelector("#repQuote").focus();
   }
 
   function close() {
-    if (!box) return;
+    if (!box || box.hidden) return;
+    session++;
     box.hidden = true;
-    document.documentElement.style.overflow = "";
+    document.documentElement.style.overflow = priorOverflow;
+    if (opener && opener.isConnected) opener.focus();
+    opener = null;
   }
 
   function msg(t, cls) {
@@ -114,7 +145,6 @@
   function payload() {
     var q = box.querySelector("#repQuote").value.trim();
     var name = box.querySelector("#repName").value.trim();
-    if (name) { try { localStorage.setItem(NAMEKEY, name); } catch (e) {} }
     return {
       page_url: location.pathname + location.hash,
       quote: q,
@@ -126,13 +156,37 @@
     };
   }
 
+  function valid(p) {
+    var field = box.querySelector("#repQuote");
+    if (p.quote.length < 2) {
+      field.setAttribute("aria-invalid", "true");
+      msg("어디가 잘못됐는지 두 글자 이상 적어 주세요.", "no");
+      field.focus();
+      return false;
+    }
+    field.removeAttribute("aria-invalid");
+    return true;
+  }
+
+  function setPending(value) {
+    pending = value;
+    box.querySelector("#repSend").disabled = value;
+    box.querySelector("#repGh").disabled = value;
+    box.querySelector(".rep-box").setAttribute("aria-busy", String(value));
+  }
+
   function send() {
+    if (pending) return;
     var p = payload();
-    if (p.quote.length < 2) { msg("어디가 잘못됐는지 한 줄이라도 적어 주세요.", "no"); return; }
+    if (!valid(p)) return;
     var c = cfg();
     if (!c) { github(); return; }
-    var b = box.querySelector("#repSend");
-    b.disabled = true; msg("보내는 중…", "");
+    try {
+      if (p.author_name !== "익명") localStorage.setItem(NAMEKEY, p.author_name);
+      else localStorage.removeItem(NAMEKEY);
+    } catch (e) {}
+    var requestSession = session;
+    setPending(true); msg("보내는 중…", "");
     fetch(c.url.replace(/\/$/, "") + "/rest/v1/problem_reports", {
       method: "POST",
       headers: {
@@ -143,21 +197,27 @@
       },
       body: JSON.stringify(p)
     }).then(function (r) {
-      b.disabled = false;
-      if (r.ok) { msg("접수됐습니다. 확인해서 고치겠습니다.", "ok"); setTimeout(close, 1400); }
+      setPending(false);
+      if (requestSession !== session || box.hidden) return;
+      if (r.ok) {
+        msg("접수됐습니다. 확인해서 고치겠습니다.", "ok");
+        box.querySelector("#repSend").disabled = true;
+      }
       else { msg("접수에 실패했습니다(" + r.status + "). GitHub에 남겨 주세요.", "no"); }
     }).catch(function () {
-      b.disabled = false;
+      setPending(false);
+      if (requestSession !== session || box.hidden) return;
       msg("연결이 안 됩니다. GitHub에 남겨 주세요.", "no");
     });
   }
 
   function github() {
+    if (pending) return;
     var p = payload();
-    if (p.quote.length < 2) { msg("어디가 잘못됐는지 한 줄이라도 적어 주세요.", "no"); return; }
+    if (!valid(p)) return;
     var title = "[오류] " + (p.atom_id ? p.atom_id + " · " : "") + cut(p.quote, 50);
     var body =
-      "### 어디\n" + location.href + "\n" +
+      "### 어디\n" + location.origin + p.page_url + "\n" +
       (p.atom_id ? "항목 ID: `" + p.atom_id + "`\n" : "") +
       (p.detail ? "구분: " + p.detail + "\n" : "") +
       "\n### 틀린 내용\n" + p.quote + "\n" +
@@ -165,7 +225,13 @@
       (p.evidence ? "\n### 근거\n" + p.evidence + "\n" : "");
     var u = GH + "?title=" + encodeURIComponent(title) + "&body=" + encodeURIComponent(body);
     window.open(u, "_blank", "noopener");
-    msg("GitHub 창을 열었습니다. 그곳에서 제출하면 접수됩니다.", "ok");
+    msg("GitHub에서 내용을 확인하고 제출해야 접수됩니다. 창이 열리지 않으면 ", "");
+    var link = document.createElement("a");
+    link.href = u;
+    link.target = "_blank";
+    link.rel = "noopener noreferrer";
+    link.textContent = "신고 작성 화면 열기";
+    box.querySelector("#repMsg").appendChild(link);
   }
 
   /* ------------------------------------------------ 버튼 달기 (자동·수동) */
@@ -193,7 +259,7 @@
         id: el.getAttribute("data-atom"),
         kindLabel: el.getAttribute("data-rep-label") || "개념",
         quote: el.getAttribute("data-rep-quote") ||
-               (body ? body.textContent : el.textContent)
+               (body ? body.getAttribute("data-drill") || body.textContent : el.textContent)
       }));
       el.appendChild(row);
     }
@@ -211,7 +277,7 @@
     btn: function (o, label) {
       var k = stashPut(o);
       return '<button class="btn ghost sm rep-inline" type="button" onclick="PPMReport.openKey(' +
-        k + ')">' + (label || "오류 신고") + "</button>";
+        k + ')">' + esc(label || "오류 신고") + "</button>";
     },
     openPage: function () { open({}); },
     scan: attachAtoms
@@ -219,8 +285,10 @@
 
   function boot() {
     attachAtoms(document);
-    var f = document.querySelector(".foot-report");
-    if (f) f.onclick = function (e) { e.preventDefault(); open({}); };
+    var links = document.querySelectorAll(".foot-report");
+    for (var i = 0; i < links.length; i++) {
+      links[i].onclick = function (e) { e.preventDefault(); open({}); };
+    }
   }
   if (document.readyState === "loading") document.addEventListener("DOMContentLoaded", boot);
   else boot();

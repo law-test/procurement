@@ -3,7 +3,7 @@
 """표준교재와 현행 법령이 다른 곳 — 대조표."""
 import json, os, importlib.util
 
-OUT = os.environ.get("PPM_OUT", "/home/claude/procurement")
+OUT = os.environ.get("PPM_OUT", os.path.dirname(os.path.dirname(os.path.abspath(__file__))))
 spec = importlib.util.spec_from_file_location("bp", os.path.join(OUT, "tools", "build_pages.py"))
 bp = importlib.util.module_from_spec(spec); spec.loader.exec_module(bp)
 e = bp.e
@@ -94,3 +94,6 @@ def main():
 
 if __name__ == "__main__":
     main()
+
+    from finalize_site import finalize
+    finalize(OUT)

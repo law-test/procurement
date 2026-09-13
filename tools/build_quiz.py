@@ -14,8 +14,8 @@ atom 원장에서 객관식 문항을 만든다.
 """
 import json, os, re, random, collections
 
-BUILD = os.environ.get("PPM_BUILD", "/home/claude/build")
-OUT = os.environ.get("PPM_OUT", "/home/claude/procurement")
+BUILD = os.environ.get("PPM_BUILD", os.path.join(os.path.dirname(os.path.dirname(os.path.abspath(__file__))), "_private", "build"))
+OUT = os.environ.get("PPM_OUT", os.path.dirname(os.path.dirname(os.path.abspath(__file__))))
 
 SUBJ_SLUG = {
     "공공조달과 법제도 이해": "law",

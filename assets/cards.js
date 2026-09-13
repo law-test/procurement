@@ -16,16 +16,30 @@
   var NUM = /[0-9０-９]/;
   var PARTICLE = /(은|는|이|가|을|를|의|에|에서|으로|로|와|과|도|만|부터|까지|에게|보다|이나|나|며|고|하여|하고|한다|된다|이다|있다|없다)$/;
 
-  var DATA = {}, Q = null;
+  var DATA = {}, pending = {}, Q = null, version = 0, starting = false, memory = {}, memoryOnly = false;
 
-  function esc(s) { return (s || "").replace(/&/g, "&amp;").replace(/</g, "&lt;").replace(/>/g, "&gt;"); }
+  function esc(s) { return String(s == null ? "" : s).replace(/&/g, "&amp;").replace(/</g, "&lt;").replace(/>/g, "&gt;").replace(/"/g, "&quot;").replace(/'/g, "&#39;"); }
   function norm(s) { return (s || "").replace(/[\s·,.\/()\[\]:;'"「」『』%％-]/g, "").toLowerCase(); }
 
+  function cleanProgress(o) {
+    var out = {};
+    if (!o || typeof o !== "object" || Array.isArray(o)) return out;
+    Object.keys(o).forEach(function (k) {
+      var s = o[k];
+      if (/\|(quiz|blank|recall)$/.test(k) && s && Number.isInteger(s.n) && s.n >= 0 &&
+          s.n < STEPS.length && Number.isFinite(s.due)) out[k] = { n: s.n, due: s.due };
+    });
+    return out;
+  }
   function srsLoad() {
-    try { return JSON.parse(localStorage.getItem(KEY) || "{}"); } catch (e) { return {}; }
+    if (memoryOnly) return cleanProgress(memory);
+    try { memory = cleanProgress(JSON.parse(localStorage.getItem(KEY) || "{}")); } catch (e) {}
+    return cleanProgress(memory);
   }
   function srsSave(o) {
-    try { localStorage.setItem(KEY, JSON.stringify(o)); } catch (e) {}
+    memory = cleanProgress(o);
+    try { localStorage.setItem(KEY, JSON.stringify(memory)); memoryOnly = false; return true; }
+    catch (e) { memoryOnly = true; return false; }
   }
   function today() { return Math.floor(Date.now() / 86400000); }
 
@@ -69,9 +83,29 @@
   }
 
   function fetchSubject(slug) {
+    if (!SUBJECTS.some(function (s) { return s.slug === slug; })) return Promise.reject(new Error("알 수 없는 과목"));
     if (DATA[slug]) return Promise.resolve(DATA[slug]);
-    return fetch("../data/cards." + slug + ".json").then(function (r) { return r.json(); })
-      .then(function (j) { DATA[slug] = j; return j; });
+    if (pending[slug]) return pending[slug];
+    var controller = typeof AbortController === "function" ? new AbortController() : null, timer;
+    var request = fetch("../data/cards." + slug + ".json", controller ? { signal: controller.signal } : {}).then(function (r) {
+      if (!r.ok) throw new Error("카드 응답 오류");
+      return r.json();
+    }).then(function (j) {
+      if (!j || !Array.isArray(j.cards) || !j.cards.every(function (c) {
+        return c && typeof c.id === "string" && typeof c.s === "string";
+      })) throw new Error("카드 형식 오류");
+      return j;
+    });
+    var timeout = new Promise(function (_, reject) {
+      timer = setTimeout(function () {
+        if (controller) controller.abort();
+        reject(new Error("카드 요청 시간 초과"));
+      }, 15000);
+    });
+    pending[slug] = Promise.race([request, timeout]).then(function (j) {
+      clearTimeout(timer); delete pending[slug]; DATA[slug] = j; return j;
+    }, function (err) { clearTimeout(timer); delete pending[slug]; throw err; });
+    return pending[slug];
   }
 
   function fillSubjects() {
@@ -84,11 +118,13 @@
   }
 
   function fillMajors() {
+    var current = ++version;
     var slug = document.getElementById("selSubject").value;
     var sel = document.getElementById("selMajor");
     sel.innerHTML = '<option value="all">전부</option>';
     document.getElementById("cardStat").textContent = "불러오는 중…";
     fetchSubject(slug).then(function (j) {
+      if (current !== version) return;
       var seen = [];
       j.cards.forEach(function (c) { if (seen.indexOf(c.m) < 0) seen.push(c.m); });
       seen.forEach(function (m) {
@@ -100,40 +136,48 @@
       document.getElementById("cardStat").textContent =
         j.n + "장 가운데 " + done + "장을 한 번 이상 풀었습니다.";
     }).catch(function () {
+      if (current !== version) return;
       document.getElementById("cardStat").textContent = "카드 데이터를 불러오지 못했습니다.";
     });
   }
 
   window.ppmCardReset = function () {
-    srsSave({});
+    if (!confirm("이 브라우저의 모든 학습 진도를 초기화할까요? 이 작업은 되돌릴 수 없습니다.")) return;
+    if (!srsSave({})) {
+      document.getElementById("cardStat").textContent = "저장소에 접근할 수 없어 진도를 초기화하지 못했습니다.";
+      return;
+    }
     fillMajors();
   };
 
   window.ppmCardStart = function () {
+    if (starting || Q) return;
+    starting = true;
+    var current = version;
     var slug = document.getElementById("selSubject").value;
     var major = document.getElementById("selMajor").value;
     var mode = document.getElementById("selMode").value;
     var count = +document.getElementById("selCount").value;
     var imp = document.getElementById("selImp").value;
     fetchSubject(slug).then(function (j) {
+      if (current !== version) return;
       var srs = srsLoad(), t = today();
       var pool = j.cards.filter(function (c) {
         if (major !== "all" && c.m !== major) return false;
         if (imp === "높음" && c.i !== "높음") return false;
         if (imp === "높음중간" && c.i === "낮음") return false;
-        return norm(c.s).length >= 12;
+        return norm(c.s).length >= 12 && (mode === "recall" || maskAnswers(c.s, 60).length > 0);
       });
       // 복습기한이 지난 것 → 아직 안 본 것 → 나머지
       function due(c, m) {
         var st = srs[c.id + "|" + m];
-        if (!st) return -1;                 // 새 카드
-        return st.due - t;
+        if (!st) return 1;
+        return st.due <= t ? 0 : 2;
       }
       var m0 = mode === "mix" ? "blank" : mode;
       pool.sort(function (a, b) {
         var da = due(a, m0), db = due(b, m0);
-        var ka = da < 0 ? (da === -1 ? 1 : 0) : 2;   // 0 기한도래 1 새카드 2 나머지
-        var kb = db < 0 ? (db === -1 ? 1 : 0) : 2;
+        var ka = da, kb = db;
         if (ka !== kb) return ka - kb;
         if (a.i !== b.i) return (a.i === "높음" ? -1 : b.i === "높음" ? 1 : 0);
         return 0;
@@ -142,16 +186,18 @@
         return { c: c, mode: mode === "mix" ? (k % 2 ? "recall" : "blank") : mode };
       });
       if (!items.length) { alert("조건에 맞는 카드가 없습니다."); return; }
-      Q = { items: items, i: 0, hit: 0, ratio: 60 };
+      Q = { items: items, i: 0, hit: 0, ratio: 60, phase: "question" };
       document.getElementById("cardSetup").hidden = true;
       var run = document.getElementById("cardRun");
       run.hidden = false;
       paint();
-    });
+    }).catch(function () {
+      document.getElementById("cardStat").textContent = "카드를 불러오지 못했습니다. 연결을 확인하고 다시 시작해 주세요.";
+    }).then(function () { starting = false; });
   };
 
   function grade(id, mode, ok) {
-    var srs = srsLoad(), k = id + "|" + mode, st = srs[k] || { n: 0 };
+    var srs = srsLoad(), k = id + "|" + mode, st = srs[k] || { n: -1 };
     st.n = ok ? Math.min(st.n + 1, STEPS.length - 1) : 0;
     st.due = today() + STEPS[st.n];
     srs[k] = st;
@@ -159,12 +205,13 @@
   }
 
   function paint() {
+    Q.phase = "question";
     var run = document.getElementById("cardRun");
     var it = Q.items[Q.i], c = it.c;
     var pct = Math.round(Q.i / Q.items.length * 100);
     var body = it.mode === "blank"
       ? '<div class="modal-s" id="cS">' + maskHtml(c.s, Q.ratio) + "</div>" +
-        '<input type="text" id="cIn" autocomplete="off" placeholder="가려진 말을 순서대로, 빈칸으로 띄어 쓰세요"/>'
+        '<input type="text" id="cIn" aria-label="빈칸 정답" autocomplete="off" placeholder="가려진 말을 순서대로, 빈칸으로 띄어 쓰세요"/>'
       : '<div class="modal-s" id="cS"><i>답을 떠올린 뒤 확인을 누르세요.</i></div>';
     run.innerHTML =
       '<div class="bar"><i style="width:' + pct + '%"></i></div>' +
@@ -173,7 +220,7 @@
       (c.i === "높음" ? " · 중요" : "") + " · " + esc(c.id) + "</span></div>" +
       '<div class="modal-q">' + esc(c.t) + "</div>" +
       body +
-      '<div class="modal-fb" id="cFb"></div>' +
+      '<div class="modal-fb" id="cFb" role="status"></div>' +
       '<div class="modal-btns" id="cBtns">' +
       (it.mode === "blank"
         ? '<button class="btn" onclick="ppmCardCheck()">확인</button>' +
@@ -183,7 +230,9 @@
       "</div>" +
       (c.r ? '<div class="modal-src">' + esc(c.r) + " · " + esc(c.d) + "</div>" : "");
     var inp = document.getElementById("cIn");
-    if (inp) { inp.focus(); inp.onkeydown = function (ev) { if (ev.key === "Enter") window.ppmCardCheck(); }; }
+    if (inp) { inp.focus(); inp.onkeydown = function (ev) {
+      if (ev.key === "Enter" && !ev.isComposing && !ev.repeat) { ev.preventDefault(); window.ppmCardCheck(); }
+    }; }
   }
 
   function afterReveal(it, c) {
@@ -191,49 +240,62 @@
       (c.c && c.c !== "없음" ? '<div class="atom-cond"><b>조건·예외</b> ' + esc(c.c) + "</div>" : "") +
       (c.x && c.x !== "없음" ? '<div class="atom-conf"><b>혼동</b> ' + esc(c.x) + "</div>" : "");
     document.getElementById("cBtns").innerHTML =
-      '<button class="btn" onclick="ppmCardGrade(1)">알았음</button>' +
-      '<button class="btn ghost" onclick="ppmCardGrade(0)">몰랐음</button>' +
+      (Q.phase === "answered" ? '<button class="btn" onclick="ppmCardNext()">다음</button>' :
+        '<button class="btn" onclick="ppmCardGrade(1)">알았음</button><button class="btn ghost" onclick="ppmCardGrade(0)">몰랐음</button>') +
       '<button class="btn ghost" onclick="ppmCardQuit()">그만</button>';
+    var inp = document.getElementById("cIn"); if (inp) inp.disabled = true;
+    document.getElementById("cBtns").querySelector("button").focus();
   }
 
   window.ppmCardCheck = function () {
+    if (!Q || Q.phase !== "question" || Q.items[Q.i].mode !== "blank") return;
     var it = Q.items[Q.i], c = it.c;
     var want = maskAnswers(c.s, Q.ratio);
     var got = (document.getElementById("cIn").value || "").split(/\s+/).filter(Boolean);
     var ok = 0;
     for (var i = 0; i < want.length; i++) if (got[i] && norm(got[i]) === norm(want[i])) ok++;
     var fb = document.getElementById("cFb");
-    var all = ok === want.length && want.length;
+    var all = want.length > 0 && ok === want.length && got.length === want.length;
+    Q.phase = "answered";
     fb.className = "modal-fb " + (all ? "ok" : "no");
     fb.textContent = all ? "맞았습니다 (" + ok + "/" + want.length + ")"
       : ok + " / " + want.length + " 맞음. 정답: " + want.join(" , ");
     afterReveal(it, c);
-    if (all) { Q.hit++; grade(c.id, it.mode, true); setTimeout(window.ppmCardNext, 800); }
+    grade(c.id, it.mode, all);
+    if (all) Q.hit++;
   };
 
   window.ppmCardReveal = function () {
+    if (!Q || Q.phase !== "question") return;
     var it = Q.items[Q.i], c = it.c;
+    Q.phase = it.mode === "blank" ? "answered" : "revealed";
     if (it.mode === "blank") {
       var fb = document.getElementById("cFb");
       fb.className = "modal-fb no";
       fb.textContent = "정답: " + maskAnswers(c.s, Q.ratio).join(" , ");
+      grade(c.id, it.mode, false);
     }
     afterReveal(it, c);
   };
 
   window.ppmCardGrade = function (ok) {
+    if (!Q || Q.phase !== "revealed") return;
     var it = Q.items[Q.i];
+    Q.phase = "answered";
     grade(it.c.id, it.mode, !!ok);
     if (ok) Q.hit++;
     window.ppmCardNext();
   };
 
   window.ppmCardNext = function () {
+    if (!Q || Q.phase !== "answered") return;
     Q.i++;
     if (Q.i >= Q.items.length) {
+      Q.phase = "complete";
       document.getElementById("cardRun").innerHTML =
         '<div class="modal-q">' + Q.items.length + "장을 끝냈습니다</div>" +
-        '<p class="modal-s">한 번에 맞힌 것 ' + Q.hit + "장. 틀린 카드는 내일 다시 나옵니다.</p>" +
+        '<p class="modal-s">정답 또는 회상 성공 ' + Q.hit + "장. 틀린 카드는 내일 복습할 차례입니다.</p>" +
+        (memoryOnly ? '<p class="note">브라우저 저장소를 사용할 수 없어 이번 진도는 창을 닫으면 사라집니다.</p>' : "") +
         '<div class="modal-btns"><button class="btn" onclick="ppmCardQuit()">돌아가기</button></div>';
       return;
     }

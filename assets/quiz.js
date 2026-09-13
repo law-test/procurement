@@ -15,18 +15,37 @@
   var NUM = /[0-9０-９]/;
   var PART = /(은|는|이|가|을|를|의|에|에서|으로|로|와|과|도|만|부터|까지|에게|보다|이나|나|며|고|하여|하고|한다|된다|이다|있다|없다)$/;
 
-  var QZ = {}, CD = {}, S = null;
+  var QZ = {}, CD = {}, pending = {}, memory = {}, memoryOnly = false;
 
-  function esc(s) { return (s || "").replace(/&/g, "&amp;").replace(/</g, "&lt;").replace(/>/g, "&gt;"); }
+  function esc(s) { return String(s == null ? "" : s).replace(/&/g, "&amp;").replace(/</g, "&lt;").replace(/>/g, "&gt;").replace(/"/g, "&quot;").replace(/'/g, "&#39;"); }
   function norm(s) { return (s || "").replace(/[\s·,.\/()\[\]:;'"「」『』%％-]/g, "").toLowerCase(); }
   function today() { return Math.floor(Date.now() / 86400000); }
-  function srsGet() { try { return JSON.parse(localStorage.getItem(SRS) || "{}"); } catch (e) { return {}; } }
-  function srsPut(o) { try { localStorage.setItem(SRS, JSON.stringify(o)); } catch (e) {} }
+  function validProgress(o) {
+    var clean = {};
+    if (!o || typeof o !== "object" || Array.isArray(o)) return clean;
+    Object.keys(o).forEach(function (k) {
+      var st = o[k];
+      if (!/\|(quiz|blank|recall)$/.test(k) || !st || !Number.isInteger(st.n) ||
+          st.n < 0 || st.n >= STEPS.length || !Number.isFinite(st.due)) return;
+      clean[k] = { n: st.n, due: st.due };
+    });
+    return clean;
+  }
+  function srsGet() {
+    if (memoryOnly) return validProgress(memory);
+    try { memory = validProgress(JSON.parse(localStorage.getItem(SRS) || "{}")); } catch (e) {}
+    return validProgress(memory);
+  }
+  function srsPut(o) {
+    memory = validProgress(o);
+    try { localStorage.setItem(SRS, JSON.stringify(memory)); memoryOnly = false; return true; }
+    catch (e) { memoryOnly = true; return false; }
+  }
   function grade(id, mode, ok) {
-    var o = srsGet(), k = id + "|" + mode, st = o[k] || { n: 0 };
+    var o = srsGet(), k = id + "|" + mode, st = o[k] || { n: -1 };
     st.n = ok ? Math.min(st.n + 1, STEPS.length - 1) : 0;
     st.due = today() + STEPS[st.n];
-    o[k] = st; srsPut(o);
+    o[k] = st; return srsPut(o);
   }
   function shuffle(a) { for (var i = a.length - 1; i > 0; i--) { var j = Math.floor(Math.random() * (i + 1)); var t = a[i]; a[i] = a[j]; a[j] = t; } return a; }
 
@@ -65,20 +84,50 @@
     return c.slice(0, n).sort(function (a, b) { return a.i - b.i; }).map(function (x) { return x.t.replace(PART, ""); });
   }
 
-  function loadQuiz(slug) {
-    if (QZ[slug]) return Promise.resolve(QZ[slug]);
-    return fetch("../data/quiz." + slug + ".json").then(function (r) { return r.json(); })
-      .then(function (j) { QZ[slug] = j; return j; });
+  function loadData(type, slug, cache) {
+    if (!SUBJECTS.some(function (s) { return s.slug === slug; }) && !(type === "cards" && slug === "etc")) {
+      return Promise.reject(new Error("알 수 없는 과목입니다."));
+    }
+    if (cache[slug]) return Promise.resolve(cache[slug]);
+    var key = type + "." + slug;
+    if (pending[key]) return pending[key];
+    var controller = typeof AbortController === "function" ? new AbortController() : null;
+    var timer;
+    var request = fetch("../data/" + key + ".json", controller ? { signal: controller.signal } : {}).then(function (r) {
+      if (!r.ok) throw new Error("데이터 응답 오류: " + r.status);
+      return r.json();
+    }).then(function (j) {
+      var rows = j && j[type === "quiz" ? "items" : "cards"];
+      if (!Array.isArray(rows) || !rows.every(function (x) {
+        if (!x || typeof x !== "object") return false;
+        if (type === "cards") return typeof x.id === "string" && typeof x.s === "string" && typeof x.t === "string";
+        return typeof x.atom === "string" && typeof x.subject === "string" &&
+          Array.isArray(x.choices) && x.choices.length >= 2 && x.choices.length <= MARK.length &&
+          x.choices.every(function (c) { return typeof c === "string"; }) &&
+          Number.isInteger(x.answer) && x.answer >= 0 && x.answer < x.choices.length;
+      })) throw new Error("데이터 형식이 올바르지 않습니다.");
+      return j;
+    });
+    var timeout = new Promise(function (_, reject) {
+      timer = setTimeout(function () {
+        if (controller) controller.abort();
+        reject(new Error("데이터 요청 시간이 초과되었습니다."));
+      }, 15000);
+    });
+    pending[key] = Promise.race([request, timeout]).then(function (j) {
+      clearTimeout(timer); delete pending[key]; cache[slug] = j; return j;
+    }, function (err) {
+      clearTimeout(timer); delete pending[key]; throw err;
+    });
+    return pending[key];
   }
-  function loadCards(slug) {
-    if (CD[slug]) return Promise.resolve(CD[slug]);
-    return fetch("../data/cards." + slug + ".json").then(function (r) { return r.json(); })
-      .then(function (j) { CD[slug] = j; return j; });
-  }
+  function loadQuiz(slug) { return loadData("quiz", slug, QZ); }
+  function loadCards(slug) { return loadData("cards", slug, CD); }
 
   window.PPMQ = {
     SUBJECTS: SUBJECTS, MARK: MARK, esc: esc, norm: norm, shuffle: shuffle,
     maskHtml: maskHtml, maskAns: maskAns, grade: grade, srsGet: srsGet, srsPut: srsPut,
-    today: today, loadQuiz: loadQuiz, loadCards: loadCards
+    today: today, loadQuiz: loadQuiz, loadCards: loadCards,
+    storageOk: function () { return !memoryOnly; }
   };
 })();

@@ -3,15 +3,15 @@
 """1주일 완성 × 3회독 학습계획 화면 생성기."""
 import json, os, importlib.util
 
-BUILD = os.environ.get("PPM_BUILD", "/home/claude/build")
-OUT = os.environ.get("PPM_OUT", "/home/claude/procurement")
+BUILD = os.environ.get("PPM_BUILD", os.path.join(os.path.dirname(os.path.dirname(os.path.abspath(__file__))), "_private", "build"))
+OUT = os.environ.get("PPM_OUT", os.path.dirname(os.path.dirname(os.path.abspath(__file__))))
 spec = importlib.util.spec_from_file_location("bp", os.path.join(OUT, "tools", "build_pages.py"))
 bp = importlib.util.module_from_spec(spec); spec.loader.exec_module(bp)
 
 SLUG = {"공공조달과 법제도 이해": "law", "공공조달계획 수립 및 분석": "plan", "공공계약관리": "contract"}
 
 ROUNDS = [
-    ("1회독", "훑기", "중요 개념만 읽고 지나갑니다. 빈칸도 문제도 없습니다. 전체 지도를 머리에 넣는 것이 목적입니다.",
+    ("1회독", "훑기", "중요 개념을 훑고 객관식으로 핵심을 확인합니다. 전체 지도를 머리에 넣는 것이 목적입니다.",
      "익히기 페이지를 중요 표시된 개념만 읽기", "외우기 · 4지선다 · 중요만"),
     ("2회독", "붙이기", "같은 범위를 다시 돌면서 조건·예외와 헷갈리는 짝을 붙입니다. 가리기를 60%로 올리고 객관식을 풉니다.",
      "익히기 페이지에서 가리기 60% · 이 절 빈칸 암기", "외우기 · 세 방식 섞기 · 중요·중간"),
@@ -43,10 +43,11 @@ def day_block(i, day):
         mode = ["quiz", "mix", "recall"][r]
         cnt = [20, 30, 40][r]
         slug = SLUG.get(day[0]["subject"], "law")
+        groups = ",".join(p["gid"] for p in day)
         o.append('<label class="chk"><input type="checkbox" data-day="%d" data-round="%d"/> %s</label>'
                  % (i + 1, r + 1, label))
-        o.append('<a class="btn ghost sm" href="../drill/?subject=%s&amp;mode=%s&amp;imp=%s&amp;n=%d">%s 외우기</a>'
-                 % (slug, mode, imp, cnt, label))
+        o.append('<a class="btn ghost sm" href="../drill/?subject=%s&amp;mode=%s&amp;imp=%s&amp;n=%d&amp;groups=%s&amp;day=%d">%s 외우기</a>'
+                 % (slug, mode, imp, cnt, groups, i + 1, label))
     o.append("</div></section>")
     return "".join(o)
 
@@ -54,11 +55,11 @@ def day_block(i, day):
 def main():
     days = json.load(open(os.path.join(BUILD, "plan7.json"), encoding="utf-8"))
     total = sum(p["n"] for d in days for p in d)
-    o = [bp.head("1주일 완성 3회독 학습계획 — 조달프로",
+    o = [bp.head("3주 3회독 학습계획 — 조달프로",
                  "공공조달관리사 필기 개념 %d개를 7일에 한 바퀴 돌고, 그 7일을 세 번 반복합니다. 회독마다 읽는 깊이와 묻는 방식이 달라집니다." % total,
                  1)]
     o.append('<main class="wrap">')
-    o.append("<h1>1주일 완성, 3회독</h1>")
+    o.append("<h1>7일씩, 3주 3회독</h1>")
     o.append('<p class="lede">필기 범위를 <b>7일에 한 바퀴</b> 돌립니다. 그 7일을 <b>세 번</b> 반복합니다. '
              '같은 범위를 세 번 보지만 회독마다 읽는 깊이와 묻는 방식이 달라집니다. '
              '한 바퀴가 짧아서 앞을 잊기 전에 다시 만납니다.</p>')
@@ -92,22 +93,7 @@ def main():
              "계산과 서술이 섞이므로 하루에 <b>계산 1문항을 손으로 끝까지 푸는 시간</b>을 반드시 넣습니다. "
              '<a href="../c/">실기 실무 교재 →</a></p>')
     o.append("</main>")
-    o.append("""<script>
-(function () {
-  var KEY = "ppm.plan.v1", st = {};
-  try { st = JSON.parse(localStorage.getItem(KEY) || "{}"); } catch (e) {}
-  var boxes = document.querySelectorAll('input[type=checkbox][data-day]');
-  for (var i = 0; i < boxes.length; i++) {
-    var b = boxes[i], k = b.getAttribute("data-day") + "-" + b.getAttribute("data-round");
-    b.checked = !!st[k];
-    b.onchange = function () {
-      var kk = this.getAttribute("data-day") + "-" + this.getAttribute("data-round");
-      st[kk] = this.checked;
-      try { localStorage.setItem(KEY, JSON.stringify(st)); } catch (e) {}
-    };
-  }
-})();
-</script>""")
+    o.append('<script src="../assets/plan.js"></script>')
     o.append(bp.foot(1))
     p = os.path.join(OUT, "plan", "index.html")
     os.makedirs(os.path.dirname(p), exist_ok=True)
@@ -117,3 +103,6 @@ def main():
 
 if __name__ == "__main__":
     main()
+
+    from finalize_site import finalize
+    finalize(OUT)
