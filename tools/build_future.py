@@ -3,7 +3,7 @@
 """자격의 앞날 — 이 자격이 왜 생겼고 어디로 가는지."""
 import os, importlib.util
 
-OUT = os.environ.get("PPM_OUT", "/home/claude/procurement")
+OUT = os.environ.get("PPM_OUT", os.path.dirname(os.path.dirname(os.path.abspath(__file__))))
 spec = importlib.util.spec_from_file_location("bp", os.path.join(OUT, "tools", "build_pages.py"))
 bp = importlib.util.module_from_spec(spec); spec.loader.exec_module(bp)
 
@@ -114,7 +114,7 @@ Supply Management)이 있습니다. 조달·공급관리를 독립된 전문 직
 이름만 바꾸자는 요청은 이 기준 위에서 논증하기 어렵습니다. 등급을 나누거나 직무 범위를 다시 그리는 요청과 함께 가야
 제11조의 항목들에 답할 거리가 생깁니다.</p>
 
-<h2>"공인"이라는 말에 대하여</h2>
+<h2 id="공인이라는-말에-대하여">"공인"이라는 말에 대하여</h2>
 <p>조달 자격을 검색하면 "공인", "국가공인"을 앞에 붙인 이름을 자주 봅니다. 이 말은 법률 용어입니다.</p>
 <blockquote>"공인"이란 자격의 관리·운영 수준이 국가자격과 같거나 비슷한 <b>민간자격</b>을 이 법에서 정한 절차에 따라
 국가가 인정하는 행위를 말한다. <span class="cite">자격기본법 제2조 제10호</span></blockquote>
@@ -170,3 +170,6 @@ def main():
 
 if __name__ == "__main__":
     main()
+
+    from finalize_site import finalize
+    finalize(OUT)

@@ -9,8 +9,17 @@
 <link rel="stylesheet" href="https://cdn.jsdelivr.net/gh/orioncactus/pretendard@v1.3.9/dist/web/static/pretendard.css"/>
 <link rel="stylesheet" href="../assets/site.css"/>
 <link rel="stylesheet" href="../assets/study.css"/>
+<link rel="stylesheet" href="../assets/enhancements.css"/>
+<link rel="canonical" href="https://jodal.pro/cbt/"/>
+<meta property="og:type" content="website"/>
+<meta property="og:locale" content="ko_KR"/>
+<meta property="og:site_name" content="조달프로"/>
+<meta property="og:url" content="https://jodal.pro/cbt/"/>
+<meta property="og:title" content="모의시험 CBT — 조달프로"/>
+<meta property="og:description" content="공공조달관리사 필기 구성 그대로 80문항 120분. 과목별 짧은 연습과 실기 실무 문항 연습도 있습니다. 제출하면 과목별 점수와 오답 해설이 나옵니다."/>
 </head>
 <body>
+<a class="skip-link" href="#main-content">본문 바로가기</a>
 <header>
   <div class="wrap hrow">
     <a class="logo" href="../">조달프로<small>공공조달관리사 수험·실무</small></a>
@@ -28,43 +37,42 @@
     </nav>
   </div>
 </header>
-
-<main class="wrap card-wrap">
+<main id="main-content" tabindex="-1" class="wrap card-wrap">
   <h1>모의시험</h1>
   <p class="lede">실제 필기 구성 그대로 <b>80문항 120분</b>입니다. 과목별 문항 수는 법제도 30 · 계획분석 20 · 계약관리 30입니다. 제출하면 과목별 점수와 틀린 문항의 근거가 함께 나옵니다.</p>
 
   <div class="card-setup" id="setup">
-    <div class="row"><label>방식</label><select id="selKind">
+    <div class="row"><label for="selKind">방식</label><select id="selKind">
       <option value="real">실전 · 필기 80문항 120분</option>
       <option value="subject">과목별 연습</option>
       <option value="practice">실기 실무 문항 연습</option>
     </select></div>
-    <div class="row" id="rowSubject" hidden><label>과목</label><select id="selSubject"></select></div>
-    <div class="row" id="rowCount" hidden><label>문항</label><select id="selCount">
+    <div class="row" id="rowSubject" hidden><label for="selSubject">과목</label><select id="selSubject"></select></div>
+    <div class="row" id="rowCount" hidden><label for="selCount">문항</label><select id="selCount">
       <option value="10">10문항</option><option value="20" selected>20문항</option><option value="40">40문항</option>
     </select></div>
-    <div class="row"><label>시간</label><select id="selTime">
+    <div class="row"><label for="selTime">시간</label><select id="selTime">
       <option value="1">제한시간 적용</option><option value="0">시간 제한 없이</option>
     </select></div>
-    <div class="row"><button class="btn" onclick="cStart()">시작</button></div>
-    <p class="note" id="stat"></p>
+    <div class="row"><button class="btn" id="start" onclick="cStart()">시작</button></div>
+    <p class="note" id="stat" role="status" aria-live="polite"></p>
     <p class="note">국가기술자격 필기는 통상 과목당 40점 이상, 전 과목 평균 60점 이상을 합격으로 봅니다. 이 종목의 확정 기준은 <a href="https://www.q-net.or.kr/crf005.do?id=crf00503s02&amp;gSite=Q&amp;gId=&amp;jmCd=9777&amp;jmInfoDivCcd=B0&amp;seriesCd=03" rel="noopener">Q-Net 시험정보</a>에서 확인하세요.</p>
   </div>
 
-  <div id="exam" hidden>
+  <div id="exam" tabindex="-1" hidden>
     <div class="cbt-bar">
-      <span id="clock" class="clock">--:--</span>
-      <span id="counter"></span>
+      <span id="clock" class="clock" role="timer" aria-label="남은 시간">--:--</span>
+      <span id="counter" role="status"></span>
       <button class="btn" onclick="cSubmit()">제출</button>
       <button class="btn ghost" onclick="cQuit()">그만</button>
     </div>
     <div id="qlist"></div>
   </div>
-  <div id="result" hidden></div>
+  <div id="result" tabindex="-1" hidden></div>
 </main>
 <script src="../assets/quiz.js"></script>
 <script>
-var E = null, TMR = null;
+var E = null, TMR = null, starting = false, startVersion = 0;
 function $(id) { return document.getElementById(id); }
 
 document.addEventListener("DOMContentLoaded", function () {
@@ -78,26 +86,45 @@ document.addEventListener("DOMContentLoaded", function () {
 });
 
 function cStart() {
+  if (starting || E) return;
+  starting = true;
+  var version = ++startVersion;
+  $("start").disabled = true;
   var kind = $("selKind").value, timed = $("selTime").value === "1";
   $("stat").textContent = "문항을 뽑는 중…";
   var plan = kind === "real"
     ? [["law", 30], ["plan", 20], ["contract", 30]]
     : kind === "practice" ? [["practice", +$("selCount").value]]
     : [[$("selSubject").value, +$("selCount").value]];
-  Promise.all(plan.map(function (p) { return PPMQ.loadQuiz(p[0]); })).then(function (res) {
+  return Promise.all(plan.map(function (p) { return PPMQ.loadQuiz(p[0]); })).then(function (res) {
+    if (version !== startVersion) return;
     var items = [];
     res.forEach(function (j, idx) {
       var want = plan[idx][1];
       var pick = PPMQ.shuffle(j.items.slice()).slice(0, want);
       pick.forEach(function (q) { items.push(q); });
     });
-    if (!items.length) { $("stat").textContent = "문항이 없습니다."; return; }
+    if (!items.length) { $("stat").textContent = "선택한 범위에 문항이 없습니다. 다른 과목을 선택해 주세요."; return; }
+    if (kind === "real" && res.some(function (j, i) { return j.items.length < plan[i][1]; })) {
+      $("stat").textContent = "실전 구성에 필요한 문항이 부족합니다. 과목별 연습을 선택해 주세요.";
+      return;
+    }
     var mins = kind === "real" ? 120 : Math.max(5, Math.round(items.length * 1.5));
-    E = { items: items, pick: {}, left: timed ? mins * 60 : 0, timed: timed };
+    E = { items: items, pick: {}, left: timed ? mins * 60 : 0, timed: timed,
+      deadline: timed ? Date.now() + mins * 60000 : 0, kind: kind, submitted: false };
+    if (TMR !== null) { clearInterval(TMR); TMR = null; }
     $("setup").hidden = true; $("exam").hidden = false; $("result").hidden = true;
     render();
-    if (timed) { tick(); TMR = setInterval(tick, 1000); }
+    $("clock").className = "clock";
+    if (timed) { tick(); if (E) TMR = setInterval(tick, 1000); }
     else $("clock").textContent = "시간 제한 없음";
+    $("exam").focus();
+  }).catch(function () {
+    if (version !== startVersion) return;
+    $("stat").textContent = "문항을 불러오지 못했습니다. 연결을 확인하고 다시 시작해 주세요.";
+  }).then(function () {
+    if (version !== startVersion) return;
+    starting = false; $("start").disabled = false;
   });
 }
 
@@ -108,7 +135,7 @@ function render() {
       '<span class="cbt-sub">' + PPMQ.esc(q.subject) + '</span></div>' +
       '<div class="modal-s">' + PPMQ.esc(q.stem) + '</div>' +
       '<ol class="choices">' + q.choices.map(function (c, k) {
-        return '<li><button class="ch" id="c' + i + '_' + k + '" onclick="cPick(' + i + ',' + k + ')">' +
+        return '<li><button class="ch" aria-pressed="false" id="c' + i + '_' + k + '" onclick="cPick(' + i + ',' + k + ')">' +
           PPMQ.MARK[k] + " " + PPMQ.esc(c) + '</button></li>';
       }).join("") + '</ol></article>';
   }).join("");
@@ -116,10 +143,13 @@ function render() {
   count();
 }
 function cPick(i, k) {
+  if (!E || E.submitted || !Number.isInteger(i) || !E.items[i] || !Number.isInteger(k) ||
+      k < 0 || k >= E.items[i].choices.length) return;
+  if (E.timed && Date.now() >= E.deadline) { tick(); return; }
   E.pick[i] = k;
-  for (var j = 0; j < 4; j++) {
+  for (var j = 0; j < E.items[i].choices.length; j++) {
     var b = $("c" + i + "_" + j);
-    if (b) b.classList.toggle("ch-on", j === k);
+    if (b) { b.classList.toggle("ch-on", j === k); b.setAttribute("aria-pressed", String(j === k)); }
   }
   count();
 }
@@ -127,17 +157,20 @@ function count() {
   $("counter").textContent = Object.keys(E.pick).length + " / " + E.items.length + " 답함";
 }
 function tick() {
-  if (!E) return;
-  E.left--;
-  if (E.left <= 0) { $("clock").textContent = "00:00"; cSubmit(); return; }
+  if (!E || E.submitted || !E.timed) return;
+  E.left = Math.max(0, Math.ceil((E.deadline - Date.now()) / 1000));
+  if (E.left <= 0) { $("clock").textContent = "00:00"; cSubmit(true); return; }
   var m = Math.floor(E.left / 60), s = E.left % 60;
   $("clock").textContent = (m < 10 ? "0" : "") + m + ":" + (s < 10 ? "0" : "") + s;
   $("clock").className = "clock" + (E.left < 300 ? " hot" : "");
 }
 
-function cSubmit() {
-  if (!E) return;
-  if (TMR) { clearInterval(TMR); TMR = null; }
+function cSubmit(automatic) {
+  if (!E || E.submitted) return;
+  var unanswered = E.items.length - Object.keys(E.pick).length;
+  if (!automatic && unanswered && !confirm("아직 " + unanswered + "문항에 답하지 않았습니다. 제출할까요?")) return;
+  E.submitted = true;
+  if (TMR !== null) { clearInterval(TMR); TMR = null; }
   var bySub = {}, wrong = [];
   E.items.forEach(function (q, i) {
     var s = bySub[q.subject] || (bySub[q.subject] = { n: 0, ok: 0 });
@@ -146,23 +179,26 @@ function cSubmit() {
     if (ok) s.ok++; else wrong.push({ q: q, i: i, pick: E.pick[i] });
     PPMQ.grade(q.atom, "quiz", ok);
   });
-  var rows = "", tot = 0, totN = 0, fail = false;
+  var rows = "", tot = 0, totN = 0, fail = false, scoreSum = 0;
   Object.keys(bySub).forEach(function (k) {
-    var s = bySub[k], sc = Math.round(s.ok / s.n * 100);
-    if (sc < 40) fail = true;
+    var s = bySub[k], raw = s.ok / s.n * 100, sc = Math.round(raw * 10) / 10;
+    scoreSum += raw;
+    if (raw < 40) fail = true;
     tot += s.ok; totN += s.n;
     rows += '<tr><td>' + PPMQ.esc(k) + '</td><td>' + s.ok + ' / ' + s.n + '</td><td><b>' + sc + '점</b></td></tr>';
   });
-  var avg = Math.round(tot / totN * 100);
+  var rawAvg = scoreSum / Object.keys(bySub).length, avg = Math.round(rawAvg * 10) / 10;
   $("exam").hidden = true; $("result").hidden = false;
   $("result").innerHTML =
-    '<h2>결과</h2>' +
+    '<h2>결과</h2>' + (automatic ? '<p class="note">제한시간이 끝나 자동 제출했습니다.</p>' : '') +
+    (!PPMQ.storageOk() ? '<p class="note">브라우저 저장소를 사용할 수 없어 이번 진도는 창을 닫으면 사라집니다.</p>' : '') +
     '<div class="tablewrap"><table><thead><tr><th>과목</th><th>맞힘</th><th>점수</th></tr></thead><tbody>' +
     rows + '<tr><td><b>평균</b></td><td>' + tot + ' / ' + totN + '</td><td><b>' + avg + '점</b></td></tr>' +
     '</tbody></table></div>' +
-    '<p class="lede">' + (fail ? '과목 하나가 40점 미만입니다. 그 과목부터 다시 보세요.'
-      : avg >= 60 ? '통상 합격선인 평균 60점을 넘겼습니다.' : '평균이 60점에 못 미칩니다.') + '</p>' +
-    '<h2>틀린 문항 ' + wrong.length + '개</h2>' +
+    '<p class="lede">' + (E.kind !== "real" ? '선택한 범위의 연습 결과입니다. 틀린 문항을 확인해 보세요.'
+      : fail ? '과목 하나가 40점 미만입니다. 그 과목부터 다시 보세요.'
+      : rawAvg >= 60 ? '통상 합격선인 평균 60점 이상입니다.' : '평균이 60점에 못 미칩니다.') + '</p>' +
+    '<h2>틀린 문항 ' + wrong.length + '개</h2>' + (wrong.length ? '' : '<p>모든 문항을 맞혔습니다.</p>') +
     wrong.map(function (w) {
       var q = w.q;
       return '<article class="atom" data-atom="' + PPMQ.esc(q.id || q.atom || "") +
@@ -183,13 +219,21 @@ function cSubmit() {
   if (window.PPMReport) PPMReport.scan($("result"));
   window.scrollTo(0, 0);
   E = null;
+  $("result").focus();
 }
 function cQuit() {
-  if (TMR) { clearInterval(TMR); TMR = null; }
+  if (E && !E.submitted && !confirm("진행 중인 시험을 종료할까요? 제출하지 않은 답은 저장되지 않습니다.")) return;
+  if (TMR !== null) { clearInterval(TMR); TMR = null; }
+  startVersion++; starting = false; $("start").disabled = false;
   E = null;
   $("exam").hidden = true; $("result").hidden = true; $("setup").hidden = false;
   $("stat").textContent = "";
+  $("start").focus();
 }
+document.addEventListener("visibilitychange", function () { if (!document.hidden) tick(); });
+window.addEventListener("beforeunload", function (e) {
+  if (E && !E.submitted) { e.preventDefault(); e.returnValue = ""; }
+});
 </script>
 <footer>
   <div class="wrap foot-grid">
@@ -235,5 +279,6 @@ function cQuit() {
   </div>
 </footer>
 <script src="../assets/report.js"></script>
+<script src="../assets/site.js"></script>
 </body>
 </html>

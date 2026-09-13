@@ -32,110 +32,127 @@ function fnUrl(req: Request) {
 }
 
 function redirect(to: string, headers: HeadersInit = {}) {
-  return new Response(null, { status: 302, headers: { Location: to, ...headers } });
+  return new Response(null, { status: 302, headers: {
+    Location: to, "Cache-Control": "no-store", "Referrer-Policy": "no-referrer", ...headers,
+  } });
 }
 
 function fail(msg: string) {
-  return redirect(`${SITE_URL}/login/?error=${encodeURIComponent(msg)}`);
+  return redirect(`${SITE_URL}/login/?error=${encodeURIComponent(msg)}`, {
+    "Set-Cookie": "nv_state=; Path=/; Max-Age=0; HttpOnly; Secure; SameSite=Lax",
+  });
 }
 
 Deno.serve(async (req) => {
-  const url = new URL(req.url);
-  const action = url.searchParams.get("action") ?? "start";
+  try {
+    if (req.method !== "GET") return new Response("Method not allowed", { status: 405, headers: { Allow: "GET" } });
+    const url = new URL(req.url);
+    const action = url.searchParams.get("action") ?? "start";
 
-  // ── 1) 네이버 동의 화면으로
-  if (action === "start") {
-    const state = crypto.randomUUID();
-    const redirectUri = `${fnUrl(req)}?action=callback`;
-    const to = `${NAVER_AUTH}?response_type=code&client_id=${encodeURIComponent(CLIENT_ID)}` +
-      `&redirect_uri=${encodeURIComponent(redirectUri)}&state=${state}`;
-    // state는 쿠키에 담아 콜백에서 맞춰 본다(교차 사이트 요청 위조 방지)
-    return redirect(to, {
-      "Set-Cookie": `nv_state=${state}; Path=/; Max-Age=600; HttpOnly; Secure; SameSite=Lax`,
-    });
-  }
-
-  // ── 2) 콜백
-  if (action !== "callback") return fail("unknown_action");
-
-  const code = url.searchParams.get("code");
-  const state = url.searchParams.get("state");
-  const cookie = req.headers.get("cookie") ?? "";
-  const want = /nv_state=([^;]+)/.exec(cookie)?.[1];
-  if (!code) return fail("no_code");
-  if (!state || !want || state !== want) return fail("state_mismatch");
-
-  // 코드 → 접근토큰
-  const tokenRes = await fetch(
-    `${NAVER_TOKEN}?grant_type=authorization_code&client_id=${encodeURIComponent(CLIENT_ID)}` +
-      `&client_secret=${encodeURIComponent(CLIENT_SECRET)}&code=${encodeURIComponent(code)}` +
-      `&state=${encodeURIComponent(state)}`,
-  );
-  const token = await tokenRes.json();
-  if (!token?.access_token) return fail("token_failed");
-
-  // 접근토큰 → 프로필
-  const meRes = await fetch(NAVER_ME, {
-    headers: { Authorization: `Bearer ${token.access_token}` },
-  });
-  const me = await meRes.json();
-  if (me?.resultcode !== "00" || !me?.response?.id) return fail("profile_failed");
-
-  const nv = me.response as {
-    id: string; email?: string; name?: string; nickname?: string;
-  };
-  const naverId = String(nv.id);
-  const name = (nv.name ?? nv.nickname ?? "수험생").slice(0, 24);
-
-  // 네이버는 이메일 제공 동의가 선택일 수 있다. 없으면 내부용 주소를 만든다.
-  // 이 주소로는 메일이 가지 않으므로, 나중에 본인이 실제 주소를 등록할 수 있게 화면을 둔다.
-  const email = (nv.email ?? `naver_${naverId}@users.jodal.pro`).toLowerCase();
-  const hasRealEmail = Boolean(nv.email);
-
-  // ── 같은 네이버 계정이 이미 붙어 있는지 먼저 본다(이메일이 바뀌어도 같은 사람)
-  let userId: string | null = null;
-  const { data: link } = await admin
-    .from("social_links")
-    .select("user_id")
-    .eq("provider", "naver")
-    .eq("provider_uid", naverId)
-    .maybeSingle();
-  if (link?.user_id) userId = link.user_id;
-
-  // 계정이 없으면 만든다. 이미 같은 이메일의 계정이 있으면 그 계정에 붙인다.
-  if (!userId) {
-    const created = await admin.auth.admin.createUser({
-      email,
-      email_confirm: true,
-      user_metadata: {
-        name,
-        provider: "naver",
-        naver_id: naverId,
-        email_verified_by_naver: hasRealEmail,
-      },
-    });
-    if (created.data?.user?.id) {
-      userId = created.data.user.id;
-    } else {
-      // 이미 있는 이메일이면 목록에서 찾아 붙인다
-      const { data: list } = await admin.auth.admin.listUsers({ page: 1, perPage: 200 });
-      userId = list?.users?.find((u) => (u.email ?? "").toLowerCase() === email)?.id ?? null;
-      if (!userId) return fail("create_failed");
+    // ── 1) 네이버 동의 화면으로
+    if (action === "start") {
+      const state = crypto.randomUUID();
+      const redirectUri = `${fnUrl(req)}?action=callback`;
+      const to = `${NAVER_AUTH}?response_type=code&client_id=${encodeURIComponent(CLIENT_ID)}` +
+        `&redirect_uri=${encodeURIComponent(redirectUri)}&state=${state}`;
+      // state는 쿠키에 담아 콜백에서 맞춰 본다(교차 사이트 요청 위조 방지)
+      return redirect(to, {
+        "Set-Cookie": `nv_state=${state}; Path=/; Max-Age=600; HttpOnly; Secure; SameSite=Lax`,
+      });
     }
-    await admin.from("social_links").upsert({
-      provider: "naver", provider_uid: naverId, user_id: userId,
-    }, { onConflict: "provider,provider_uid" });
+
+    // ── 2) 콜백
+    if (action !== "callback") return fail("unknown_action");
+
+    const code = url.searchParams.get("code");
+    const state = url.searchParams.get("state");
+    const cookie = req.headers.get("cookie") ?? "";
+    const want = /(?:^|;\s*)nv_state=([^;]+)/.exec(cookie)?.[1];
+    if (!code) return fail("no_code");
+    if (!state || !want || state !== want) return fail("state_mismatch");
+
+    // 코드 → 접근토큰
+    const tokenRes = await fetch(NAVER_TOKEN, {
+      method: "POST",
+      body: new URLSearchParams({ grant_type: "authorization_code", client_id: CLIENT_ID,
+        client_secret: CLIENT_SECRET, code, state }),
+      signal: AbortSignal.timeout(10000),
+    });
+    if (!tokenRes.ok) return fail("token_failed");
+    const token = await tokenRes.json();
+    if (!token?.access_token) return fail("token_failed");
+
+    // 접근토큰 → 프로필
+    const meRes = await fetch(NAVER_ME, {
+      headers: { Authorization: `Bearer ${token.access_token}` },
+      signal: AbortSignal.timeout(10000),
+    });
+    if (!meRes.ok) return fail("profile_failed");
+    const me = await meRes.json();
+    if (me?.resultcode !== "00" || typeof me?.response?.id !== "string" ||
+        !me.response.id || me.response.id.length > 128) return fail("profile_failed");
+
+    const nv = me.response as {
+      id: string; email?: string; name?: string; nickname?: string;
+    };
+    const naverId = String(nv.id);
+    const name = String(nv.name ?? nv.nickname ?? "수험생").slice(0, 24);
+
+    // ── 같은 네이버 계정이 이미 붙어 있는지 먼저 본다(이메일이 바뀌어도 같은 사람)
+    let userId: string | null = null;
+    const { data: link, error: lookupError } = await admin
+      .from("social_links")
+      .select("user_id")
+      .eq("provider", "naver")
+      .eq("provider_uid", naverId)
+      .maybeSingle();
+    if (lookupError) return fail("lookup_failed");
+    if (link?.user_id) userId = link.user_id;
+
+    // 제공자의 이메일 일치만으로 기존 계정에 연결하지 않는다.
+    // 신규 계정은 제공자 ID에 묶인 내부 주소를 사용한다. 실제 이메일을 연결하려면
+    // 별도의 로그인·이메일 확인 절차가 필요하다(이 함수에서는 수행하지 않는다).
+    if (!userId) {
+      const digest = await crypto.subtle.digest("SHA-256", new TextEncoder().encode(naverId));
+      const providerKey = Array.from(new Uint8Array(digest), (b) => b.toString(16).padStart(2, "0")).join("");
+      const email = `${providerKey}@users.jodal.pro`;
+      const created = await admin.auth.admin.createUser({
+        email,
+        email_confirm: true,
+        user_metadata: {
+          name,
+          provider: "naver",
+          naver_id: naverId,
+        },
+      });
+      if (created.error || !created.data?.user?.id) return fail("create_failed");
+      userId = created.data.user.id;
+      const { error: insertError } = await admin.from("social_links").insert({
+        provider: "naver", provider_uid: naverId, user_id: userId,
+      });
+      if (insertError) {
+        // 연결 경쟁으로 기존 매핑을 덮어쓰지 않는다. 이번에 만든 미연결 계정만 정리한다.
+        await admin.auth.admin.deleteUser(userId);
+        return fail("link_failed");
+      }
+    }
+
+    // 기존 연결의 userId를 다시 조회한다. 제공자 프로필의 이메일이 변경되더라도
+    // 다른 이메일 계정으로 로그인 링크를 발급하면 안 된다.
+    const { data: account, error: accountError } = await admin.auth.admin.getUserById(userId);
+    if (accountError || account?.user?.id !== userId || !account.user.email) return fail("account_failed");
+    const { data: linkData, error } = await admin.auth.admin.generateLink({
+      type: "magiclink",
+      email: account.user.email,
+      options: { redirectTo: `${SITE_URL}/me/` },
+    });
+    if (error || !linkData?.properties?.action_link) return fail("link_failed");
+
+    return redirect(linkData.properties.action_link, {
+      "Set-Cookie": "nv_state=; Path=/; Max-Age=0; HttpOnly; Secure; SameSite=Lax",
+    });
+  } catch {
+    // 외부 응답/네트워크 오류가 서버 상세나 비밀값을 노출하지 않게 한다.
+    return fail("login_failed");
   }
-
-  // ── 로그인 링크를 만들어 브라우저를 되돌린다
-  const { data: linkData, error } = await admin.auth.admin.generateLink({
-    type: "magiclink",
-    email,
-    options: { redirectTo: `${SITE_URL}/me/` },
-  });
-  if (error || !linkData?.properties?.action_link) return fail("link_failed");
-
-  return redirect(linkData.properties.action_link, {
-    "Set-Cookie": "nv_state=; Path=/; Max-Age=0",
-  });
 });

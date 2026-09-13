@@ -3,7 +3,7 @@
 """바로가기 — 공식 사이트와 수험 자원을 한 화면에."""
 import json, os, importlib.util, datetime
 
-OUT = os.environ.get("PPM_OUT", "/home/claude/procurement")
+OUT = os.environ.get("PPM_OUT", os.path.dirname(os.path.dirname(os.path.abspath(__file__))))
 spec = importlib.util.spec_from_file_location("bp", os.path.join(OUT, "tools", "build_pages.py"))
 bp = importlib.util.module_from_spec(spec); spec.loader.exec_module(bp)
 e = bp.e
@@ -122,3 +122,6 @@ def main():
 
 if __name__ == "__main__":
     main()
+
+    from finalize_site import finalize
+    finalize(OUT)

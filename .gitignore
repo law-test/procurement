@@ -18,3 +18,5 @@ setup_log.txt
 deploy_log.txt
 site_update.zip
 _source/
+__pycache__/
+*.pyc

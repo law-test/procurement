@@ -13,8 +13,8 @@
 """
 import json, os, re, html, collections, sys
 
-BUILD = os.environ.get("PPM_BUILD", "/home/claude/build")
-OUT = os.environ.get("PPM_OUT", "/home/claude/procurement")
+BUILD = os.environ.get("PPM_BUILD", os.path.join(os.path.dirname(os.path.dirname(os.path.abspath(__file__))), "_private", "build"))
+OUT = os.environ.get("PPM_OUT", os.path.dirname(os.path.dirname(os.path.abspath(__file__))))
 
 SUBJ_SLUG = {
     "공공조달과 법제도 이해": "law",
@@ -96,8 +96,10 @@ def head(title, desc, depth, extra_css=""):
 <link rel="stylesheet" href="https://cdn.jsdelivr.net/gh/orioncactus/pretendard@v1.3.9/dist/web/static/pretendard.css"/>
 <link rel="stylesheet" href="{up}assets/site.css"/>
 <link rel="stylesheet" href="{up}assets/study.css"/>
+<link rel="stylesheet" href="{up}assets/enhancements.css"/>
 {extra_css}</head>
 <body>
+<a class="skip-link" href="#main-content">본문 바로가기</a>
 <header>
   <div class="wrap hrow">
     <a class="logo" href="{up}">조달프로<small>공공조달관리사 수험·실무</small></a>
@@ -391,7 +393,7 @@ def index_html(subjects, pages, total_atoms):
                     f'<span class="tree-d">{len(p["items"])}항목</span></li>'
                 )
             o.append("</ul>")
-    o.append("</main>")
+    o.append('</main><script src="../assets/catalog.js"></script>')
     o.append(foot(1))
     return "".join(o)
 
@@ -464,3 +466,6 @@ def main():
 
 if __name__ == "__main__":
     main()
+
+    from finalize_site import finalize
+    finalize(OUT)

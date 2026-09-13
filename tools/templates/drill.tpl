@@ -1,0 +1,301 @@
+<main id="main-content" tabindex="-1" class="wrap card-wrap">
+  <h1>외우기</h1>
+  <p class="lede">같은 개념을 <b>4지선다</b>, <b>빈칸 채우기</b>, <b>직접회상</b> 세 방식으로 묻습니다. 방식별로 복습 상태를 따로 저장하니, 객관식을 맞혔다고 회상까지 외운 것으로 처리하지 않습니다. 틀린 카드는 다음 날 다시 나옵니다.</p>
+
+  <div class="card-setup" id="setup">
+    <p class="note" id="scope" hidden></p>
+    <div class="row"><label for="selSubject">과목</label><select id="selSubject"></select></div>
+    <div class="row"><label for="selMajor">주요항목</label><select id="selMajor"><option value="all">전부</option></select></div>
+    <div class="row"><label for="selMode">방식</label><select id="selMode">
+      <option value="quiz">4지선다</option>
+      <option value="blank">빈칸 채우기</option>
+      <option value="recall">직접회상</option>
+      <option value="mix" selected>세 방식 섞기</option>
+    </select></div>
+    <div class="row"><label for="selCount">분량</label><select id="selCount">
+      <option value="10">10문항</option><option value="20" selected>20문항</option>
+      <option value="30">30문항</option><option value="40">40문항</option><option value="80">80문항</option>
+    </select></div>
+    <div class="row"><label for="selImp">중요도</label><select id="selImp">
+      <option value="all">전부</option><option value="높음">중요만</option><option value="높음중간">중요·중간</option>
+    </select></div>
+    <div class="row">
+      <button class="btn" id="start" onclick="dStart()" disabled>시작</button>
+      <button class="btn ghost" id="retry" onclick="load()" hidden>다시 불러오기</button>
+      <button class="btn ghost" onclick="dReset()">진도 초기화</button>
+    </div>
+    <p class="note" id="stat" role="status" aria-live="polite"></p>
+  </div>
+  <div id="run" tabindex="-1" hidden></div>
+</main>
+<script src="../assets/quiz.js"></script>
+<script>
+var Q = null, POOL = { quiz: [], card: [] }, loadVersion = 0, ready = false, GROUPS = [], DAY = "";
+function $(id) { return document.getElementById(id); }
+
+function fillSubjects() {
+  $("selSubject").innerHTML = PPMQ.SUBJECTS.map(function (x) {
+    return '<option value="' + x.slug + '">' + PPMQ.esc(x.s) + ' (' + x.exam + ')</option>';
+  }).join("");
+  $("selSubject").onchange = clearScope;
+  $("selMajor").onchange = function () { if (GROUPS.length) clearScope(); };
+}
+function clearScope() {
+  GROUPS = []; DAY = "";
+  return load();
+}
+function load(major) {
+  var slug = $("selSubject").value, version = ++loadVersion;
+  var slugs = GROUPS.length ? ["law", "plan", "contract"].filter(function (_, i) {
+    return GROUPS.some(function (g) { return g.indexOf("W" + (i + 1) + ".") === 0; });
+  }) : [slug];
+  ready = false; POOL = { quiz: [], card: [] };
+  $("start").disabled = true; $("retry").hidden = true;
+  $("selMajor").disabled = true;
+  $("selMajor").innerHTML = '<option value="all">전부</option>';
+  $("scope").hidden = !GROUPS.length;
+  if (GROUPS.length) $("scope").innerHTML = '학습계획 ' + (DAY ? PPMQ.esc(DAY) + '일차 · ' : '') +
+    '지정 항목 ' + GROUPS.length + '개 · ' + slugs.map(function (s) {
+      return PPMQ.SUBJECTS.filter(function (x) { return x.slug === s; })[0].s;
+    }).map(PPMQ.esc).join(' / ') + ' <button class="btn ghost" onclick="clearScope()">범위 해제</button>';
+  $("stat").textContent = "불러오는 중…";
+  return Promise.all(slugs.map(function (s) {
+    return Promise.all([PPMQ.loadQuiz(s), PPMQ.loadCards(s)]);
+  })).then(function (res) {
+    if (version !== loadVersion) return;
+    res.forEach(function (r) {
+      POOL.quiz = POOL.quiz.concat(r[0].items); POOL.card = POOL.card.concat(r[1].cards);
+    });
+    if (GROUPS.length) {
+      POOL.card = POOL.card.filter(function (c) { return GROUPS.indexOf(c.g) >= 0; });
+      var ids = new Set(POOL.card.map(function (c) { return c.id; }));
+      POOL.quiz = POOL.quiz.filter(function (q) { return ids.has(q.atom); });
+    }
+    var seen = [];
+    POOL.card.forEach(function (c) { if (seen.indexOf(c.m) < 0) seen.push(c.m); });
+    $("selMajor").innerHTML = '<option value="all">전부</option>' +
+      seen.map(function (m) { return '<option>' + PPMQ.esc(m) + '</option>'; }).join("");
+    if (typeof major === "string" && seen.indexOf(major) >= 0) $("selMajor").value = major;
+    $("selMajor").disabled = false;
+    ready = true; $("start").disabled = false;
+    var srs = PPMQ.srsGet(), t = PPMQ.today(), done = 0, due = 0;
+    Object.keys(srs).forEach(function (k) { done++; if ((srs[k].due || 0) <= t) due++; });
+    $("stat").textContent = "선택 범위 개념 " + POOL.card.length + "개 · 객관식 " + POOL.quiz.length +
+      "문항. 전체 진도 " + done + "장 가운데 " + due + "장이 복습 차례입니다.";
+  }).catch(function () {
+    if (version !== loadVersion) return;
+    $("stat").textContent = "데이터를 불러오지 못했습니다. 연결을 확인하고 다시 불러오세요.";
+    $("retry").hidden = false;
+  });
+}
+function dReset() {
+  if (!confirm("이 브라우저의 모든 과목 학습 진도를 초기화할까요? 이 작업은 되돌릴 수 없습니다.")) return;
+  if (!PPMQ.srsPut({})) { $("stat").textContent = "저장소에 접근할 수 없어 진도를 초기화하지 못했습니다."; return; }
+  load();
+}
+
+function dStart() {
+  if (!ready || Q) return;
+  var major = $("selMajor").value, mode = $("selMode").value;
+  var n = +$("selCount").value, imp = $("selImp").value;
+  function impOk(x) {
+    if (imp === "높음") return (x.i || x.imp) === "높음";
+    if (imp === "높음중간") return (x.i || x.imp) !== "낮음";
+    return true;
+  }
+  var cards = POOL.card.filter(function (c) {
+    return (major === "all" || c.m === major) && impOk(c) && PPMQ.norm(c.s).length >= 12;
+  });
+  var quiz = POOL.quiz.filter(function (q) {
+    return (major === "all" || q.major === major) && impOk(q);
+  });
+  var srs = PPMQ.srsGet(), t = PPMQ.today();
+  function rank(id, m) { var st = srs[id + "|" + m]; return !st ? 1 : (st.due <= t ? 0 : 2); }
+  var queues = { quiz: PPMQ.shuffle(quiz.slice()).sort(function (a, b) {
+    return rank(a.atom, "quiz") - rank(b.atom, "quiz");
+  }).map(function (q) { return { mode: "quiz", q: q }; }) };
+  ["blank", "recall"].forEach(function (m) {
+    queues[m] = PPMQ.shuffle(cards.filter(function (c) {
+      return m !== "blank" || PPMQ.maskAns(c.s, 60).length > 0;
+    })).sort(function (a, b) { return rank(a.id, m) - rank(b.id, m); })
+      .map(function (c) { return { mode: m, c: c }; });
+  });
+  var items = [], order = mode === "mix" ? ["quiz", "blank", "quiz", "recall"] : [mode];
+  while (items.length < n) {
+    var added = false;
+    order.forEach(function (m) {
+      if (items.length < n && queues[m] && queues[m].length) { items.push(queues[m].shift()); added = true; }
+    });
+    if (!added) break;
+  }
+  if (!items.length) { alert("조건에 맞는 문항이 없습니다."); return; }
+  Q = { items: PPMQ.shuffle(items), i: 0, hit: 0, ratio: 60, phase: "question" };
+  $("setup").hidden = true; $("run").hidden = false;
+  paint();
+}
+
+function paint() {
+  Q.phase = "question";
+  var it = Q.items[Q.i], pct = Math.round(Q.i / Q.items.length * 100), h;
+  var label = { quiz: "4지선다", blank: "빈칸", recall: "직접회상" }[it.mode];
+  if (it.mode === "quiz") {
+    var q = it.q;
+    h = '<div class="modal-top"><span>' + (Q.i + 1) + " / " + Q.items.length + " · " + label +
+      '</span><span>' + PPMQ.esc(q.minor) + '</span></div>' +
+      '<div class="modal-q">' + PPMQ.esc(q.q) + '</div>' +
+      '<div class="modal-s">' + PPMQ.esc(q.stem) + '</div>' +
+      '<ol class="choices">' + q.choices.map(function (c, k) {
+        return '<li><button class="ch" onclick="dPick(' + k + ')">' + PPMQ.MARK[k] + " " + PPMQ.esc(c) + '</button></li>';
+      }).join("") + '</ol><div class="modal-fb" id="fb" role="status"></div><div class="modal-btns" id="btns">' +
+      '<button class="btn ghost" onclick="dQuit()">그만</button></div>';
+  } else {
+    var c = it.c;
+    h = '<div class="modal-top"><span>' + (Q.i + 1) + " / " + Q.items.length + " · " + label +
+      '</span><span>' + PPMQ.esc(c.y) + (c.i === "높음" ? " · 중요" : "") + '</span></div>' +
+      '<div class="modal-q">' + PPMQ.esc(c.t) + '</div>' +
+      (it.mode === "blank"
+        ? '<div class="modal-s" id="sBox">' + PPMQ.maskHtml(c.s, Q.ratio) + '</div>' +
+          '<input type="text" id="in" aria-label="빈칸 정답" autocomplete="off" placeholder="가려진 말을 순서대로, 빈칸으로 띄어 쓰세요"/>'
+        : '<div class="modal-s" id="sBox"><i>답을 떠올린 뒤 확인을 누르세요.</i></div>') +
+      '<div class="modal-fb" id="fb" role="status"></div><div class="modal-btns" id="btns">' +
+      (it.mode === "blank" ? '<button class="btn" onclick="dCheck()">확인</button>' : '') +
+      '<button class="btn ' + (it.mode === "blank" ? "ghost" : "") + '" onclick="dReveal()">정답 보기</button>' +
+      '<button class="btn ghost" onclick="dQuit()">그만</button></div>';
+  }
+  $("run").innerHTML = '<div class="bar"><i style="width:' + pct + '%"></i></div>' + h;
+  var inp = $("in");
+  if (inp) { inp.focus(); inp.onkeydown = function (e) {
+    if (e.key === "Enter" && !e.isComposing && !e.repeat) { e.preventDefault(); dCheck(); }
+  }; } else $("run").focus();
+}
+
+function explain(x) {
+  return (x.full || x.s ? '<div class="modal-s">' + PPMQ.esc(x.full || x.s) + '</div>' : "") +
+    (x.cond && x.cond !== "없음" ? '<div class="atom-cond"><b>조건·예외</b> ' + PPMQ.esc(x.cond) + '</div>' : "") +
+    (x.c && x.c !== "없음" ? '<div class="atom-cond"><b>조건·예외</b> ' + PPMQ.esc(x.c) + '</div>' : "") +
+    (x.conf && x.conf !== "없음" ? '<div class="atom-conf"><b>혼동</b> ' + PPMQ.esc(x.conf) + '</div>' : "") +
+    (x.x && x.x !== "없음" ? '<div class="atom-conf"><b>혼동</b> ' + PPMQ.esc(x.x) + '</div>' : "") +
+    ((x.src || x.r) ? '<div class="modal-src">' + PPMQ.esc(x.src || x.r) + '</div>' : "");
+}
+
+function dPick(k) {
+  if (!Q || Q.phase !== "question" || Q.items[Q.i].mode !== "quiz") return;
+  var it = Q.items[Q.i], q = it.q, ok = k === q.answer;
+  if (!Number.isInteger(k) || k < 0 || k >= q.choices.length) return;
+  Q.phase = "answered";
+  var btns = document.querySelectorAll(".ch");
+  for (var i = 0; i < btns.length; i++) {
+    btns[i].disabled = true;
+    if (i === q.answer) btns[i].classList.add("ch-ok");
+    else if (i === k) btns[i].classList.add("ch-no");
+  }
+  $("fb").className = "modal-fb " + (ok ? "ok" : "no");
+  $("fb").textContent = ok ? "맞았습니다" : "틀렸습니다. 정답 " + PPMQ.MARK[q.answer];
+  PPMQ.grade(q.atom, "quiz", ok);
+  if (ok) Q.hit++;
+  $("btns").innerHTML = '<button class="btn" onclick="dNext()">다음</button>' +
+    (q.gid ? '<a class="btn ghost" href="../c/' + q.gid.split(".").slice(0, -1).join(".") + '/">교재에서 보기</a>' : "") +
+    (window.PPMReport ? PPMReport.btn({ id: q.id || q.atom, kindLabel: "문항 " + (q.kind === "num" ? "수치형" : "규정형"),
+                    quote: q.stem + "  [정답 " + q.choices[q.answer] + "]" }) : "") +
+    '<button class="btn ghost" onclick="dQuit()">그만</button>';
+  $("btns").insertAdjacentHTML("beforebegin", explain(q));
+  $("btns").querySelector("button").focus();
+}
+
+function dCheck() {
+  if (!Q || Q.phase !== "question" || Q.items[Q.i].mode !== "blank") return;
+  var it = Q.items[Q.i], c = it.c;
+  var want = PPMQ.maskAns(c.s, Q.ratio);
+  var got = ($("in").value || "").split(/\s+/).filter(Boolean), ok = 0;
+  for (var i = 0; i < want.length; i++) if (got[i] && PPMQ.norm(got[i]) === PPMQ.norm(want[i])) ok++;
+  var all = want.length > 0 && ok === want.length && got.length === want.length;
+  Q.phase = "answered";
+  $("fb").className = "modal-fb " + (all ? "ok" : "no");
+  $("fb").textContent = all ? "맞았습니다 (" + ok + "/" + want.length + ")"
+    : ok + " / " + want.length + " 맞음. 정답: " + want.join(" , ");
+  PPMQ.grade(c.id, "blank", all);
+  if (all) Q.hit++;
+  finishCard(c);
+}
+function dReveal() {
+  if (!Q || Q.phase !== "question" || Q.items[Q.i].mode === "quiz") return;
+  var it = Q.items[Q.i], c = it.c;
+  Q.phase = it.mode === "blank" ? "answered" : "revealed";
+  if (it.mode === "blank") {
+    $("fb").className = "modal-fb no";
+    $("fb").textContent = "정답: " + PPMQ.maskAns(c.s, Q.ratio).join(" , ");
+    PPMQ.grade(c.id, "blank", false);
+  }
+  finishCard(c);
+}
+function finishCard(c) {
+  var it = Q.items[Q.i];
+  $("sBox").innerHTML = "";
+  $("btns").innerHTML = (Q.phase === "answered" ? '<button class="btn" onclick="dNext()">다음</button>' :
+    '<button class="btn" onclick="dGrade(1)">알았음</button><button class="btn ghost" onclick="dGrade(0)">몰랐음</button>') +
+    (c.g ? '<a class="btn ghost" href="../c/' + encodeURIComponent(c.g) + '/#' + encodeURIComponent(c.id) + '">교재에서 보기</a>' : "") +
+    (window.PPMReport ? PPMReport.btn({ id: c.id, kindLabel: it.mode === "blank" ? "빈칸 카드" : "회상 카드",
+                    quote: (c.t ? c.t + " — " : "") + (c.s || "") }) : "") +
+    '<button class="btn ghost" onclick="dQuit()">그만</button>';
+  $("btns").insertAdjacentHTML("beforebegin", explain(c));
+  var inp = $("in"); if (inp) inp.remove();
+  $("btns").querySelector("button").focus();
+}
+function dGrade(ok) {
+  if (!Q || Q.phase !== "revealed") return;
+  var it = Q.items[Q.i];
+  Q.phase = "answered";
+  PPMQ.grade(it.c.id, it.mode, !!ok);
+  if (ok) Q.hit++;
+  dNext();
+}
+function dNext() {
+  if (!Q || Q.phase !== "answered") return;
+  Q.i++;
+  if (Q.i >= Q.items.length) {
+    Q.phase = "complete";
+    $("run").innerHTML = '<div class="modal-q">' + Q.items.length + '문항을 끝냈습니다</div>' +
+      '<p class="modal-s">정답 또는 회상 성공 ' + Q.hit + ' / ' + Q.items.length + '문항. 틀린 것은 내일 복습할 차례입니다.</p>' +
+      (!PPMQ.storageOk() ? '<p class="note">브라우저 저장소를 사용할 수 없어 이번 진도는 창을 닫으면 사라집니다.</p>' : '') +
+      '<div class="modal-btns"><button class="btn" onclick="dQuit()">돌아가기</button></div>';
+    $("run").focus();
+    return;
+  }
+  paint();
+}
+function dQuit() {
+  Q = null; $("run").hidden = true; $("setup").hidden = false;
+  load($("selMajor").value).then(function () { $("start").focus(); });
+}
+function applyQuery() {
+  var q = {};
+  new URLSearchParams(location.search).forEach(function (v, k) { q[k] = v; });
+  /* 주소에 없는 값이 오면 선택 상자가 빈 값이 되어 문항이 0개가 된다. 있는 값만 반영한다. */
+  function put(id, v) {
+    if (!v) return;
+    var el = $(id);
+    for (var i = 0; i < el.options.length; i++) {
+      if (el.options[i].value === v) { el.value = v; return; }
+    }
+  }
+  put("selSubject", q.subject);
+  put("selMode", q.mode);
+  put("selImp", q.imp);
+  put("selCount", q.n);
+  GROUPS = (q.groups || "").split(",").filter(function (g, i, all) {
+    return /^W[123]\.\d+\.\d+$/.test(g) && all.indexOf(g) === i;
+  });
+  DAY = /^[1-7]$/.test(q.day || "") ? q.day : "";
+  return q;
+}
+document.addEventListener("DOMContentLoaded", function () {
+  fillSubjects();
+  var q = applyQuery();
+  load(q.major);
+});
+document.addEventListener("keydown", function (e) {
+  if (!Q || Q.phase !== "question" || Q.items[Q.i].mode !== "quiz" || e.repeat ||
+      e.ctrlKey || e.metaKey || e.altKey || /INPUT|TEXTAREA|SELECT/.test(e.target.tagName) || e.target.isContentEditable) return;
+  if (/^[1-5]$/.test(e.key)) { e.preventDefault(); dPick(Number(e.key) - 1); }
+});
+</script>
