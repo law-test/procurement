@@ -1,0 +1,17 @@
+# 공개하면 안 되는 것: 상용 교재 파생 데이터, 공식 예제 원문, 대용량 원본
+_private/
+_reference/
+data/*.private.json
+*.xlsx
+*.hwpx
+*.pdf
+
+# 임시·시스템 파일
+~$*
+*.tmp
+.DS_Store
+desktop.ini
+Thumbs.db
+
+# 진단 로그
+setup_log.txt
