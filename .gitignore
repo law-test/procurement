@@ -16,3 +16,5 @@ Thumbs.db
 # 진단 로그
 setup_log.txt
 deploy_log.txt
+site_update.zip
+_source/

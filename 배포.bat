@@ -1,17 +1,12 @@
 @echo off
-setlocal
+chcp 65001 > nul
 cd /d "%~dp0"
-echo ==========================================
-echo   procurement : deploy
-echo ==========================================
-echo.
+echo ===== procurement deploy =====
 git add -A
 git commit -m "update site"
-echo.
-echo --- push ---
+echo --- pushing to GitHub ---
 git push origin main
 echo.
-echo   OK if you see:  main -^> main    or    up-to-date
-echo   Site: https://law-test.github.io/procurement/
-echo.
+echo ===== "main -> main" 또는 "up-to-date"가 보이면 성공 =====
+echo ===== Site: https://law-test.github.io/procurement/ =====
 pause

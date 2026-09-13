@@ -1,0 +1,311 @@
+<!DOCTYPE html>
+<html lang="ko">
+<head>
+<meta charset="utf-8"/>
+<meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+<title>외우기 — 조달프로</title>
+<meta name="description" content="공공조달관리사 개념을 4지선다·빈칸·직접회상 세 방식으로 묻습니다. 과목과 주요항목을 골라 연속으로 풀어 보세요."/>
+<meta name="theme-color" content="#0f5f7a"/>
+<link rel="stylesheet" href="https://cdn.jsdelivr.net/gh/orioncactus/pretendard@v1.3.9/dist/web/static/pretendard.css"/>
+<link rel="stylesheet" href="../assets/site.css"/>
+<link rel="stylesheet" href="../assets/study.css"/>
+</head>
+<body>
+<header>
+  <div class="wrap hrow">
+    <a class="logo" href="../">조달프로<small>공공조달관리사 수험·실무</small></a>
+    <nav class="menu">
+      <a href="../">학습방</a>
+      <a href="../plan/">학습계획</a>
+      <a href="../c/">익히기</a>
+      <a href="../drill/">외우기</a>
+      <a href="../cbt/">모의시험</a>
+      <a href="../exam/">시험정보</a>
+      <a href="../future/">앞날</a>
+      <a href="../errata/">교재대조</a>
+      <a href="../links/">바로가기</a>
+      <a href="../news/">소식·자료</a>
+    </nav>
+  </div>
+</header>
+
+<main class="wrap card-wrap">
+  <h1>외우기</h1>
+  <p class="lede">같은 개념을 <b>4지선다</b>, <b>빈칸 채우기</b>, <b>직접회상</b> 세 방식으로 묻습니다. 방식별로 복습 상태를 따로 저장하니, 객관식을 맞혔다고 회상까지 외운 것으로 처리하지 않습니다. 틀린 카드는 다음 날 다시 나옵니다.</p>
+
+  <div class="card-setup" id="setup">
+    <div class="row"><label>과목</label><select id="selSubject"></select></div>
+    <div class="row"><label>주요항목</label><select id="selMajor"><option value="all">전부</option></select></div>
+    <div class="row"><label>방식</label><select id="selMode">
+      <option value="quiz">4지선다</option>
+      <option value="blank">빈칸 채우기</option>
+      <option value="recall">직접회상</option>
+      <option value="mix" selected>세 방식 섞기</option>
+    </select></div>
+    <div class="row"><label>분량</label><select id="selCount">
+      <option value="10">10문항</option><option value="20" selected>20문항</option>
+      <option value="40">40문항</option><option value="80">80문항</option>
+    </select></div>
+    <div class="row"><label>중요도</label><select id="selImp">
+      <option value="all">전부</option><option value="높음">중요만</option><option value="높음중간">중요·중간</option>
+    </select></div>
+    <div class="row">
+      <button class="btn" onclick="dStart()">시작</button>
+      <button class="btn ghost" onclick="dReset()">진도 초기화</button>
+    </div>
+    <p class="note" id="stat"></p>
+  </div>
+  <div id="run" hidden></div>
+</main>
+<script src="../assets/quiz.js"></script>
+<script>
+var Q = null, POOL = { quiz: [], card: [] };
+function $(id) { return document.getElementById(id); }
+
+function fillSubjects() {
+  $("selSubject").innerHTML = PPMQ.SUBJECTS.map(function (x) {
+    return '<option value="' + x.slug + '">' + PPMQ.esc(x.s) + ' (' + x.exam + ')</option>';
+  }).join("");
+  $("selSubject").onchange = load;
+  load();
+}
+function load() {
+  var slug = $("selSubject").value;
+  $("stat").textContent = "불러오는 중…";
+  Promise.all([PPMQ.loadQuiz(slug), PPMQ.loadCards(slug)]).then(function (r) {
+    POOL.quiz = r[0].items; POOL.card = r[1].cards;
+    var seen = [];
+    POOL.card.forEach(function (c) { if (seen.indexOf(c.m) < 0) seen.push(c.m); });
+    $("selMajor").innerHTML = '<option value="all">전부</option>' +
+      seen.map(function (m) { return '<option>' + PPMQ.esc(m) + '</option>'; }).join("");
+    var srs = PPMQ.srsGet(), t = PPMQ.today(), done = 0, due = 0;
+    Object.keys(srs).forEach(function (k) { done++; if ((srs[k].due || 0) <= t) due++; });
+    $("stat").textContent = "이 과목 개념 " + POOL.card.length + "개 · 객관식 " + POOL.quiz.length +
+      "문항. 전체 진도 " + done + "장 가운데 " + due + "장이 복습 차례입니다.";
+  }).catch(function () { $("stat").textContent = "데이터를 불러오지 못했습니다."; });
+}
+function dReset() { PPMQ.srsPut({}); load(); }
+
+function dStart() {
+  var major = $("selMajor").value, mode = $("selMode").value;
+  var n = +$("selCount").value, imp = $("selImp").value;
+  function impOk(x) {
+    if (imp === "높음") return (x.i || x.imp) === "높음";
+    if (imp === "높음중간") return (x.i || x.imp) !== "낮음";
+    return true;
+  }
+  var cards = POOL.card.filter(function (c) {
+    return (major === "all" || c.m === major) && impOk(c) && PPMQ.norm(c.s).length >= 12;
+  });
+  var quiz = POOL.quiz.filter(function (q) {
+    return (major === "all" || q.major === major) && impOk(q);
+  });
+  var srs = PPMQ.srsGet(), t = PPMQ.today();
+  function rank(id, m) { var st = srs[id + "|" + m]; return !st ? 1 : (st.due <= t ? 0 : 2); }
+  var items = [];
+  if (mode === "quiz" || mode === "mix") {
+    quiz.sort(function (a, b) { return rank(a.atom, "quiz") - rank(b.atom, "quiz"); });
+    quiz.slice(0, mode === "mix" ? Math.ceil(n / 2) : n).forEach(function (q) {
+      items.push({ mode: "quiz", q: q });
+    });
+  }
+  if (mode !== "quiz") {
+    var per = mode === "mix" ? Math.floor(n / 4) : n;
+    ["blank", "recall"].forEach(function (m) {
+      if (mode !== "mix" && mode !== m) return;
+      var list = cards.slice();
+      list.sort(function (a, b) { return rank(a.id, m) - rank(b.id, m); });
+      list.slice(0, mode === "mix" ? per : n).forEach(function (c) { items.push({ mode: m, c: c }); });
+    });
+  }
+  if (!items.length) { alert("조건에 맞는 문항이 없습니다."); return; }
+  Q = { items: PPMQ.shuffle(items).slice(0, n), i: 0, hit: 0, ratio: 60 };
+  $("setup").hidden = true; $("run").hidden = false;
+  paint();
+}
+
+function paint() {
+  var it = Q.items[Q.i], pct = Math.round(Q.i / Q.items.length * 100), h;
+  var label = { quiz: "4지선다", blank: "빈칸", recall: "직접회상" }[it.mode];
+  if (it.mode === "quiz") {
+    var q = it.q;
+    h = '<div class="modal-top"><span>' + (Q.i + 1) + " / " + Q.items.length + " · " + label +
+      '</span><span>' + PPMQ.esc(q.minor) + '</span></div>' +
+      '<div class="modal-q">' + PPMQ.esc(q.q) + '</div>' +
+      '<div class="modal-s">' + PPMQ.esc(q.stem) + '</div>' +
+      '<ol class="choices">' + q.choices.map(function (c, k) {
+        return '<li><button class="ch" onclick="dPick(' + k + ')">' + PPMQ.MARK[k] + " " + PPMQ.esc(c) + '</button></li>';
+      }).join("") + '</ol><div class="modal-fb" id="fb"></div><div class="modal-btns" id="btns">' +
+      '<button class="btn ghost" onclick="dQuit()">그만</button></div>';
+  } else {
+    var c = it.c;
+    h = '<div class="modal-top"><span>' + (Q.i + 1) + " / " + Q.items.length + " · " + label +
+      '</span><span>' + PPMQ.esc(c.y) + (c.i === "높음" ? " · 중요" : "") + '</span></div>' +
+      '<div class="modal-q">' + PPMQ.esc(c.t) + '</div>' +
+      (it.mode === "blank"
+        ? '<div class="modal-s" id="sBox">' + PPMQ.maskHtml(c.s, Q.ratio) + '</div>' +
+          '<input type="text" id="in" autocomplete="off" placeholder="가려진 말을 순서대로, 빈칸으로 띄어 쓰세요"/>'
+        : '<div class="modal-s" id="sBox"><i>답을 떠올린 뒤 확인을 누르세요.</i></div>') +
+      '<div class="modal-fb" id="fb"></div><div class="modal-btns" id="btns">' +
+      (it.mode === "blank" ? '<button class="btn" onclick="dCheck()">확인</button>' : '') +
+      '<button class="btn ' + (it.mode === "blank" ? "ghost" : "") + '" onclick="dReveal()">정답 보기</button>' +
+      '<button class="btn ghost" onclick="dQuit()">그만</button></div>';
+  }
+  $("run").innerHTML = '<div class="bar"><i style="width:' + pct + '%"></i></div>' + h;
+  var inp = $("in");
+  if (inp) { inp.focus(); inp.onkeydown = function (e) { if (e.key === "Enter") dCheck(); }; }
+}
+
+function explain(x) {
+  return (x.full || x.s ? '<div class="modal-s">' + PPMQ.esc(x.full || x.s) + '</div>' : "") +
+    (x.cond && x.cond !== "없음" ? '<div class="atom-cond"><b>조건·예외</b> ' + PPMQ.esc(x.cond) + '</div>' : "") +
+    (x.c && x.c !== "없음" ? '<div class="atom-cond"><b>조건·예외</b> ' + PPMQ.esc(x.c) + '</div>' : "") +
+    (x.conf && x.conf !== "없음" ? '<div class="atom-conf"><b>혼동</b> ' + PPMQ.esc(x.conf) + '</div>' : "") +
+    (x.x && x.x !== "없음" ? '<div class="atom-conf"><b>혼동</b> ' + PPMQ.esc(x.x) + '</div>' : "") +
+    ((x.src || x.r) ? '<div class="modal-src">' + PPMQ.esc(x.src || x.r) + '</div>' : "");
+}
+
+function dPick(k) {
+  var it = Q.items[Q.i], q = it.q, ok = k === q.answer;
+  var btns = document.querySelectorAll(".ch");
+  for (var i = 0; i < btns.length; i++) {
+    btns[i].disabled = true;
+    if (i === q.answer) btns[i].classList.add("ch-ok");
+    else if (i === k) btns[i].classList.add("ch-no");
+  }
+  $("fb").className = "modal-fb " + (ok ? "ok" : "no");
+  $("fb").textContent = ok ? "맞았습니다" : "틀렸습니다. 정답 " + PPMQ.MARK[q.answer];
+  PPMQ.grade(q.atom, "quiz", ok);
+  if (ok) Q.hit++;
+  $("btns").innerHTML = '<button class="btn" onclick="dNext()">다음</button>' +
+    (q.gid ? '<a class="btn ghost" href="../c/' + q.gid.split(".").slice(0, -1).join(".") + '/">교재에서 보기</a>' : "") +
+    PPMReport.btn({ id: q.id || q.atom, kindLabel: "문항 " + (q.kind === "num" ? "수치형" : "규정형"),
+                    quote: q.stem + "  [정답 " + q.choices[q.answer] + "]" }) +
+    '<button class="btn ghost" onclick="dQuit()">그만</button>';
+  $("btns").insertAdjacentHTML("beforebegin", explain(q));
+}
+
+function dCheck() {
+  var it = Q.items[Q.i], c = it.c;
+  var want = PPMQ.maskAns(c.s, Q.ratio);
+  var got = ($("in").value || "").split(/\s+/).filter(Boolean), ok = 0;
+  for (var i = 0; i < want.length; i++) if (got[i] && PPMQ.norm(got[i]) === PPMQ.norm(want[i])) ok++;
+  var all = ok === want.length && want.length;
+  $("fb").className = "modal-fb " + (all ? "ok" : "no");
+  $("fb").textContent = all ? "맞았습니다 (" + ok + "/" + want.length + ")"
+    : ok + " / " + want.length + " 맞음. 정답: " + want.join(" , ");
+  PPMQ.grade(c.id, "blank", all);
+  if (all) Q.hit++;
+  finishCard(c);
+}
+function dReveal() {
+  var it = Q.items[Q.i], c = it.c;
+  if (it.mode === "blank") {
+    $("fb").className = "modal-fb no";
+    $("fb").textContent = "정답: " + PPMQ.maskAns(c.s, Q.ratio).join(" , ");
+  }
+  finishCard(c);
+}
+function finishCard(c) {
+  var it = Q.items[Q.i];
+  $("sBox").innerHTML = "";
+  $("btns").innerHTML = '<button class="btn" onclick="dGrade(1)">알았음</button>' +
+    '<button class="btn ghost" onclick="dGrade(0)">몰랐음</button>' +
+    (c.g && c.g !== "etc" ? '<a class="btn ghost" href="../c/' + c.g.split(".").slice(0, -1).join(".") + '/">교재에서 보기</a>' : "") +
+    PPMReport.btn({ id: c.id, kindLabel: it.mode === "blank" ? "빈칸 카드" : "회상 카드",
+                    quote: (c.t ? c.t + " — " : "") + (c.s || "") }) +
+    '<button class="btn ghost" onclick="dQuit()">그만</button>';
+  $("btns").insertAdjacentHTML("beforebegin", explain(c));
+  var inp = $("in"); if (inp) inp.remove();
+}
+function dGrade(ok) {
+  var it = Q.items[Q.i];
+  PPMQ.grade(it.c.id, it.mode, !!ok);
+  dNext();
+}
+function dNext() {
+  Q.i++;
+  if (Q.i >= Q.items.length) {
+    $("run").innerHTML = '<div class="modal-q">' + Q.items.length + '문항을 끝냈습니다</div>' +
+      '<p class="modal-s">한 번에 맞힌 것 ' + Q.hit + '문항. 틀린 것은 내일 다시 나옵니다.</p>' +
+      '<div class="modal-btns"><button class="btn" onclick="dQuit()">돌아가기</button></div>';
+    return;
+  }
+  paint();
+}
+function dQuit() { Q = null; $("run").hidden = true; $("setup").hidden = false; load(); }
+function applyQuery() {
+  var q = {};
+  location.search.replace(/^\?/, "").split("&").forEach(function (kv) {
+    var a = kv.split("=");
+    if (a[0]) q[decodeURIComponent(a[0])] = decodeURIComponent(a[1] || "");
+  });
+  /* 주소에 없는 값이 오면 선택 상자가 빈 값이 되어 문항이 0개가 된다. 있는 값만 반영한다. */
+  function put(id, v) {
+    if (!v) return;
+    var el = $(id);
+    for (var i = 0; i < el.options.length; i++) {
+      if (el.options[i].value === v) { el.value = v; return; }
+    }
+  }
+  put("selSubject", q.subject);
+  put("selMode", q.mode);
+  put("selImp", q.imp);
+  put("selCount", q.n);
+  return q;
+}
+document.addEventListener("DOMContentLoaded", function () {
+  fillSubjects();
+  var q = applyQuery();
+  if (q.subject) {
+    load();
+    setTimeout(function () { if (q.major) $("selMajor").value = q.major; }, 600);
+  }
+});
+</script>
+<footer>
+  <div class="wrap foot-grid">
+    <div class="foot-col foot-brand">
+      <div class="foot-logo">조달프로</div>
+      <p>2026년 신설 국가자격 <b>공공조달관리사</b>를 준비하는 곳입니다.
+         출제기준 273개 항목을 개념으로 정리하고, 문제로 묻고, 모의시험으로 점검합니다.</p>
+    </div>
+    <div class="foot-col">
+      <div class="foot-h">공부</div>
+      <a href="../plan/">학습계획</a>
+      <a href="../c/">익히기</a>
+      <a href="../errata/">교재 대조표</a>
+      <a href="../drill/">외우기</a>
+      <a href="../cbt/">모의시험</a>
+    </div>
+    <div class="foot-col">
+      <div class="foot-h">정보</div>
+      <a href="../exam/">시험·접수</a>
+      <a href="../future/">자격의 앞날</a>
+      <a href="../links/">바로가기</a>
+      <a href="../news/">소식·자료</a>
+      <a href="../about/">소개</a>
+    </div>
+    <div class="foot-col">
+      <div class="foot-h">운영</div>
+      <a href="../news/#contact">문의·오류 신고</a>
+      <a href="../privacy/">개인정보 처리방침</a>
+      <a href="../terms/">이용약관</a>
+    </div>
+    <div class="foot-col">
+      <div class="foot-h">공식 출처</div>
+      <a href="https://www.q-net.or.kr" rel="noopener">Q-Net 시험정보</a>
+      <a href="https://pps.go.kr" rel="noopener">조달청</a>
+      <a href="https://www.law.go.kr" rel="noopener">국가법령정보센터</a>
+    </div>
+  </div>
+  <div class="wrap foot-bottom">
+    <span>조달프로 · jodal.pro</span>
+    <span>시험 일정과 출제기준은 시행기관 공고가 기준입니다.</span>
+    <span><a class="foot-report" href="../news/#contact">이 페이지 오류 신고</a></span>
+    <span>© 2026 조달프로</span>
+  </div>
+</footer>
+<script src="../assets/report.js"></script>
+</body>
+</html>
