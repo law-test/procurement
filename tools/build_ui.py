@@ -48,8 +48,8 @@ HOME = bp.head(
     </a>
     <a class="home-card" href="drill/">
       <div class="home-k">외우기</div>
-      <div class="home-t">문제·빈칸·회상</div>
-      <p>같은 개념을 <b>4지선다</b>, <b>빈칸 채우기</b>, <b>직접회상</b> 세 방식으로 묻습니다. 객관식 <b>%(n_quiz)s문항</b>. 틀린 것은 다시 나오고 진도가 남습니다.</p>
+      <div class="home-t">실제 시험 형식</div>
+      <p>필기는 <b>4지선다</b>와 <b>직접회상</b>으로, 실기는 <b>빈칸 채우기</b>까지 씁니다. 공개 예시문항과 같은 형식의 객관식 <b>%(n_quiz)s문항</b>. 틀린 것은 다시 나오고 진도가 남습니다.</p>
       <div class="home-go">범위 골라 시작하기 →</div>
     </a>
     <a class="home-card" href="cbt/">
@@ -110,21 +110,22 @@ HOME = bp.head(
 
 DRILL = bp.head(
     "외우기 — 조달프로",
-    "공공조달관리사 개념을 4지선다·빈칸·직접회상 세 방식으로 묻습니다. 과목과 주요항목을 골라 연속으로 풀어 보세요.",
+    "공개 예시문항과 같은 4지선다 형식으로 묻습니다. 필기는 객관식과 직접회상, 필답형인 실기는 빈칸 채우기까지. 과목과 주요항목을 골라 연속으로 풀어 보세요.",
     1) + """
 <main class="wrap card-wrap">
   <h1>외우기</h1>
-  <p class="lede">같은 개념을 <b>4지선다</b>, <b>빈칸 채우기</b>, <b>직접회상</b> 세 방식으로 묻습니다. 방식별로 복습 상태를 따로 저장하니, 객관식을 맞혔다고 회상까지 외운 것으로 처리하지 않습니다. 틀린 카드는 다음 날 다시 나옵니다.</p>
+  <p class="lede">문항은 시행기관이 공개한 <b>예시문항 6개의 형식</b>에 맞췄습니다. 모두 <b>4지선다</b>이고, 발문이 근거 규정을 먼저 밝히며 선지가 짧습니다. <b>필기</b>는 객관식과 직접회상으로 풉니다. CBT 객관식 시험이라 문장을 가려 채우는 연습은 넣지 않았습니다. <b>실기</b>는 필답형이므로 빈칸 채우기를 함께 씁니다. 방식별로 복습 상태를 따로 저장합니다.</p>
 
   <div class="card-setup" id="setup">
     <div class="row"><label>과목</label><select id="selSubject"></select></div>
     <div class="row"><label>주요항목</label><select id="selMajor"><option value="all">전부</option></select></div>
     <div class="row"><label>방식</label><select id="selMode">
       <option value="quiz">4지선다</option>
-      <option value="blank">빈칸 채우기</option>
       <option value="recall">직접회상</option>
-      <option value="mix" selected>세 방식 섞기</option>
+      <option value="mix" selected>섞기</option>
+      <option value="blank" hidden>빈칸 채우기</option>
     </select></div>
+    <div class="row"><label></label><span class="note" id="modeNote"></span></div>
     <div class="row"><label>분량</label><select id="selCount">
       <option value="10">10문항</option><option value="20" selected>20문항</option>
       <option value="40">40문항</option><option value="80">80문항</option>
@@ -146,12 +147,26 @@ var Q = null, POOL = { quiz: [], card: [] };
 function $(id) { return document.getElementById(id); }
 
 function fillSubjects() {
+  $("selSubject").addEventListener("change", modeOptions);
   $("selSubject").innerHTML = PPMQ.SUBJECTS.map(function (x) {
     return '<option value="' + x.slug + '">' + PPMQ.esc(x.s) + ' (' + x.exam + ')</option>';
   }).join("");
   $("selSubject").onchange = load;
   load();
 }
+function modeOptions() {
+  /* 필기는 CBT 객관식이다. 문장을 가려 채우는 연습은 필답형인 실기에서만 쓴다. */
+  var s = PPMQ.SUBJECTS.filter(function (x) { return x.slug === $("selSubject").value; })[0];
+  var prac = s && s.exam === "실기";
+  var b = $("selMode").querySelector('option[value="blank"]');
+  if (b) b.hidden = !prac;
+  if (!prac && $("selMode").value === "blank") $("selMode").value = "mix";
+  var note = $("modeNote");
+  if (note) note.textContent = prac
+    ? "실기는 필답형입니다. 빈칸 채우기와 직접회상으로 손으로 쓰는 연습을 하세요."
+    : "필기는 CBT 객관식입니다. 4지선다와 직접회상으로 고르는 연습을 하세요.";
+}
+
 function load() {
   var slug = $("selSubject").value;
   $("stat").textContent = "불러오는 중…";
@@ -186,6 +201,10 @@ function dStart() {
   var srs = PPMQ.srsGet(), t = PPMQ.today();
   function rank(id, m) { var st = srs[id + "|" + m]; return !st ? 1 : (st.due <= t ? 0 : 2); }
   var items = [];
+  var sObj = PPMQ.SUBJECTS.filter(function (x) { return x.slug === $("selSubject").value; })[0];
+  var prac = sObj && sObj.exam === "실기";
+  /* 필기는 객관식 시험이므로 빈칸 채우기를 섞지 않는다. */
+  var modes = prac ? ["blank", "recall"] : ["recall"];
   if (mode === "quiz" || mode === "mix") {
     quiz.sort(function (a, b) { return rank(a.atom, "quiz") - rank(b.atom, "quiz"); });
     quiz.slice(0, mode === "mix" ? Math.ceil(n / 2) : n).forEach(function (q) {
@@ -193,8 +212,8 @@ function dStart() {
     });
   }
   if (mode !== "quiz") {
-    var per = mode === "mix" ? Math.floor(n / 4) : n;
-    ["blank", "recall"].forEach(function (m) {
+    var per = mode === "mix" ? Math.max(1, Math.floor(n / (modes.length + 2))) : n;
+    modes.forEach(function (m) {
       if (mode !== "mix" && mode !== m) return;
       var list = cards.slice();
       list.sort(function (a, b) { return rank(a.id, m) - rank(b.id, m); });
@@ -215,7 +234,7 @@ function paint() {
     h = '<div class="modal-top"><span>' + (Q.i + 1) + " / " + Q.items.length + " · " + label +
       '</span><span>' + PPMQ.esc(q.minor) + '</span></div>' +
       '<div class="modal-q">' + PPMQ.esc(q.q) + '</div>' +
-      '<div class="modal-s">' + PPMQ.esc(q.stem) + '</div>' +
+      (q.stem ? '<div class="modal-s boki">' + PPMQ.esc(q.stem) + '</div>' : '') +
       '<ol class="choices">' + q.choices.map(function (c, k) {
         return '<li><button class="ch" onclick="dPick(' + k + ')">' + PPMQ.MARK[k] + " " + PPMQ.esc(c) + '</button></li>';
       }).join("") + '</ol><div class="modal-fb" id="fb"></div><div class="modal-btns" id="btns">' +
@@ -339,7 +358,9 @@ function applyQuery() {
 }
 document.addEventListener("DOMContentLoaded", function () {
   fillSubjects();
+  modeOptions();
   var q = applyQuery();
+  modeOptions();
   if (q.subject) {
     load();
     setTimeout(function () { if (q.major) $("selMajor").value = q.major; }, 600);
@@ -431,7 +452,7 @@ function render() {
     return '<article class="cbt-q" id="q' + i + '">' +
       '<div class="cbt-qh"><span class="cbt-n">' + (i + 1) + '</span>' + PPMQ.esc(q.q) +
       '<span class="cbt-sub">' + PPMQ.esc(q.subject) + '</span></div>' +
-      '<div class="modal-s">' + PPMQ.esc(q.stem) + '</div>' +
+      (q.stem ? '<div class="modal-s boki">' + PPMQ.esc(q.stem) + '</div>' : '') +
       '<ol class="choices">' + q.choices.map(function (c, k) {
         return '<li><button class="ch" id="c' + i + '_' + k + '" onclick="cPick(' + i + ',' + k + ')">' +
           PPMQ.MARK[k] + " " + PPMQ.esc(c) + '</button></li>';
@@ -494,7 +515,7 @@ function cSubmit() {
         '" data-rep-label="문항" data-rep-quote="' + PPMQ.esc(q.stem).replace(/"/g, "&quot;") +
         '  [정답 ' + PPMQ.esc(q.choices[q.answer]).replace(/"/g, "&quot;") + ']"><h4 class="atom-h"><span class="atom-n">' + (w.i + 1) + '</span>' +
         PPMQ.esc(q.t) + '</h4>' +
-        '<div class="modal-s">' + PPMQ.esc(q.stem) + '</div>' +
+        (q.stem ? '<div class="modal-s boki">' + PPMQ.esc(q.stem) + '</div>' : '') +
         '<p class="cbt-ans">내 답 ' + (w.pick == null ? '없음' : PPMQ.MARK[w.pick] + " " + PPMQ.esc(q.choices[w.pick])) +
         ' · 정답 <b>' + PPMQ.MARK[q.answer] + " " + PPMQ.esc(q.choices[q.answer]) + '</b></p>' +
         '<div class="modal-s">' + PPMQ.esc(q.full) + '</div>' +

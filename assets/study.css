@@ -278,3 +278,11 @@ select{font:inherit;font-size:14px;padding:7px 10px;border:1px solid var(--line)
 .er-v { font-size: .93rem; line-height: 1.68; }
 .er-why { font-size: .9rem; color: #45525e; line-height: 1.72; margin: .55rem 0 0; }
 .er-risk { margin-top: .5rem; font-size: .78rem; color: #7e8b93; border-top: 1px dashed #e3e7ec; padding-top: .4rem; }
+
+.drill-why { font-size: .8rem; color: #7e8b93; align-self: center; }
+
+/* 〈보기〉 상자 — 실제 시험지처럼 본문과 구분한다 */
+.boki {
+  white-space: pre-line; border: 1px solid #dfe4ea; border-radius: 8px;
+  background: #fafbfc; padding: .6rem .8rem; margin: .6rem 0;
+}

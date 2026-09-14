@@ -106,7 +106,7 @@ function render() {
     return '<article class="cbt-q" id="q' + i + '">' +
       '<div class="cbt-qh"><span class="cbt-n">' + (i + 1) + '</span>' + PPMQ.esc(q.q) +
       '<span class="cbt-sub">' + PPMQ.esc(q.subject) + '</span></div>' +
-      '<div class="modal-s">' + PPMQ.esc(q.stem) + '</div>' +
+      (q.stem ? '<div class="modal-s boki">' + PPMQ.esc(q.stem) + '</div>' : '') +
       '<ol class="choices">' + q.choices.map(function (c, k) {
         return '<li><button class="ch" id="c' + i + '_' + k + '" onclick="cPick(' + i + ',' + k + ')">' +
           PPMQ.MARK[k] + " " + PPMQ.esc(c) + '</button></li>';
@@ -169,7 +169,7 @@ function cSubmit() {
         '" data-rep-label="문항" data-rep-quote="' + PPMQ.esc(q.stem).replace(/"/g, "&quot;") +
         '  [정답 ' + PPMQ.esc(q.choices[q.answer]).replace(/"/g, "&quot;") + ']"><h4 class="atom-h"><span class="atom-n">' + (w.i + 1) + '</span>' +
         PPMQ.esc(q.t) + '</h4>' +
-        '<div class="modal-s">' + PPMQ.esc(q.stem) + '</div>' +
+        (q.stem ? '<div class="modal-s boki">' + PPMQ.esc(q.stem) + '</div>' : '') +
         '<p class="cbt-ans">내 답 ' + (w.pick == null ? '없음' : PPMQ.MARK[w.pick] + " " + PPMQ.esc(q.choices[w.pick])) +
         ' · 정답 <b>' + PPMQ.MARK[q.answer] + " " + PPMQ.esc(q.choices[q.answer]) + '</b></p>' +
         '<div class="modal-s">' + PPMQ.esc(q.full) + '</div>' +

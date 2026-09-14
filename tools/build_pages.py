@@ -332,13 +332,17 @@ def page_html(p, subjects, link, prev_p, next_p):
     o.append(
         intro_block(subject, major)
     )
-    o.append(
-        '<div class="drill-bar">'
-        '<button class="btn" onclick="ppmDrillStart()">이 절 빈칸 암기</button>'
-        '<label class="gauge-wrap">가리기 <input id="ppmGauge" type="range" min="0" max="100" step="10" value="0" oninput="ppmGauge(this.value)"/> '
-        '<span id="ppmGaugeV">0</span>%</label>'
-        "</div>"
-    )
+    # 필기는 CBT 객관식이므로 문장을 가려 외우는 것이 시험 방식과 맞지 않는다.
+    # 필답형인 실기 교재에만 둔다.
+    if p["exam"] == "실기":
+        o.append(
+            '<div class="drill-bar">'
+            '<button class="btn" onclick="ppmDrillStart()">이 절 빈칸 암기</button>'
+            '<label class="gauge-wrap">가리기 <input id="ppmGauge" type="range" min="0" max="100" step="10" value="0" oninput="ppmGauge(this.value)"/> '
+            '<span id="ppmGaugeV">0</span>%</label>'
+            '<span class="drill-why">실기는 필답형이라 손으로 쓰는 연습이 필요합니다.</span>'
+            "</div>"
+        )
     n = 0
     for c in p["items"]:
         atoms = link[c["id"]]
@@ -373,7 +377,7 @@ def index_html(subjects, pages, total_atoms):
         f'<p class="lede">시험 범위는 출제기준이 정합니다. 공식 출제기준 <b>273개 세세항목</b>을 하나도 빼지 않고 '
         f'개념 <b>{total_atoms}개</b>로 채웠습니다. 각 개념에는 근거(법령 조문·표준교재 쪽)가 붙어 있습니다.</p>'
     )
-    o.append('<p class="lede">개념마다 <b>빈칸 가리기</b>가 걸려 있습니다. 눈으로 읽는 대신 답을 가리고 채워 보세요. '
+    o.append('<p class="lede">실기는 필답형이라 손으로 쓰는 연습이 필요합니다. 개념마다 <b>빈칸 가리기</b>를 걸어 두었습니다. '
              '<a href="../card/">암기카드</a>에서 과목을 골라 연속으로 풀 수도 있습니다.</p>')
     for s in SUBJ_ORDER:
         if s not in subjects:

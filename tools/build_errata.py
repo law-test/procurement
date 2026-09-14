@@ -58,13 +58,17 @@ def main():
     o.append('<br/><span class="er-k k-self">교재 안에서 갈림</span> 같은 교재의 다른 쪽에서 값이 다른 것')
     o.append("</div>")
 
-    o.append("<h2>가장 크게 틀어진 셋</h2>")
+    o.append("<h2>계산이 어긋나는 다섯</h2>")
+    o.append("<p>아래 다섯은 숫자 하나가 아니라 <b>계산 전체</b>를 틀어 놓습니다. 실기 계산 문항에 그대로 들어갑니다.</p>")
     o.append('<div class="tablewrap"><table><thead><tr><th>무엇</th><th>교재</th><th>현행</th></tr></thead><tbody>'
              '<tr><td><a href="#E01">공사 지체상금률</a></td><td>0.005</td><td><b>0.0005</b> (1천분의 0.5)</td></tr>'
+             '<tr><td><a href="#E16">일반관리비 산식</a></td><td>(노무비+경비) × 율</td><td><b>(재료비+노무비+경비) × 율</b></td></tr>'
+             '<tr><td><a href="#E15">용역 이윤율</a></td><td>14%</td><td><b>10%</b></td></tr>'
+             '<tr><td><a href="#E17">선금 의무지급률(공사)</a></td><td>30% · 20%</td><td><b>40% · 30%</b></td></tr>'
              '<tr><td><a href="#E05">수의계약 공사 금액</a></td><td>종합 2억 · 전문 1억</td><td><b>4억 · 2억 · 1억6천만원</b></td></tr>'
-             '<tr><td><a href="#E04">계약서 생략 기준</a></td><td>5,000만원</td><td><b>3,000만원</b> (국가)</td></tr>'
              '</tbody></table></div>')
-    o.append("<p>지체상금률은 계수가 열 배입니다. 교재 산식대로 계산하면 실기 계산 문항의 답이 열 배로 나옵니다.</p>")
+    o.append("<p>지체상금률은 계수가 열 배입니다. 일반관리비 산식은 재료비가 빠져 있어 물품 제조에서 특히 크게 어긋납니다. "
+             "이 둘은 교재의 <b>표</b>에서만 틀렸고 같은 교재 본문은 옳게 쓰고 있습니다. 표를 보고 외우면 틀립니다.</p>")
 
     o.append("<h2>대조표</h2>")
     for it in items:
