@@ -5,7 +5,7 @@ import re
 ROOT=Path(__file__).resolve().parents[1]
 VERSION='20260916'
 def header(rel):
-    items=[('', '게임'),('drill/','복습'),('library/','자료'),('future/','취업·활용')]
+    items=[('', '게임'),('rank/','순위'),('drill/','복습'),('review/','별점·후기'),('board/','커뮤니티'),('library/','자료')]
     nav=''.join(f'<a href="{rel}{href}">{title}</a>' for href,title in items)
     return f'''<a class="skip-link" href="#main-content">본문으로 바로가기</a>
 <header><div class="wrap hrow"><a class="logo" href="{rel}">조달프로<small>공공조달관리사 학습·실무</small></a><button class="menu-toggle" aria-expanded="false" aria-controls="site-menu" type="button">메뉴</button><nav id="site-menu" class="menu" aria-label="주 메뉴">{nav}</nav></div></header>'''
@@ -16,12 +16,7 @@ def document(title,description,body,rel,footer):
 def run():
     original=(ROOT/'index.html').read_text(encoding='utf-8')
     footer=re.search(r'<footer>[\s\S]*?</footer>',original).group(0)
-    home=(ROOT/'tools/templates/game-home.html').read_text(encoding='utf-8')
-    output=document('공공조달관리사 무료 학습 게임','가입 없이 바로 시작하는 조달프로 학습 게임. 콤보 챌린지, 조달 미션, 개념 짝맞추기로 판단력을 쌓으세요.',home,'./',footer)
-    output=output.replace('<main class="wrap"', '<main class="wrap game-home"')
-    output=output.replace('</head>','<link rel="stylesheet" href="./assets/games.css?v=20260916"></head>')
-    output=output.replace('</body>','<script src="./assets/games.js?v=20260916"></script></body>')
-    (ROOT/'index.html').write_text(output,encoding='utf-8')
+    # Keep the current hand-maintained story, ranking and community homepage.
     planpath=ROOT/'plan/index.html'
     plan=planpath.read_text(encoding='utf-8')
     if 'id="plan-revised"' not in plan:

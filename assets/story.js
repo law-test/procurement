@@ -66,6 +66,21 @@
   }
   function endingList(c) { return c.nodes.filter(function (n) { return !!n.ending; }); }
   function unlocked(c) { return Array.from(new Set((store.collection[c.id] || []).filter(function (id) { return endingList(c).some(function (n) { return n.ending.id === id; }); }))); }
+  function renderRank(c, s) {
+    var ranking = document.getElementById('story-ranking'), rank = window.JodalRank;
+    if (!ranking || !rank || typeof rank.renderResult !== 'function' || typeof rank.newId !== 'function') return;
+    var key = JSON.stringify(s.history);
+    if (!s.rankCompletions || typeof s.rankCompletions !== 'object' || Array.isArray(s.rankCompletions)) s.rankCompletions = {};
+    if (typeof s.rankCompletions[key] !== 'string' || !/^[0-9a-f]{8}-[0-9a-f]{4}-4[0-9a-f]{3}-[89ab][0-9a-f]{3}-[0-9a-f]{12}$/i.test(s.rankCompletions[key])) {
+      s.rankCompletions[key] = rank.newId(); persist();
+    }
+    var payload = { id: s.rankCompletions[key], mode: c.id, revision: C.VERSION, history: s.history.map(function (step) { return { nodeId: step.nodeId, choiceId: step.choiceId }; }) };
+    try {
+      Promise.resolve(rank.renderResult(ranking, payload)).catch(function () {
+        if (ranking.isConnected) ranking.textContent = '점수 기록을 불러오지 못했어요. 이야기와 엔딩은 그대로 이어집니다.';
+      });
+    } catch (e) { ranking.textContent = '점수 기록을 불러오지 못했어요. 이야기와 엔딩은 그대로 이어집니다.'; }
+  }
   function lobby() {
     active = null; dialog = null;
     var cards = roles.map(function (role) {
@@ -106,6 +121,10 @@
       main = '<div class="story-scene-art"><span class="story-scene-label">' + esc(current.location) + '</span>' + world(current.scene) + '</div><div class="story-text"><div class="story-chapter">' + esc(chapter.title) + ' · ' + (s.history.length + 1) + '번째 장면</div><h1>' + esc(current.title) + '</h1>' + (s.history.length === 0 ? '<details class="story-setting"><summary>내 역할과 이번 사업</summary><p>' + esc(c.intro) + '</p></details>' : '') + '<div class="story-speaker">' + esc(current.speaker) + '</div><div class="story-prose">' + current.text.map(function (p) { return '<p>' + esc(p) + '</p>'; }).join('') + '</div><div class="story-choices" aria-label="다음 행동 선택">' + current.choices.map(function (a, i) { var allowed = C.eligible(a, v.stats, v.flags); return '<button type="button" class="story-choice" data-action="choose" data-choice="' + esc(a.id) + '"' + (allowed ? '' : ' disabled') + '><span class="choice-number" aria-hidden="true">' + (i + 1) + '</span><span><strong>' + esc(a.label) + '</strong>' + (a.hint ? '<small>' + esc(a.hint) + '</small>' : '') + (!allowed ? '<small class="lock-note">' + esc(lockReason(a, v)) + '</small>' : '') + '</span></button>'; }).join('') + '</div></div>';
     }
     layout('<div class="story-stage"><section class="story-panel">' + main + '</section><aside class="story-side" aria-label="자원과 여정">' + statsPanel(v) + mapPanel(c, v, current) + '</aside></div>', true);
+    if (!s.pending && v.node.ending && window.JodalRank) {
+      var ranking = document.createElement('div'); ranking.id = 'story-ranking';
+      root.querySelector('.story-ending').appendChild(ranking); renderRank(c, s);
+    }
   }
   function showBroken(message) {
     layout('<section class="story-panel story-empty"><h1>이야기를 다시 확인할게요.</h1><p>' + esc(message) + '</p><p>기존 저장값은 그대로 두었습니다. 다시 불러오거나 이 역할을 처음부터 시작할 수 있어요.</p><div class="story-bottom-actions">' + button('retry', '다시 불러오기', 'story-secondary') + button('restart', '이 역할 처음부터', 'story-primary') + button('lobby', '역할 선택', 'story-secondary') + '</div></section>', true);

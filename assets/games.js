@@ -7,6 +7,15 @@
   const esc = s => String(s ?? '').replace(/[&<>"']/g, c => ({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[c]));
   const shuffle = list => { const a = list.slice(); for (let i=a.length-1;i>0;i--) {const j=Math.floor(Math.random()*(i+1));[a[i],a[j]]=[a[j],a[i]];} return a; };
   const today = () => new Date(Date.now()+9*3600000).toISOString().slice(0,10);
+  const rankId = () => window.JodalRank && typeof window.JodalRank.newId === 'function' ? window.JodalRank.newId() : null;
+  function renderRank(element, payload) {
+    if (!element || !payload.id || !window.JodalRank || typeof window.JodalRank.renderResult !== 'function') return;
+    try {
+      Promise.resolve(window.JodalRank.renderResult(element, payload)).catch(() => {
+        if (element.isConnected) element.textContent = '점수 기록을 불러오지 못했어요. 게임 결과는 이 화면에서 확인할 수 있습니다.';
+      });
+    } catch (_) { element.textContent = '점수 기록을 불러오지 못했어요. 게임 결과는 이 화면에서 확인할 수 있습니다.'; }
+  }
   const cleanRecord = raw => {
     const s = raw && typeof raw==='object' && !Array.isArray(raw) ? raw : {}, best = {};
     ['combo','combo-free','mission','review','match'].forEach(key => {
@@ -64,7 +73,7 @@
     if(mode==='mission'&&!ids) pool=data.atoms.map(a=>shuffle(data.questions.filter(q=>q.atom_id===a.id))[0]);
     if(!pool.length){round=null;host.innerHTML='<p>다시 풀 문항이 없습니다. 위에서 다른 게임을 골라 보세요.</p>';return;}
     const limit=mode==='combo'&&!ids;
-    round={questions:pool.slice(0,6),index:0,score:0,combo:0,maxCombo:0,correct:0,answers:[],answered:false,finished:false,remaining:60000,started:null,limit:limit,clockBegun:false,review:Boolean(ids),bestKey:ids?'review':mode,paused:false};
+    round={questions:pool.slice(0,6),index:0,score:0,combo:0,maxCombo:0,correct:0,answers:[],answered:false,finished:false,remaining:60000,started:null,limit:limit,clockBegun:false,review:Boolean(ids),bestKey:ids?'review':mode,paused:false,rankingId:ids?null:rankId()};
     renderQuestion(false);
   }
   function missionMap() {
@@ -123,10 +132,15 @@
     document.getElementById('game-again').onclick=()=>{if(round===active)startRound(mode);};
     const retry=document.getElementById('game-wrong');if(retry)retry.onclick=()=>{if(round===active)startRound(mode,retryIds);};
     const other=document.getElementById('game-other');if(other)other.onclick=()=>{if(round===active)startRound(mode==='mission'?'match':'mission');};
+    if (window.JodalRank && !round.review && round.answers.length) {
+      const ranking = document.createElement('div'); ranking.id = 'game-ranking';
+      host.querySelector('.result-actions').after(ranking);
+      renderRank(ranking, {id:round.rankingId,mode:round.bestKey,revision:data.package_id,answers:round.answers.map(a=>({id:a.id,choice:a.choice}))});
+    }
     document.getElementById('result-title').focus({preventScroll:true});
   }
   function startMatch() {
-    round=null;selected={};matched=new Set();attempts=0;const active={finished:false};matchRound=active;
+    round=null;selected={};matched=new Set();attempts=0;const active={finished:false,rankingId:rankId(),matches:[],pool:data.atoms.map(a=>a.id)};matchRound=active;
     const left=shuffle(data.atoms),right=shuffle(data.atoms);
     host.innerHTML='<div class="game-stats">'+stat('찾은 짝','0 / '+data.atoms.length,'match-count')+stat('시도','0','match-tries')+stat('시간 제한','없음')+stat('목표','6쌍')+'</div><h2 class="game-question" tabindex="-1" id="game-question">개념과 설명, 맞는 짝을 찾아보세요.</h2><p class="game-help">왼쪽 개념 하나, 오른쪽 설명 하나를 골라 연결하세요.</p><div class="match-grid">'+[left,right].map((items,col)=>'<div class="match-column" aria-label="'+(col?'설명':'개념')+'">'+items.map(a=>'<button type="button" class="match-tile" data-side="'+col+'" data-atom="'+esc(a.id)+'" aria-pressed="false">'+esc(col?a.match_prompt:a.match_answer)+'</button>').join('')+'</div>').join('')+'</div><div class="match-message" role="status" id="match-message">짝이 맞으면 초록색으로 바뀝니다.</div>';
     host.querySelectorAll('.match-tile').forEach(b=>b.addEventListener('click',()=>{
@@ -136,6 +150,7 @@
       if(selected[side])selected[side].setAttribute('aria-pressed','false');selected[side]=b;b.setAttribute('aria-pressed','true');
       if(!selected['0']||!selected['1'])return;
       attempts++;const ok=selected['0'].dataset.atom===selected['1'].dataset.atom;
+      if (active.matches.length < 61) active.matches.push({left:selected['0'].dataset.atom,right:selected['1'].dataset.atom});
       if(ok)matched.add(b.dataset.atom);
       Object.values(selected).forEach(t=>{t.setAttribute('aria-pressed','false');t.classList.add(ok?'matched':'missed');if(ok)t.disabled=true;});selected={};
       document.getElementById('match-count').textContent=matched.size+' / '+data.atoms.length;document.getElementById('match-tries').textContent=attempts;
@@ -149,6 +164,12 @@
     const score=Math.max(60,600-(attempts-6)*25),saved=saveRound(score,'match');
     document.getElementById('match-message').innerHTML='<b>6쌍 완성! '+attempts+'번 시도 · '+score+'점</b><p>'+ (saved.isNew?'새로운 내 최고 기록!':'내 최고 기록 '+saved.best+'점')+'</p><button type="button" class="btn" id="match-again">다시 섞어서 도전</button> <a href="learn/">판단과 근거 더 보기 →</a>';
     document.getElementById('match-again').onclick=()=>{if(matchRound===active)startRound('match');};
+    if (window.JodalRank) {
+      const ranking = document.createElement('div'); ranking.id = 'match-ranking';
+      document.getElementById('match-message').appendChild(ranking);
+      if (attempts > 60) ranking.textContent = '이번 결과는 개인 기록에 남았어요. 공개 순위에는 60번 이내에 완성한 짝맞추기만 등록할 수 있습니다.';
+      else renderRank(ranking, {id:active.rankingId,mode:'match',revision:data.package_id,pool:active.pool.slice(),matches:active.matches.map(pair=>({left:pair.left,right:pair.right}))});
+    }
   }
   document.addEventListener('keydown',e=>{if(e.repeat||e.ctrlKey||e.altKey||e.metaKey||/INPUT|SELECT|TEXTAREA/.test(e.target.tagName)||e.target.isContentEditable)return;if(mode!=='match'&&/^[1-4]$/.test(e.key)&&round&&!round.answered&&!round.finished){e.preventDefault();answer(Number(e.key)-1);}});
   document.addEventListener('visibilitychange',()=>{if(document.hidden)pauseForBackground();});

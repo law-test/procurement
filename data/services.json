@@ -1,0 +1,121 @@
+{
+  "cataloguedAt": "2026-09-16",
+  "scope": "후기를 남길 수 있는 첫 대상 목록입니다. 평가·추천 순위 또는 전수 목록이 아닙니다.",
+  "items": [
+    {
+      "id": "book-01",
+      "name": "박문각 공공조달관리사 필기·실기 올큐패스",
+      "url": "https://www.aladin.co.kr/shop/wproduct.aspx?ItemId=390288280",
+      "category": "교재",
+      "sourceNote": "기존 자료목록에 수록된 링크. 가격·운영조건은 원문에서 확인하세요."
+    },
+    {
+      "id": "book-02",
+      "name": "박문각 필기 3분책 세트",
+      "url": "https://www.yes24.com/product/goods/182109058",
+      "category": "교재",
+      "sourceNote": "기존 자료목록에 수록된 링크. 가격·운영조건은 원문에서 확인하세요."
+    },
+    {
+      "id": "book-03",
+      "name": "시대에듀 필기 한권으로 끝내기",
+      "url": "https://www.yes24.com/product/goods/182432606",
+      "category": "교재",
+      "sourceNote": "기존 자료목록에 수록된 링크. 가격·운영조건은 원문에서 확인하세요."
+    },
+    {
+      "id": "book-04",
+      "name": "성안당 공공조달관리사 필기",
+      "url": "https://www.yes24.com/product/goods/190874190",
+      "category": "교재",
+      "sourceNote": "기존 자료목록에 수록된 링크. 가격·운영조건은 원문에서 확인하세요."
+    },
+    {
+      "id": "book-05",
+      "name": "경연 올인원 필기",
+      "url": "https://www.yes24.com/product/goods/182278580",
+      "category": "교재",
+      "sourceNote": "기존 자료목록에 수록된 링크. 가격·운영조건은 원문에서 확인하세요."
+    },
+    {
+      "id": "book-06",
+      "name": "건기원 필기",
+      "url": "https://www.yes24.com/product/goods/190418282",
+      "category": "교재",
+      "sourceNote": "기존 자료목록에 수록된 링크. 가격·운영조건은 원문에서 확인하세요."
+    },
+    {
+      "id": "book-07",
+      "name": "베스트에듀 이찬엽의 공공조달관리사",
+      "url": "https://www.yes24.com/product/goods/191505018",
+      "category": "교재",
+      "sourceNote": "기존 자료목록에 수록된 링크. 가격·운영조건은 원문에서 확인하세요."
+    },
+    {
+      "id": "book-08",
+      "name": "박영사 필기 최종 모의고사",
+      "url": "https://www.yes24.com/product/goods/195864250",
+      "category": "교재",
+      "sourceNote": "기존 자료목록에 수록된 링크. 가격·운영조건은 원문에서 확인하세요."
+    },
+    {
+      "id": "lecture-01",
+      "name": "giraffetrees 문제은행",
+      "url": "https://giraffetrees.com/",
+      "category": "강의·문제은행",
+      "sourceNote": "기존 자료목록에 수록된 링크. 가격·운영조건은 원문에서 확인하세요."
+    },
+    {
+      "id": "lecture-02",
+      "name": "문답유용 (moondab)",
+      "url": "https://moondab.net/intro",
+      "category": "강의·문제은행",
+      "sourceNote": "기존 자료목록에 수록된 링크. 가격·운영조건은 원문에서 확인하세요."
+    },
+    {
+      "id": "lecture-03",
+      "name": "박문각 공공조달관리사 (온라인)",
+      "url": "https://www.pmg.co.kr/user/pbo/main.asp",
+      "category": "강의·문제은행",
+      "sourceNote": "기존 자료목록에 수록된 링크. 가격·운영조건은 원문에서 확인하세요."
+    },
+    {
+      "id": "lecture-04",
+      "name": "합격의법학원 공공조달관리사",
+      "url": "https://ppm.lawschool.co.kr/",
+      "category": "강의·문제은행",
+      "sourceNote": "기존 자료목록에 수록된 링크. 가격·운영조건은 원문에서 확인하세요."
+    },
+    {
+      "id": "lecture-05",
+      "name": "탑에듀 공공조달관리사",
+      "url": "https://jodal.topedu.kr/",
+      "category": "강의·문제은행",
+      "sourceNote": "기존 자료목록에 수록된 링크. 가격·운영조건은 원문에서 확인하세요."
+    },
+    {
+      "id": "official-textbook",
+      "name": "조달청 공공조달관리사 표준교재",
+      "url": "https://www.pps.go.kr/kor/bbs/list.do?key=00034",
+      "category": "공식 무료자료"
+    },
+    {
+      "id": "official-elearning",
+      "name": "조달청 나라배움터",
+      "url": "https://pps.nhi.go.kr/",
+      "category": "공식 무료자료"
+    },
+    {
+      "id": "jodalmaster",
+      "name": "표준교재 통합의견수렴센터",
+      "url": "https://www.jodalmaster.net/textbook/",
+      "category": "학습 사이트"
+    },
+    {
+      "id": "jodal-pro",
+      "name": "조달프로 학습 게임",
+      "url": "https://jodal.pro/",
+      "category": "학습 사이트"
+    }
+  ]
+}
