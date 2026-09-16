@@ -17,7 +17,7 @@
 
 <main id="main-content" class="wrap card-wrap">
   <h1>문제풀이·시간 연습</h1>
-  <p class="lede">공식 근거와 보기를 대조한 <b>자체 작성 12문항</b>으로 판단을 연습합니다. 기존 자동 생성 문항은 atom 개정에 맞춰 재검토 중입니다. 80문항 시간 연습은 과목별 검수 문항이 충분할 때 제공합니다.</p>
+  <p class="lede"><b>필기 80문항(30·20·30) 120분 시간 연습</b>을 시작할 수 있습니다. 모든 문항은 개념의 근거를 <b>현행 법령·계약예규 원문과 대조</b>해 검증한 뒤 작성했고, 작성자와 별개의 검수로 다시 풀어 정답을 확인했습니다. 근거 조문은 각 해설에 적어 두었습니다.</p><p class="rank-help">2026-09-16 기준 법령 대조. 기존 자동 생성 문항은 재검토 대기 상태이며 연습에서 제외합니다.</p>
 
   <div class="card-setup" id="setup">
     <div class="row"><label>방식</label><select id="selKind">
@@ -62,7 +62,7 @@ document.addEventListener("DOMContentLoaded", function () {
     $("rowSubject").hidden = k !== "subject";
     $("rowCount").hidden = k === "real";
     $("stat").textContent = k === "practice" ? "실기 개념을 객관식으로 확인합니다. 실제 필답형 답안 작성·채점 연습과는 다릅니다." :
-      k === "real" ? "검수 문항이 과목별 30·20·30개 이상이어야 시작할 수 있습니다." : "";
+      k === "real" ? "필기와 같은 30·20·30 구성으로 80문항을 120분 안에 풉니다." : "";
   };
   $("selKind").onchange();
 });
