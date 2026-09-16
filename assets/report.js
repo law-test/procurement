@@ -18,8 +18,13 @@
     return s.length > n ? s.slice(0, n - 1) + "…" : s;
   }
   function cfg() {
+    /* 순위·커뮤니티가 쓰는 설정(JODAL_RANK_CONFIG)을 그대로 받아쓴다.
+       key 는 브라우저에 공개해도 되는 publishable key 다. */
     var c = window.PPM_SUPABASE;
-    return (c && c.url && c.anon) ? c : null;
+    if (c && c.url && c.anon) return c;
+    var r = window.JODAL_RANK_CONFIG;
+    if (r && r.url && r.key) return { url: r.url, anon: r.key };
+    return null;
   }
   function savedName() {
     try { return localStorage.getItem(NAMEKEY) || ""; } catch (e) { return ""; }
@@ -224,4 +229,16 @@
   }
   if (document.readyState === "loading") document.addEventListener("DOMContentLoaded", boot);
   else boot();
+})();
+
+/* 방문 통계 — analytics.js 를 한 번만 불러온다. */
+(function () {
+  if (window.__jodalAnalyticsTag) return;
+  window.__jodalAnalyticsTag = true;
+  var logo = document.querySelector('header a.logo');
+  var base = logo ? (logo.getAttribute('href') || './') : './';
+  var s = document.createElement('script');
+  s.src = base + 'assets/analytics.js';
+  s.defer = true;
+  (document.head || document.documentElement).appendChild(s);
 })();

@@ -1,0 +1,50 @@
+<!DOCTYPE html>
+<html lang="ko">
+<head>
+<meta charset="utf-8"/>
+<meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+<title>없는 주소입니다 — 조달프로</title>
+<meta name="robots" content="noindex"/>
+<meta name="theme-color" content="#0f5f7a"/>
+<link rel="icon" href="/favicon.ico" sizes="any"/>
+<link rel="stylesheet" href="/assets/site.css"/>
+<link rel="stylesheet" href="/assets/study.css"/>
+<style>
+.nf { max-width: 640px; margin: 8vh auto; padding: 0 20px; }
+.nf h1 { font-size: 1.6rem; margin: 0 0 .6rem; }
+.nf-code { font-size: .8rem; color: #8b939c; letter-spacing: .08em; }
+.nf-list { list-style: none; padding: 0; margin: 1.6rem 0 0; display: grid; gap: .5rem; }
+.nf-list a {
+  display: block; border: 1px solid #e3e7ec; border-radius: 10px;
+  padding: .7rem .9rem; text-decoration: none; color: #10536b; font-weight: 600; background: #fff;
+}
+.nf-list a:hover { border-color: #0f5f7a; }
+.nf-list small { display: block; font-weight: 400; color: #55606b; margin-top: .15rem; }
+.nf-url { font-family: ui-monospace, Menlo, monospace; font-size: .82rem; color: #7e8b93; word-break: break-all; }
+</style>
+</head>
+<body>
+<main class="nf">
+  <div class="nf-code">404</div>
+  <h1>없는 주소입니다</h1>
+  <p>주소가 바뀌었거나 잘못 입력된 것 같습니다. 찾으시던 것이 아래에 있을 수 있습니다.</p>
+  <p class="nf-url" id="nfUrl"></p>
+  <ul class="nf-list">
+    <li><a href="/">게임으로 시작하기<small>선택으로 배우는 조달 스토리와 미니게임</small></a></li>
+    <li><a href="/exam/">시험·접수 안내<small>제1회 일정과 응시 방법</small></a></li>
+    <li><a href="/errata/">표준교재와 현행 법령이 다른 곳<small>대조표 20군데</small></a></li>
+    <li><a href="/links/">바로가기<small>공식 자료·법령·조달 시스템 78곳</small></a></li>
+    <li><a href="/library/">자료 모음<small>개념 사전, 학습계획, 교재·강의 비교</small></a></li>
+    <li><a href="/c/">개념 찾기<small>출제기준별 교재</small></a></li>
+  </ul>
+  <p style="margin-top:1.6rem"><a href="/news/#contact">없어진 링크 알려주기 →</a></p>
+</main>
+<script>
+(function () {
+  var el = document.getElementById("nfUrl");
+  if (el) el.textContent = location.pathname + location.search;
+})();
+</script>
+<script src="/assets/analytics.js"></script>
+</body>
+</html>

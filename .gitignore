@@ -22,3 +22,6 @@ _source/
 # Python screen builders
 __pycache__/
 *.pyc
+
+# 배포 자격증명 설정 스크립트(토큰을 입력받으므로 저장소에 올리지 않는다)
+_setup_deploy_once.bat

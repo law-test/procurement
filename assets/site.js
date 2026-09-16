@@ -28,3 +28,15 @@ function ppmRenderDday() {
 }
 
 document.addEventListener('DOMContentLoaded', ppmRenderDday);
+
+/* 방문 통계 — assets/analytics.js 를 한 번만 불러온다. 토큰이 없으면 아무 일도 없다. */
+(function () {
+  if (window.__jodalAnalyticsTag) return;
+  window.__jodalAnalyticsTag = true;
+  var base = (document.querySelector('header a.logo') || {}).getAttribute
+    ? (document.querySelector('header a.logo').getAttribute('href') || './') : './';
+  var s = document.createElement('script');
+  s.src = base + 'assets/analytics.js';
+  s.defer = true;
+  (document.head || document.documentElement).appendChild(s);
+})();

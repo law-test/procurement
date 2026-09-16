@@ -1,0 +1,8 @@
+# 조달프로 — jodal.pro
+User-agent: *
+Allow: /
+
+# 미리보기·시험용 경로는 색인하지 않습니다
+Disallow: /card/
+
+Sitemap: https://jodal.pro/sitemap.xml
