@@ -1,0 +1,1516 @@
+{
+  "id": "manager",
+  "title": "공공조달관리사 · 바람을 되찾는 교실",
+  "subtitle": "모두의 돈으로, 모두가 쓸 수 있는 첫 계약을 완성하라.",
+  "intro": "당신은 가상 국가기관 국립새봄과학관에서 조달 실무를 맡은 공공조달관리사다. 어린이 환경교실에 이동형 환경측정 키트 24대를 들이는 사업을, 권한을 가진 계약담당자와 함께 진행한다. 자격 취득만으로 계약 권한이 생기는 설정은 아니다. 기관·인물·사업과 자원 수치는 게임을 위해 만든 가정이다.",
+  "start": "m_start",
+  "chapters": [
+    {
+      "id": "prepare",
+      "title": "1. 누구를 위한 키트인가"
+    },
+    {
+      "id": "notice",
+      "title": "2. 열린 문을 만드는 공고"
+    },
+    {
+      "id": "selection",
+      "title": "3. 이름보다 근거"
+    },
+    {
+      "id": "contract",
+      "title": "4. 약속을 문서로"
+    },
+    {
+      "id": "performance",
+      "title": "5. 바람이 바뀐 날"
+    },
+    {
+      "id": "inspection",
+      "title": "6. 상자를 여는 책임"
+    },
+    {
+      "id": "payment",
+      "title": "7. 끝나지 않은 계약"
+    },
+    {
+      "id": "aftercare",
+      "title": "8. 다음 교실로"
+    }
+  ],
+  "nodes": [
+    {
+      "id": "m_start",
+      "chapter": "prepare",
+      "title": "봉투 속 한 장의 그림",
+      "location": "과학관 조달 사무실",
+      "speaker": "하린 · 환경교실 운영 담당",
+      "text": [
+        "책상 위에 어린이가 그린 그림이 놓였다. 창문 밖은 회색인데, 그림 속 바람은 초록색이다.",
+        "하린이 말한다. “아이들이 직접 공기를 재 보고 싶대요. 키트 24대면 될까요? 개장식부터 정하자는 이야기도 나와요.”",
+        "당신에게 넘어온 것은 구매 요청서 한 장. 첫 번째 목적지는 어디인가?"
+      ],
+      "scene": "office",
+      "choices": [
+        {
+          "id": "visit",
+          "label": "아이들이 수업할 교실로 간다",
+          "hint": "사용 장면을 먼저 듣는다.",
+          "feedback": "교실에서 만나자는 연락을 보냈다. 요청서 밖의 이야기가 시작된다.",
+          "delta": {
+            "time": -3,
+            "trust": 3
+          },
+          "next": "m_classroom",
+          "setFlags": [
+            "field_visit"
+          ]
+        },
+        {
+          "id": "desk",
+          "label": "지난 구매 목록부터 펼친다",
+          "hint": "기존 기록으로 초안을 빠르게 잡는다.",
+          "feedback": "서랍에서 오래된 장비 목록을 찾았다. 이번 수업과 같은 조건인지는 아직 모른다.",
+          "delta": {
+            "time": 3
+          },
+          "next": "m_desk",
+          "setFlags": [
+            "desk_start"
+          ]
+        }
+      ]
+    },
+    {
+      "id": "m_classroom",
+      "chapter": "prepare",
+      "title": "키트보다 먼저 필요한 것",
+      "location": "아직 비어 있는 환경교실",
+      "speaker": "하린 · 환경교실 운영 담당",
+      "text": [
+        "어린이 의자 사이로 충전선이 길게 늘어져 있다. 창가와 복도에서는 무선 연결 상태도 다르다.",
+        "하린이 작은 손잡이를 가리킨다. “아이들이 직접 들 수 있고, 선생님이 결과를 설명할 수 있어야 해요.”",
+        "구매 목록의 ‘고성능’이라는 한 단어가 갑자기 흐릿하게 느껴진다."
+      ],
+      "scene": "meeting",
+      "choices": [
+        {
+          "id": "observe",
+          "label": "이동·충전·결과 읽기를 함께 시연한다",
+          "hint": "실제 사용 조건을 기록한다.",
+          "feedback": "아이들이 들 무게와 교사의 설명 흐름이 요구사항에 들어갔다. 운영팀이 당신의 편이 되었다.",
+          "delta": {
+            "time": -3,
+            "quality": 10,
+            "trust": 6
+          },
+          "next": "m_budget",
+          "setFlags": [
+            "field_notes"
+          ]
+        },
+        {
+          "id": "workshop",
+          "label": "교사에게 어려운 사용 장면을 그림으로 부탁한다",
+          "hint": "다음 검토에 쓸 사용 사례를 모은다.",
+          "feedback": "그림에는 작은 글씨와 충전 순서가 표시됐다. 짧은 만남에서도 구체적인 요구를 얻었다.",
+          "delta": {
+            "time": -3,
+            "quality": 6,
+            "trust": 5
+          },
+          "next": "m_budget",
+          "setFlags": [
+            "field_notes",
+            "teacher_partner"
+          ]
+        }
+      ]
+    },
+    {
+      "id": "m_desk",
+      "chapter": "prepare",
+      "title": "작년의 정답은 올해도 정답일까",
+      "location": "자료 보관실",
+      "speaker": "민호 · 운영 지원",
+      "text": [
+        "작년 장비는 한 자리에서만 쓰는 탁상형이다. 이번 사업명에는 ‘이동형’이라는 말이 붙어 있다.",
+        "민호가 묻는다. “모델 이름을 그대로 옮기면 빨라요. 그런데 아이들이 들고 다녀도 될까요?”",
+        "외부 업체의 반듯한 카탈로그가 빈 규격서 옆에 놓여 있다."
+      ],
+      "scene": "office",
+      "choices": [
+        {
+          "id": "check",
+          "label": "초안을 들고 교실에서 차이를 확인한다",
+          "hint": "과거 자료를 출발점으로만 쓴다.",
+          "feedback": "초안을 접어 들고 교실로 향했다. 빠른 초안에 필요한 검증을 더할 차례다.",
+          "delta": {
+            "time": -2,
+            "quality": 3
+          },
+          "next": "m_classroom",
+          "setFlags": [
+            "draft_checked"
+          ]
+        },
+        {
+          "id": "copy",
+          "label": "같은 모델을 기준으로 일단 예산을 올린다",
+          "hint": "속도는 얻지만 사용 조건은 미확인이다.",
+          "feedback": "예산 초안은 빨리 나왔다. 이동성과 교육 방식은 빈칸으로 남았다.",
+          "delta": {
+            "time": 5,
+            "quality": -7
+          },
+          "next": "m_budget",
+          "setFlags": [
+            "legacy_assumption"
+          ]
+        }
+      ]
+    },
+    {
+      "id": "m_budget",
+      "chapter": "prepare",
+      "title": "싸게 산 뒤에 더 쓰는 돈",
+      "location": "작은 예산 회의실",
+      "speaker": "민호 · 운영 지원",
+      "text": [
+        "견적표에는 본체 가격이 크게, 충전함과 교육 지원은 작은 글씨로 적혀 있다.",
+        "민호가 말한다. “표 맨 아래만 보면 여유가 있어요. 그런데 키트를 굴리려면 또 무엇이 필요하죠?”",
+        "이 사업의 게임 자원은 실제 원화가 아니다. 운영 여력을 어디에 남길지 결정할 차례다."
+      ],
+      "scene": "meeting",
+      "choices": [
+        {
+          "id": "whole",
+          "label": "사용·교육·유지관리까지 비용표에 담는다",
+          "hint": "처음부터 필요한 범위를 맞춘다.",
+          "feedback": "누락된 운영 항목이 드러났다. 덜 중요한 장식을 줄여 핵심 기능의 여력을 확보했다.",
+          "delta": {
+            "money": -4,
+            "time": -2,
+            "quality": 8
+          },
+          "next": "m_spec",
+          "setFlags": [
+            "budget_ready"
+          ]
+        },
+        {
+          "id": "unit",
+          "label": "본체 단가부터 낮추고 나머지는 나중에 본다",
+          "hint": "당장 보이는 지출을 줄인다.",
+          "feedback": "초안의 숫자는 작아졌다. 하린은 교육과 보관을 누가 맡을지 다시 물었다.",
+          "delta": {
+            "money": 7,
+            "time": 3,
+            "quality": -6
+          },
+          "next": "m_spec",
+          "setFlags": [
+            "budget_gap"
+          ]
+        }
+      ]
+    },
+    {
+      "id": "m_spec",
+      "chapter": "prepare",
+      "title": "모델명 대신 써야 할 말",
+      "location": "규격 검토 회의실",
+      "speaker": "하린 · 환경교실 운영 담당",
+      "text": [
+        "초안 화면에 특정 제품의 고유 명칭이 남아 있다. 다른 업체도 필요한 성능을 구현할 수 있을지 아무도 확인하지 않았다.",
+        "하린이 말한다. “우리에게 필요한 것은 그 이름일까요, 아이들이 할 수 있는 일일까요?”",
+        "이번 게임에서는 일반경쟁 절차로 진행할 수 있는 사업으로 검토된 상황이다. 이후 선택은 그 전제에서 진행한다."
+      ],
+      "scene": "notice",
+      "choices": [
+        {
+          "id": "function",
+          "label": "필요한 기능과 확인 방법으로 규격을 다듬는다",
+          "hint": "사용 장면을 업체가 이해할 언어로 바꾼다.",
+          "feedback": "고유 명칭을 지우고 이동·측정·기록·교육 요구를 구체화했다. 같은 요구를 여러 업체가 읽을 수 있게 됐다.",
+          "delta": {
+            "time": -3,
+            "quality": 8,
+            "trust": 4
+          },
+          "next": "m_notice",
+          "setFlags": [
+            "clear_spec"
+          ]
+        },
+        {
+          "id": "brand",
+          "label": "익숙한 업체의 설명을 그대로 규격으로 삼는다",
+          "hint": "초안은 빨리 완성된다.",
+          "feedback": "다른 업체가 같은 기능을 제시할 기회를 묻기 시작했다. 규격의 이유를 설명해야 한다.",
+          "delta": {
+            "time": 4,
+            "trust": -7
+          },
+          "next": "m_challenge",
+          "setFlags": [
+            "narrow_spec"
+          ],
+          "knowledge": {
+            "title": "익숙한 업체와 계약방법은 별개의 판단",
+            "body": "국가계약은 일반경쟁이 원칙이며, 다른 계약방법에는 해당 법령의 허용 요건이 필요하다. 거래 경험이나 일정 압박만으로 그 요건이 충족되지는 않는다.",
+            "atomId": "A0041",
+            "sourceUrl": "https://www.law.go.kr/lsInfoP.do?lsiSeq=283877",
+            "sourceChecked": "2026-09-16"
+          }
+        }
+      ]
+    },
+    {
+      "id": "m_notice",
+      "chapter": "notice",
+      "title": "누구나 읽을 수 있는 문",
+      "location": "공고 검토 화면",
+      "speaker": "계약담당자",
+      "text": [
+        "공고 초안의 마지막 검토 시간이다. 일정, 참가자격, 제출 방법, 선정 기준이 서로 다른 문서에 흩어져 있다.",
+        "계약담당자가 말한다. “나는 권한과 절차를 확인할게요. 당신은 읽는 사람이 놓칠 빈칸을 찾아주세요.”",
+        "그때 익숙한 업체에서 ‘우리만 미리 설명을 들으면 안 되느냐’는 전화가 온다."
+      ],
+      "scene": "notice",
+      "choices": [
+        {
+          "id": "crosscheck",
+          "label": "공고와 붙임을 대조하고 같은 안내를 준비한다",
+          "hint": "적용되는 공고 항목부터 점검한다.",
+          "feedback": "누락된 제출 안내를 채웠다. 모든 참가자가 같은 자료에 접근할 출발선을 만들었다.",
+          "delta": {
+            "time": -3,
+            "trust": 7,
+            "quality": 4
+          },
+          "next": "m_clarify",
+          "setFlags": [
+            "notice_checked"
+          ],
+          "knowledge": {
+            "title": "참가자가 같은 출발선에 서도록",
+            "body": "국가계약 입찰공고에는 시행령 제36조 중 이 입찰에 적용되는 사항을 명시한다. 참가자격, 제출서류, 낙찰자 결정방법, 계약조건 등을 나누어 확인한다. 설명회 등 조건부 항목은 실제 진행 방식과 함께 판단한다.",
+            "atomId": "A0358",
+            "sourceUrl": "https://www.law.go.kr/lsInfoP.do?lsiSeq=285893",
+            "sourceChecked": "2026-09-16"
+          }
+        },
+        {
+          "id": "rush",
+          "label": "큰 항목만 보고 올린 뒤 문의가 오면 답한다",
+          "hint": "당장의 게시 일정은 지킨다.",
+          "feedback": "게시 뒤 문의가 쌓였다. 빠른 공개가 완전한 공고를 대신하지는 못했다.",
+          "delta": {
+            "time": 4,
+            "trust": -6
+          },
+          "next": "m_challenge",
+          "setFlags": [
+            "notice_gap"
+          ],
+          "knowledge": {
+            "title": "참가자가 같은 출발선에 서도록",
+            "body": "국가계약 입찰공고에는 시행령 제36조 중 이 입찰에 적용되는 사항을 명시한다. 참가자격, 제출서류, 낙찰자 결정방법, 계약조건 등을 나누어 확인한다. 설명회 등 조건부 항목은 실제 진행 방식과 함께 판단한다.",
+            "atomId": "A0358",
+            "sourceUrl": "https://www.law.go.kr/lsInfoP.do?lsiSeq=285893",
+            "sourceChecked": "2026-09-16"
+          }
+        }
+      ]
+    },
+    {
+      "id": "m_challenge",
+      "chapter": "notice",
+      "title": "닫힌 문이라는 항의",
+      "location": "온라인 질의함",
+      "speaker": "다른 참가 희망 업체",
+      "text": [
+        "“이 규격의 이유와 제출 조건을 확인하고 싶습니다.” 질의서에는 날카로운 문장보다 구체적인 질문이 많다.",
+        "하린은 개장 일정표를 쥐고 있다. “고치면 늦어지겠죠. 그래도 설명할 수 있어야겠네요.”",
+        "정정·재공고 등 필요한 조치는 변경의 성격과 적용 규정을 검토할 문제다. 게임은 임의의 법정 기한을 설정하지 않는다."
+      ],
+      "scene": "notice",
+      "choices": [
+        {
+          "id": "repair",
+          "label": "질의를 기록하고 계약담당자와 공고 보완을 결정한다",
+          "hint": "빠진 조건과 경쟁을 막는 이유를 검토한다.",
+          "feedback": "시간을 써서 공고와 설명을 정리했다. 업체들은 동일한 자료로 질문을 이어 갈 수 있게 됐다.",
+          "delta": {
+            "time": -8,
+            "trust": 8,
+            "quality": 7
+          },
+          "next": "m_clarify",
+          "setFlags": [
+            "notice_repaired",
+            "clear_spec",
+            "notice_checked"
+          ],
+          "knowledge": {
+            "title": "참가자가 같은 출발선에 서도록",
+            "body": "국가계약 입찰공고에는 시행령 제36조 중 이 입찰에 적용되는 사항을 명시한다. 참가자격, 제출서류, 낙찰자 결정방법, 계약조건 등을 나누어 확인한다. 설명회 등 조건부 항목은 실제 진행 방식과 함께 판단한다.",
+            "atomId": "A0358",
+            "sourceUrl": "https://www.law.go.kr/lsInfoP.do?lsiSeq=285893",
+            "sourceChecked": "2026-09-16"
+          }
+        },
+        {
+          "id": "dismiss",
+          "label": "일단 진행하고 선정 전에 설명하겠다고 답한다",
+          "hint": "문제 해결을 뒤로 미룬다.",
+          "feedback": "질문은 사라지지 않았다. 선정 회의에서 다시 답해야 할 쟁점이 되었다.",
+          "delta": {
+            "time": 3,
+            "trust": -9
+          },
+          "next": "m_pressure",
+          "setFlags": [
+            "unresolved_notice"
+          ]
+        }
+      ]
+    },
+    {
+      "id": "m_clarify",
+      "chapter": "notice",
+      "title": "전화 한 통의 무게",
+      "location": "조달 사무실",
+      "speaker": "새봄기술 담당자",
+      "text": [
+        "“교실에서는 어떤 결과 화면을 가장 중요하게 보나요?” 새봄기술에서 전화가 왔다.",
+        "당신은 답을 알고 있다. 동시에, 같은 궁금증을 가진 다른 업체가 있을지도 모른다.",
+        "책상 위 질의대장에는 아직 빈 줄이 많다."
+      ],
+      "scene": "office",
+      "choices": [
+        {
+          "id": "public",
+          "label": "질의를 정리해 같은 경로로 안내한다",
+          "hint": "공고 내용과 일치하는 설명을 모두에게 제공한다.",
+          "feedback": "전화 한 통이 공동 안내가 되었다. 뒤늦게 문의한 업체도 같은 답을 받았다.",
+          "delta": {
+            "time": -3,
+            "trust": 8
+          },
+          "next": "m_select",
+          "setFlags": [
+            "transparent_answers"
+          ]
+        },
+        {
+          "id": "private",
+          "label": "통화 중 그 업체에만 선호 기능을 알려 준다",
+          "hint": "친절한 응대가 정보 차이로 남는다.",
+          "feedback": "통화는 짧게 끝났다. 다른 업체가 그 기능을 왜 미리 몰랐는지 묻기 시작했다.",
+          "delta": {
+            "time": 3,
+            "trust": -10
+          },
+          "next": "m_pressure",
+          "setFlags": [
+            "private_hint"
+          ]
+        }
+      ]
+    },
+    {
+      "id": "m_select",
+      "chapter": "selection",
+      "title": "가장 익숙한 이름, 가장 낮은 숫자",
+      "location": "입찰 결과 검토실",
+      "speaker": "계약담당자",
+      "text": [
+        "입찰 결과가 도착했다. 익숙한 이름, 낮은 가격, 꼼꼼한 설명은 서로 다른 칸에 있다.",
+        "계약담당자가 묻는다. “우리 공고는 어떤 방법으로 상대자를 정한다고 했죠?”",
+        "이번 장면은 해당 공고의 선정 요건과 이행능력 등을 확인할 자료가 갖춰진 가상 상황이다."
+      ],
+      "scene": "meeting",
+      "choices": [
+        {
+          "id": "criteria",
+          "label": "공고의 선정방법과 제출 자료를 대조한다",
+          "hint": "이름의 친숙함과 법정 판단을 분리한다.",
+          "feedback": "기준별 확인 결과가 남았다. 누가 왜 선정되는지 설명할 준비가 됐다.",
+          "delta": {
+            "time": -3,
+            "trust": 7,
+            "quality": 5
+          },
+          "next": "m_award",
+          "setFlags": [
+            "selection_checked"
+          ],
+          "knowledge": {
+            "title": "어떤 계약의 어떤 선정방법인가",
+            "body": "국가가 대가를 지급하는 계약은 해당 법령과 공고에 따른 낙찰자 결정방법을 적용한다. 모든 계약을 최저가격 한 가지만으로 결정한다고 단정하거나, 공고에 없는 선호를 선정 기준으로 바꾸지 않는다.",
+            "atomId": "A1114",
+            "sourceUrl": "https://www.law.go.kr/lsInfoP.do?lsiSeq=283877",
+            "sourceChecked": "2026-09-16"
+          }
+        },
+        {
+          "id": "cheap",
+          "label": "일단 가장 낮은 숫자를 후보로 올린다",
+          "hint": "그 가격만으로 선정이 끝나는지 아직 모른다.",
+          "feedback": "회의는 빨라졌지만 이행 가능성과 해당 선정 요건을 다시 묻는 손이 올라왔다.",
+          "delta": {
+            "time": 3,
+            "quality": -6
+          },
+          "next": "m_pressure",
+          "setFlags": [
+            "price_only"
+          ],
+          "knowledge": {
+            "title": "어떤 계약의 어떤 선정방법인가",
+            "body": "국가가 대가를 지급하는 계약은 해당 법령과 공고에 따른 낙찰자 결정방법을 적용한다. 모든 계약을 최저가격 한 가지만으로 결정한다고 단정하거나, 공고에 없는 선호를 선정 기준으로 바꾸지 않는다.",
+            "atomId": "A1114",
+            "sourceUrl": "https://www.law.go.kr/lsInfoP.do?lsiSeq=283877",
+            "sourceChecked": "2026-09-16"
+          }
+        }
+      ]
+    },
+    {
+      "id": "m_pressure",
+      "chapter": "selection",
+      "title": "“이번만 빨리 갑시다”",
+      "location": "늦은 오후 회의실",
+      "speaker": "개장 준비 책임자",
+      "text": [
+        "“공고도 냈고 업체도 있잖아요. 발표부터 하고 남은 서류를 맞추면 안 될까요?”",
+        "하린은 말을 고른다. “개장식에 서는 사람은 우리지만, 교실을 매일 쓰는 건 아이들이에요.”",
+        "빠른 결정이 남길 빈칸을 지금 채울지, 이후의 당신에게 넘길지 결정해야 한다."
+      ],
+      "scene": "meeting",
+      "choices": [
+        {
+          "id": "record",
+          "label": "쟁점을 공개하고 기준 검토를 마친 뒤 결정한다",
+          "hint": "정보 차이와 빠진 검토를 회복한다.",
+          "feedback": "팀이 한 번 더 모였다. 부족한 안내와 판단 근거를 정리한 뒤 권한 있는 담당자가 절차를 진행했다.",
+          "delta": {
+            "time": -8,
+            "trust": 9,
+            "quality": 7
+          },
+          "next": "m_award",
+          "setFlags": [
+            "selection_checked",
+            "transparent_answers",
+            "selection_recovered"
+          ],
+          "knowledge": {
+            "title": "어떤 계약의 어떤 선정방법인가",
+            "body": "국가가 대가를 지급하는 계약은 해당 법령과 공고에 따른 낙찰자 결정방법을 적용한다. 모든 계약을 최저가격 한 가지만으로 결정한다고 단정하거나, 공고에 없는 선호를 선정 기준으로 바꾸지 않는다.",
+            "atomId": "A1114",
+            "sourceUrl": "https://www.law.go.kr/lsInfoP.do?lsiSeq=283877",
+            "sourceChecked": "2026-09-16"
+          }
+        },
+        {
+          "id": "announce",
+          "label": "일정에 맞춰 후보를 먼저 발표하자고 밀어붙인다",
+          "hint": "검토 부담이 다음 단계로 넘어간다.",
+          "feedback": "박수보다 질문이 먼저 나왔다. 왜 그 업체인지 설명할 기록이 충분하지 않다.",
+          "delta": {
+            "time": 4,
+            "trust": -12,
+            "quality": -7
+          },
+          "next": "m_award",
+          "setFlags": [
+            "premature_award"
+          ],
+          "knowledge": {
+            "title": "어떤 계약의 어떤 선정방법인가",
+            "body": "국가가 대가를 지급하는 계약은 해당 법령과 공고에 따른 낙찰자 결정방법을 적용한다. 모든 계약을 최저가격 한 가지만으로 결정한다고 단정하거나, 공고에 없는 선호를 선정 기준으로 바꾸지 않는다.",
+            "atomId": "A1114",
+            "sourceUrl": "https://www.law.go.kr/lsInfoP.do?lsiSeq=283877",
+            "sourceChecked": "2026-09-16"
+          }
+        }
+      ]
+    },
+    {
+      "id": "m_award",
+      "chapter": "selection",
+      "title": "기록이 말을 대신할 때",
+      "location": "결정 자료 정리실",
+      "speaker": "계약담당자",
+      "text": [
+        "업체를 선정하는 절차가 마무리되고 계약 준비가 시작된다. 게임 속 선정업체는 새봄기술이다.",
+        "계약담당자가 자료철을 돌려준다. “결과만 있으면 다음 사람이 따라오지 못해요. 판단의 근거도 이어 주세요.”",
+        "선정 전에 미처 확인하지 못한 문제가 있다면, 여기서 그냥 완료 도장을 찍을 수는 없다."
+      ],
+      "scene": "office",
+      "choices": [
+        {
+          "id": "handover",
+          "label": "근거와 미해결 쟁점을 확인해 계약담당자에게 넘긴다",
+          "hint": "누락이 있으면 권한 있는 담당자의 검토를 받는다.",
+          "feedback": "결정 근거와 남은 검토 항목이 한 문서로 모였다. 계약 준비가 같은 기록에서 시작된다.",
+          "delta": {
+            "time": -3,
+            "trust": 6,
+            "quality": 4
+          },
+          "next": "m_contract",
+          "setFlags": [
+            "selection_documented"
+          ]
+        },
+        {
+          "id": "result",
+          "label": "선정 결과와 연락처만 전달한다",
+          "hint": "다음 사람이 앞의 맥락을 다시 찾아야 한다.",
+          "feedback": "연락은 빨랐다. 하지만 협의 중 질문이 나올 때마다 이전 자료를 뒤지게 됐다.",
+          "delta": {
+            "time": 2,
+            "trust": -4
+          },
+          "next": "m_contract",
+          "setFlags": [
+            "thin_handover"
+          ]
+        }
+      ]
+    },
+    {
+      "id": "m_contract",
+      "chapter": "contract",
+      "title": "구두 약속이 쌓인 책상",
+      "location": "계약 협의실",
+      "speaker": "새봄기술 사장님",
+      "text": [
+        "“24대와 충전함은 맞습니다. 그런데 교사 교육과 결과 자료 전달은 어느 범위까지인가요?”",
+        "사장님이 묻자 하린도 멈칫한다. 회의에서 했던 말과 계약 초안 사이에 작은 틈이 있다.",
+        "당신은 실무 조율을 맡고, 계약의 확정은 권한 있는 담당자와 상대방의 절차로 진행한다."
+      ],
+      "scene": "meeting",
+      "choices": [
+        {
+          "id": "write",
+          "label": "범위·일정·책임과 필요한 조건을 문서로 맞춘다",
+          "hint": "계약담당자가 계약을 확정할 근거를 만든다.",
+          "feedback": "교육과 인계 범위까지 확인한 계약 문서가 완성됐다. 서로 같은 약속을 보게 되었다.",
+          "delta": {
+            "time": -3,
+            "trust": 7,
+            "quality": 7
+          },
+          "next": "m_handoff",
+          "setFlags": [
+            "contract_clear"
+          ],
+          "knowledge": {
+            "title": "약속의 빈칸을 남기지 않기",
+            "body": "국가계약서를 작성할 때에는 목적·금액·이행기간·계약보증금·위험부담·지체상금 등 필요한 사항을 명백히 기재한다. 해당 공무원과 계약상대자가 기명날인하거나 서명하여 계약을 확정한다. 법령상 계약서 작성 생략 사유는 별도로 판단한다.",
+            "atomId": "A1072",
+            "sourceUrl": "https://www.law.go.kr/lsInfoP.do?lsiSeq=283877",
+            "sourceChecked": "2026-09-16"
+          }
+        },
+        {
+          "id": "verbal",
+          "label": "제작부터 시작하고 자세한 조건은 통화로 맞춘다",
+          "hint": "빈칸이 이행 현장으로 이동한다.",
+          "feedback": "새봄기술은 출발했지만 무엇까지 약속했는지 서로 다르게 기억했다. 제작 전에 다시 만날 일이 생겼다.",
+          "delta": {
+            "time": 5,
+            "trust": -7,
+            "quality": -6
+          },
+          "next": "m_rushed",
+          "setFlags": [
+            "verbal_order"
+          ],
+          "knowledge": {
+            "title": "약속의 빈칸을 남기지 않기",
+            "body": "국가계약서를 작성할 때에는 목적·금액·이행기간·계약보증금·위험부담·지체상금 등 필요한 사항을 명백히 기재한다. 해당 공무원과 계약상대자가 기명날인하거나 서명하여 계약을 확정한다. 법령상 계약서 작성 생략 사유는 별도로 판단한다.",
+            "atomId": "A1072",
+            "sourceUrl": "https://www.law.go.kr/lsInfoP.do?lsiSeq=283877",
+            "sourceChecked": "2026-09-16"
+          }
+        }
+      ]
+    },
+    {
+      "id": "m_handoff",
+      "chapter": "contract",
+      "title": "같은 문서를 다르게 읽는 사람들",
+      "location": "제작 착수 회의",
+      "speaker": "서윤 · 새봄기술 제품·품질 담당",
+      "text": [
+        "서윤은 측정 정확도를, 하린은 수업 흐름을, 민호는 보관함을 먼저 본다.",
+        "“장비가 움직이는 것과 교실이 움직이는 것은 다르군요.” 서윤이 빈 인계표를 펼친다.",
+        "공급자와 운영자가 함께 확인할 장면을 지금 정할 수 있다."
+      ],
+      "scene": "workshop",
+      "choices": [
+        {
+          "id": "rehearsal",
+          "label": "계약 범위 안에서 시연·교육·인계 순서를 맞춘다",
+          "hint": "누가 무엇을 확인할지 분명히 한다.",
+          "feedback": "제작과 운영을 잇는 작은 지도가 생겼다. 하린은 나중에 확인할 장면을 기억해 뒀다.",
+          "delta": {
+            "time": -2,
+            "quality": 8,
+            "trust": 5
+          },
+          "next": "m_workshop",
+          "setFlags": [
+            "handoff_ready"
+          ]
+        },
+        {
+          "id": "deliveryonly",
+          "label": "납품 장소와 날짜만 전달한다",
+          "hint": "세부 확인은 납품 당일에 모인다.",
+          "feedback": "운송 준비는 끝났다. 사용 설명과 운영 인계의 빈칸은 아직 남아 있다.",
+          "delta": {
+            "time": 4,
+            "quality": -5
+          },
+          "next": "m_workshop",
+          "setFlags": [
+            "handoff_gap"
+          ]
+        }
+      ]
+    },
+    {
+      "id": "m_workshop",
+      "chapter": "performance",
+      "title": "창문을 열 수 없는 날",
+      "location": "키트 제작 현장",
+      "speaker": "서윤 · 새봄기술 제품·품질 담당",
+      "text": [
+        "시범수업 날 강한 비가 내려 교실 창문을 열 수 없었다. 계획했던 야외 관측 대신 실내·복도를 오가는 수업이 필요해졌다.",
+        "하린이 말한다. “추가 화면과 이동 가방이 있으면 좋겠어요. 처음 약속에 들어 있었나요?”",
+        "좋은 아이디어가 생겼다고 해서 비용과 일정이 저절로 사라지는 것은 아니다."
+      ],
+      "scene": "workshop",
+      "choices": [
+        {
+          "id": "scope",
+          "label": "원래 범위와 새 요구를 구분해 영향부터 묻는다",
+          "hint": "계약 변경 여부를 판단할 재료를 모은다.",
+          "feedback": "새 기능, 비용, 일정의 관계가 보이기 시작했다. 필요한 것과 있으면 좋은 것을 나눌 수 있다.",
+          "delta": {
+            "time": -2,
+            "quality": 5,
+            "trust": 4
+          },
+          "next": "m_change",
+          "setFlags": [
+            "change_assessed"
+          ]
+        },
+        {
+          "id": "extra",
+          "label": "같은 예산으로 다 넣어 달라고 먼저 요구한다",
+          "hint": "상대방이 감당할 범위는 아직 모른다.",
+          "feedback": "새봄기술이 작업을 멈추고 목록을 보냈다. 처음 약속보다 할 일이 늘어났다는 설명이었다.",
+          "delta": {
+            "time": 2,
+            "trust": -9
+          },
+          "next": "m_rushed",
+          "setFlags": [
+            "free_extra"
+          ],
+          "knowledge": {
+            "title": "추가 요구에도 대등한 합의가 필요하다",
+            "body": "계약변경을 협의할 때도 신의성실과 부당특약 금지 원칙이 적용된다. 발주기관이라는 이유만으로 계약상 이익을 부당하게 제한할 수 없다. 구체적인 변경 가능 여부와 절차는 해당 계약·법령을 별도로 확인한다.",
+            "atomId": "A1213",
+            "sourceUrl": "https://www.law.go.kr/lsInfoP.do?lsiSeq=283877",
+            "sourceChecked": "2026-09-16"
+          }
+        }
+      ]
+    },
+    {
+      "id": "m_change",
+      "chapter": "performance",
+      "title": "모두에게 좋은 부탁일까",
+      "location": "변경 검토 회의",
+      "speaker": "새봄기술 사장님",
+      "text": [
+        "“이 기능은 할 수 있어요. 다만 추가 설계와 교육 시간이 듭니다.” 사장님이 작업표를 보여 준다.",
+        "하린은 두 가지를 표시한다. 지금 수업에 필요한 것, 다음 사업에서 검토해도 되는 것.",
+        "당신은 변경 가능 여부와 적용 절차를 계약담당자에게 확인할 수 있다. 요구를 적는 것과 변경이 확정되는 것은 다른 일이다."
+      ],
+      "scene": "meeting",
+      "choices": [
+        {
+          "id": "agree",
+          "label": "필수 사항만 추려 비용·일정·절차를 확인한다",
+          "hint": "가능한 변경은 근거를 갖춰 합의한다.",
+          "feedback": "허용되는 범위의 변경을 문서로 확정하고 나머지는 다음 개선 과제로 남겼다. 작업이 다시 움직였다.",
+          "delta": {
+            "money": -5,
+            "time": -4,
+            "quality": 9,
+            "trust": 6
+          },
+          "next": "m_delivery",
+          "setFlags": [
+            "change_clear"
+          ],
+          "knowledge": {
+            "title": "추가 요구에도 대등한 합의가 필요하다",
+            "body": "계약변경을 협의할 때도 신의성실과 부당특약 금지 원칙이 적용된다. 발주기관이라는 이유만으로 계약상 이익을 부당하게 제한할 수 없다. 구체적인 변경 가능 여부와 절차는 해당 계약·법령을 별도로 확인한다.",
+            "atomId": "A1213",
+            "sourceUrl": "https://www.law.go.kr/lsInfoP.do?lsiSeq=283877",
+            "sourceChecked": "2026-09-16"
+          }
+        },
+        {
+          "id": "original",
+          "label": "원래 계약을 이행하고 추가 기능은 다음 과제로 남긴다",
+          "hint": "현재 목적을 달성할 대안을 운영팀과 맞춘다.",
+          "feedback": "운영팀이 기존 기능으로 가능한 수업을 설계했다. 업체에 약속 밖의 부담을 넘기지 않았다.",
+          "delta": {
+            "money": 3,
+            "quality": 3,
+            "trust": 4
+          },
+          "next": "m_delivery",
+          "setFlags": [
+            "original_scope_kept"
+          ],
+          "knowledge": {
+            "title": "추가 요구에도 대등한 합의가 필요하다",
+            "body": "계약변경을 협의할 때도 신의성실과 부당특약 금지 원칙이 적용된다. 발주기관이라는 이유만으로 계약상 이익을 부당하게 제한할 수 없다. 구체적인 변경 가능 여부와 절차는 해당 계약·법령을 별도로 확인한다.",
+            "atomId": "A1213",
+            "sourceUrl": "https://www.law.go.kr/lsInfoP.do?lsiSeq=283877",
+            "sourceChecked": "2026-09-16"
+          }
+        },
+        {
+          "id": "insist",
+          "label": "개장 지원이라며 추가 기능을 무상으로 밀어붙인다",
+          "hint": "관계와 일정에 부담이 쌓인다.",
+          "feedback": "서윤의 작업표에 지울 수 없는 공백이 생겼다. 누가 이 일을 부담할지 다시 정해야 한다.",
+          "delta": {
+            "trust": -10,
+            "quality": -5
+          },
+          "next": "m_rushed",
+          "setFlags": [
+            "free_extra"
+          ],
+          "knowledge": {
+            "title": "추가 요구에도 대등한 합의가 필요하다",
+            "body": "계약변경을 협의할 때도 신의성실과 부당특약 금지 원칙이 적용된다. 발주기관이라는 이유만으로 계약상 이익을 부당하게 제한할 수 없다. 구체적인 변경 가능 여부와 절차는 해당 계약·법령을 별도로 확인한다.",
+            "atomId": "A1213",
+            "sourceUrl": "https://www.law.go.kr/lsInfoP.do?lsiSeq=283877",
+            "sourceChecked": "2026-09-16"
+          }
+        }
+      ]
+    },
+    {
+      "id": "m_rushed",
+      "chapter": "performance",
+      "title": "누가 기억하는 약속이 맞을까",
+      "location": "멈춘 제작대 앞",
+      "speaker": "서윤 · 새봄기술 제품·품질 담당",
+      "text": [
+        "제작대 한쪽은 완성품, 다른 쪽은 보류된 작업으로 나뉘었다. 통화 메모마다 범위가 조금씩 다르다.",
+        "서윤이 말한다. “할 일을 정해 주시면 책임지고 만들게요. 지금은 어떤 약속이 마지막 약속인지 모르겠어요.”",
+        "당신 앞에 회복할 기회가 있다. 일정의 일부를 쓰면 서로의 문서를 다시 맞출 수 있다."
+      ],
+      "scene": "workshop",
+      "choices": [
+        {
+          "id": "reset",
+          "label": "계약담당자와 범위·이행 조건을 다시 정리한다",
+          "hint": "필요한 검토와 합의 뒤 제작을 재개한다.",
+          "feedback": "불분명한 주문을 정리했다. 근거를 갖춰 확정한 범위에서 제작과 인계를 진행하기로 했다.",
+          "delta": {
+            "time": -9,
+            "money": -4,
+            "quality": 9,
+            "trust": 10
+          },
+          "next": "m_delivery",
+          "setFlags": [
+            "contract_clear",
+            "change_recovered"
+          ],
+          "knowledge": {
+            "title": "추가 요구에도 대등한 합의가 필요하다",
+            "body": "계약변경을 협의할 때도 신의성실과 부당특약 금지 원칙이 적용된다. 발주기관이라는 이유만으로 계약상 이익을 부당하게 제한할 수 없다. 구체적인 변경 가능 여부와 절차는 해당 계약·법령을 별도로 확인한다.",
+            "atomId": "A1213",
+            "sourceUrl": "https://www.law.go.kr/lsInfoP.do?lsiSeq=283877",
+            "sourceChecked": "2026-09-16"
+          }
+        },
+        {
+          "id": "push",
+          "label": "구두로 다시 약속받고 납품부터 재촉한다",
+          "hint": "서류와 제품 사이의 차이를 뒤로 미룬다.",
+          "feedback": "트럭 날짜는 잡혔다. 누가 어떤 제품을 확인할지는 여전히 한 문서로 이어지지 않았다.",
+          "delta": {
+            "time": 4,
+            "trust": -8,
+            "quality": -9
+          },
+          "next": "m_delivery",
+          "setFlags": [
+            "unresolved_delivery"
+          ],
+          "knowledge": {
+            "title": "동등한 당사자의 약속",
+            "body": "국가계약도 대등한 지위의 합의와 신의성실을 바탕으로 한다. 계약상대자의 법령상 이익을 부당하게 제한하는 특약은 서명을 받았다는 이유만으로 유효해지지 않는다.",
+            "atomId": "A1187",
+            "sourceUrl": "https://www.law.go.kr/lsInfoP.do?lsiSeq=283877",
+            "sourceChecked": "2026-09-16"
+          }
+        }
+      ]
+    },
+    {
+      "id": "m_delivery",
+      "chapter": "inspection",
+      "title": "파란 상자 스물네 개",
+      "location": "과학관 하역장",
+      "speaker": "민호 · 운영 지원",
+      "text": [
+        "파란 상자 24개가 들어왔다. 숫자는 맞지만 상자마다 구성품과 장비 식별표를 확인해야 한다.",
+        "민호가 커터를 들고 묻는다. “다 왔으니까 끝난 건가요?”",
+        "하린은 계약 문서, 서윤은 출고 기록을 가져왔다. 같은 상자를 다른 기록과 맞춰 볼 시간이다."
+      ],
+      "scene": "delivery",
+      "choices": [
+        {
+          "id": "trace",
+          "label": "수량·식별표·구성품을 계약 자료와 대조한다",
+          "hint": "도착 기록과 검사 준비를 연결한다.",
+          "feedback": "서로 같은 장비를 가리키는 목록이 생겼다. 상자 수와 계약 이행은 구별된다는 것을 팀이 확인했다.",
+          "delta": {
+            "time": -3,
+            "quality": 7,
+            "trust": 4
+          },
+          "next": "m_inspect",
+          "setFlags": [
+            "delivery_checked"
+          ]
+        },
+        {
+          "id": "boxes",
+          "label": "상자 수만 세고 교실로 옮긴다",
+          "hint": "겉으로 보이는 납품만 먼저 확인한다.",
+          "feedback": "복도는 비었지만 구성품 기록은 비어 있다. 문제가 생기면 어느 상자였는지 다시 찾아야 한다.",
+          "delta": {
+            "time": 4,
+            "quality": -6
+          },
+          "next": "m_inspect",
+          "setFlags": [
+            "delivery_unchecked"
+          ]
+        }
+      ]
+    },
+    {
+      "id": "m_inspect",
+      "chapter": "inspection",
+      "title": "켜진 화면, 다른 결과",
+      "location": "환경교실 검사 자리",
+      "speaker": "하린 · 환경교실 운영 담당",
+      "text": [
+        "전원은 켜진다. 다만 수업용 기록 파일을 옮기는 과정은 설명서만 읽고 확신하기 어렵다.",
+        "하린이 말한다. “우리가 확인하기로 한 방식대로 해 봐야겠어요. 화면이 켜지는 것만으로는 수업이 되는지 모르겠네요.”",
+        "공고·계약에서 정한 요구와 적용 검사 절차를 바탕으로 담당자가 결과를 확인하는 장면이다."
+      ],
+      "scene": "inspection",
+      "choices": [
+        {
+          "id": "confirm",
+          "label": "대조 기록을 바탕으로 기능·인계 사항까지 확인한다",
+          "hint": "준비된 자료와 완성도가 확인을 돕는다.",
+          "feedback": "장비와 기록을 대조해 필요한 확인을 마쳤다. 담당자의 검사 결과가 대금 절차로 이어질 수 있게 됐다.",
+          "delta": {
+            "time": -3,
+            "quality": 6,
+            "trust": 6
+          },
+          "next": "m_payment",
+          "setFlags": [
+            "inspected"
+          ],
+          "requires": {
+            "allFlags": [
+              "delivery_checked"
+            ],
+            "min": {
+              "quality": 55
+            }
+          }
+        },
+        {
+          "id": "diagnose",
+          "label": "업체와 운영팀을 불러 차이를 하나씩 확인한다",
+          "hint": "자료가 부족해도 원인을 찾는 길은 열려 있다.",
+          "feedback": "작은 기능 차이와 설명의 빈칸을 분리했다. 무엇을 보완해야 하는지 공동 목록을 만들었다.",
+          "delta": {
+            "time": -5,
+            "trust": 4
+          },
+          "next": "m_repair",
+          "setFlags": [
+            "inspection_started"
+          ]
+        },
+        {
+          "id": "skip",
+          "label": "개장 준비를 위해 확인되지 않은 부분도 완료로 넘긴다",
+          "hint": "빈칸은 이용자에게 넘어간다.",
+          "feedback": "준비실은 잠시 조용해졌다. 그러나 교실에서 같은 문제가 다시 나타났고, 완료 기록을 믿을 수 없게 됐다.",
+          "delta": {
+            "time": 5,
+            "quality": -14,
+            "trust": -14
+          },
+          "next": "m_payment",
+          "setFlags": [
+            "unchecked_acceptance"
+          ]
+        }
+      ]
+    },
+    {
+      "id": "m_repair",
+      "chapter": "inspection",
+      "title": "작은 나사의 반격",
+      "location": "과학관 작업실",
+      "speaker": "서윤 · 새봄기술 제품·품질 담당",
+      "text": [
+        "한 상자는 안내서가 빠졌고, 다른 장비는 약속한 기록 형식과 설정이 달랐다.",
+        "서윤이 말한다. “어떤 상태를 확인해야 통과인지 이제 알겠어요. 보완 결과도 같이 보여 드릴게요.”",
+        "이야기 속 보완은 합의된 범위와 담당자의 확인을 전제로 한다. 게임 자원 감소는 법정 벌금이나 제재가 아니다."
+      ],
+      "scene": "workshop",
+      "choices": [
+        {
+          "id": "fix",
+          "label": "보완 항목·담당·재확인 방법을 남기고 기다린다",
+          "hint": "고친 사실과 확인한 사실을 구분한다.",
+          "feedback": "서윤이 보완 결과를 정리해 돌아왔다. 하린도 동일한 수업 장면으로 다시 확인할 준비를 마쳤다.",
+          "delta": {
+            "money": -5,
+            "time": -7,
+            "quality": 12,
+            "trust": 6
+          },
+          "next": "m_reinspect",
+          "setFlags": [
+            "repair_documented"
+          ]
+        },
+        {
+          "id": "defer",
+          "label": "무리한 개장 대신 일정 조정안을 요청한다",
+          "hint": "지금 가능한 상태를 솔직히 알린다.",
+          "feedback": "개장 책임자에게 현황과 필요한 시간을 설명했다. 수업을 미루더라도 문제를 숨기지 않는 방향을 택했다.",
+          "delta": {
+            "trust": 6,
+            "time": 3
+          },
+          "next": "m_recover",
+          "setFlags": [
+            "deferred"
+          ]
+        }
+      ]
+    },
+    {
+      "id": "m_reinspect",
+      "chapter": "inspection",
+      "title": "다시 켜 보는 이유",
+      "location": "환경교실 검사 자리",
+      "speaker": "하린 · 환경교실 운영 담당",
+      "text": [
+        "서윤이 ‘수정 완료’라는 메모를 내민다. 하린은 메모 대신 키트를 어린이 책상 위에 놓는다.",
+        "“고맙습니다. 이제 같은 장면을 다시 해 볼게요.”",
+        "보완했다는 말과 계약 목적에 맞게 확인됐다는 기록 사이에 마지막 한 걸음이 남았다."
+      ],
+      "scene": "inspection",
+      "choices": [
+        {
+          "id": "verify",
+          "label": "보완한 항목을 재확인하고 결과를 남긴다",
+          "hint": "남은 문제까지 확인할 수 있는 상태다.",
+          "feedback": "교실의 사용 장면과 계약 요구를 다시 대조했다. 필요한 검사와 기록을 마치고 다음 절차로 넘어간다.",
+          "delta": {
+            "time": -4,
+            "quality": 5,
+            "trust": 7
+          },
+          "next": "m_payment",
+          "setFlags": [
+            "inspected"
+          ],
+          "requires": {
+            "allFlags": [
+              "repair_documented"
+            ],
+            "min": {
+              "quality": 45
+            }
+          }
+        },
+        {
+          "id": "hold",
+          "label": "남은 쟁점을 정리하고 개장 조정을 협의한다",
+          "hint": "완료를 선언하기 어려우면 숨기지 않는다.",
+          "feedback": "보완 기록에 미해결 항목을 남겼다. 개장 일정과 대금 처리 범위를 담당자와 따로 검토하기로 했다.",
+          "delta": {
+            "time": -3,
+            "trust": 5
+          },
+          "next": "m_recover",
+          "setFlags": [
+            "deferred"
+          ]
+        }
+      ]
+    },
+    {
+      "id": "m_payment",
+      "chapter": "payment",
+      "title": "완료 버튼 뒤에 남은 사람",
+      "location": "대금 처리 책상",
+      "speaker": "새봄기술 사장님",
+      "text": [
+        "“제작팀 인건비와 부품대금 일정이 있어서요. 청구 자료가 더 필요한지 알려 주세요.” 사장님의 연락이 왔다.",
+        "민호가 개장식 뒤로 서류를 모으자고 한다. 당신의 책상에는 검사 기록과 청구 자료가 나란히 놓여 있다.",
+        "공급자가 기다리는 대금 역시 사업의 한 부분이다."
+      ],
+      "scene": "office",
+      "choices": [
+        {
+          "id": "process",
+          "label": "검사·청구 자료와 적용 기한을 확인해 지급 절차를 잇는다",
+          "hint": "권한 있는 담당자가 필요한 절차를 처리한다.",
+          "feedback": "검사 완료와 청구 수령을 구분해 확인했다. 이 이야기에서는 정당한 대금의 지급 절차까지 마무리됐다.",
+          "delta": {
+            "time": -2,
+            "trust": 8
+          },
+          "next": "m_closing",
+          "setFlags": [
+            "payment_checked"
+          ],
+          "knowledge": {
+            "title": "납품·검사·청구의 시점을 구분하기",
+            "body": "국가계약의 대금 지급에서는 최종 대가와 기성·기납 대가, 검사 완료와 청구 수령 시점을 구분한다. 적용 지급기한·기간 계산·특례는 시행령 제58조에 따라 확인한다. 개장식 날짜를 임의의 지급 기준일로 삼지 않는다.",
+            "atomId": "A1266",
+            "sourceUrl": "https://www.law.go.kr/lsInfoP.do?lsiSeq=285893",
+            "sourceChecked": "2026-09-16"
+          },
+          "requires": {
+            "allFlags": [
+              "inspected"
+            ]
+          }
+        },
+        {
+          "id": "resolve",
+          "label": "누락·불일치를 정리하고 처리 계획을 당사자에게 알린다",
+          "hint": "자료가 부족한 상태에서도 할 수 있는 조치다.",
+          "feedback": "대금 처리에 무엇이 남았는지 함께 확인했다. 검사를 건너뛴 부분이 있다면 완료 기록부터 바로잡기로 했다.",
+          "delta": {
+            "time": -5,
+            "trust": 4
+          },
+          "next": "m_recover",
+          "setFlags": [
+            "payment_issue_recorded"
+          ],
+          "knowledge": {
+            "title": "납품·검사·청구의 시점을 구분하기",
+            "body": "국가계약의 대금 지급에서는 최종 대가와 기성·기납 대가, 검사 완료와 청구 수령 시점을 구분한다. 적용 지급기한·기간 계산·특례는 시행령 제58조에 따라 확인한다. 개장식 날짜를 임의의 지급 기준일로 삼지 않는다.",
+            "atomId": "A1266",
+            "sourceUrl": "https://www.law.go.kr/lsInfoP.do?lsiSeq=285893",
+            "sourceChecked": "2026-09-16"
+          }
+        },
+        {
+          "id": "later",
+          "label": "개장식이 끝난 뒤 서류를 모으자고 미룬다",
+          "hint": "당장의 일은 줄지만 상대방은 기다린다.",
+          "feedback": "새봄기술의 일정이 흔들렸다. 개장 준비라는 이유가 지급 절차를 임의로 미룰 근거가 되는 것은 아니다.",
+          "delta": {
+            "time": 3,
+            "trust": -14
+          },
+          "next": "m_closing",
+          "setFlags": [
+            "payment_delayed"
+          ],
+          "knowledge": {
+            "title": "납품·검사·청구의 시점을 구분하기",
+            "body": "국가계약의 대금 지급에서는 최종 대가와 기성·기납 대가, 검사 완료와 청구 수령 시점을 구분한다. 적용 지급기한·기간 계산·특례는 시행령 제58조에 따라 확인한다. 개장식 날짜를 임의의 지급 기준일로 삼지 않는다.",
+            "atomId": "A1266",
+            "sourceUrl": "https://www.law.go.kr/lsInfoP.do?lsiSeq=285893",
+            "sourceChecked": "2026-09-16"
+          }
+        }
+      ]
+    },
+    {
+      "id": "m_recover",
+      "chapter": "payment",
+      "title": "보류를 설명하는 용기",
+      "location": "상황 공유 회의실",
+      "speaker": "개장 준비 책임자",
+      "text": [
+        "당신은 ‘완료’라고 적히지 않은 보고서를 올려놓았다. 확인된 것, 미해결 항목, 담당자, 다음 조치가 구분되어 있다.",
+        "책임자가 묻는다. “그럼 무엇을 미루고, 무엇을 계속 진행할 수 있나요?”",
+        "일정 조정과 검사·대금 처리는 각각 적용 요건에 따라 검토한다. 사업을 미룬다는 이유로 모든 지급을 묶는 설정은 아니다."
+      ],
+      "scene": "meeting",
+      "choices": [
+        {
+          "id": "accountable",
+          "label": "운영 일정을 조정하고 미해결 계약 사항을 담당자와 처리한다",
+          "hint": "시민·운영팀·업체에게 같은 현황을 알린다.",
+          "feedback": "개장에 대한 기대를 조정했다. 확인되지 않은 이행과 지급 사항은 담당자를 정해 끝까지 추적한다.",
+          "delta": {
+            "trust": 8,
+            "time": -3,
+            "quality": 3
+          },
+          "next": "m_closing",
+          "setFlags": [
+            "deferred",
+            "recovery_plan"
+          ]
+        },
+        {
+          "id": "minimize",
+          "label": "외부에는 준비 중이라고만 알리고 내부에서 해결한다",
+          "hint": "설명은 적지만 불확실성은 남는다.",
+          "feedback": "문의가 서로 다른 창구로 쌓였다. 내부 목록은 생겼지만 이용자와 업체가 다음 일을 알기 어렵다.",
+          "delta": {
+            "trust": -6,
+            "time": 2
+          },
+          "next": "m_closing",
+          "setFlags": [
+            "quiet_recovery"
+          ]
+        }
+      ]
+    },
+    {
+      "id": "m_closing",
+      "chapter": "payment",
+      "title": "개장 전날의 빈 의자",
+      "location": "환경교실 앞",
+      "speaker": "하린 · 환경교실 운영 담당",
+      "text": [
+        "의자마다 작은 관찰 수첩이 놓였다. 하지만 개장 가능 여부와 계약 처리 상태는 기분으로 정할 수 없다.",
+        "하린이 묻는다. “오늘 우리에게 필요한 건 축하 문구일까요, 정확한 안내일까요?”",
+        "앞에서 남긴 기록을 바탕으로 이용자에게 무엇을 약속할지 선택한다."
+      ],
+      "scene": "meeting",
+      "choices": [
+        {
+          "id": "open",
+          "label": "확인한 장비와 운영 인계로 수업을 시작한다",
+          "hint": "검사와 대금 처리를 마친 경로다.",
+          "feedback": "교실 문을 열었다. 하린은 확인된 사용 범위로 첫 수업을 진행하고, 당신은 사후관리 기록을 펼쳤다.",
+          "delta": {
+            "trust": 5,
+            "quality": 3
+          },
+          "next": "m_community",
+          "setFlags": [
+            "service_opened"
+          ],
+          "requires": {
+            "allFlags": [
+              "inspected",
+              "payment_checked"
+            ]
+          }
+        },
+        {
+          "id": "disclose",
+          "label": "현재 상태와 다음 확인 시점을 공개한다",
+          "hint": "진행 중인 문제까지 같은 말로 설명한다.",
+          "feedback": "이용자에게 가능한 일과 아직 기다려야 할 일을 구분해 알렸다. 팀도 같은 안내를 사용하게 됐다.",
+          "delta": {
+            "trust": 6
+          },
+          "next": "m_community",
+          "setFlags": [
+            "status_disclosed"
+          ]
+        },
+        {
+          "id": "promote",
+          "label": "미해결 내용은 빼고 성공 소식부터 알린다",
+          "hint": "기대와 실제 상태의 차이가 커진다.",
+          "feedback": "홍보 문구는 반짝였지만 문의는 더 구체적이었다. 설명하지 않은 빈칸이 다음 업무가 되었다.",
+          "delta": {
+            "trust": -12,
+            "quality": -3
+          },
+          "next": "m_community",
+          "setFlags": [
+            "premature_promotion"
+          ]
+        }
+      ]
+    },
+    {
+      "id": "m_community",
+      "chapter": "aftercare",
+      "title": "초록색 바람의 다음 페이지",
+      "location": "과학관 작은 회고 모임",
+      "speaker": "하린 · 환경교실 운영 담당",
+      "text": [
+        "처음 받았던 그림을 다시 펼친다. 아이가 그린 초록색 바람 옆에는 이제 어른들이 남긴 확인 기록이 쌓여 있다.",
+        "“다음 교실에서는 무엇부터 할까요?” 하린의 질문에 새봄기술과 운영팀도 귀를 기울인다.",
+        "이번 계약의 결말은 마지막 문장 하나가 아니라, 당신이 지나온 선택이 결정한다."
+      ],
+      "scene": "celebration",
+      "choices": [
+        {
+          "id": "debrief",
+          "label": "운영팀·업체와 첫 계약의 회고를 연다",
+          "hint": "검사와 대금 절차를 마친 경로.",
+          "feedback": "마무리한 계약을 함께 돌아볼 자리를 만들었다. 다음 팀에 무엇을 남길지 고를 차례다.",
+          "delta": {},
+          "next": "m_debrief",
+          "setFlags": [
+            "debrief_opened"
+          ],
+          "requires": {
+            "allFlags": [
+              "inspected",
+              "payment_checked"
+            ],
+            "min": {
+              "quality": 40
+            }
+          }
+        },
+        {
+          "id": "responsible",
+          "label": "조정한 일정을 지키며 미해결 항목을 끝까지 추적한다",
+          "hint": "문제를 공개하고 개장을 조정한 경로.",
+          "feedback": "당장의 축하 대신 책임 있는 다음 약속을 택했다. 업체와 시민이 같은 진행 상황을 볼 수 있게 했다.",
+          "delta": {
+            "trust": 3
+          },
+          "next": "m_end_responsible",
+          "setFlags": [
+            "responsible_followup"
+          ],
+          "requires": {
+            "allFlags": [
+              "deferred",
+              "status_disclosed"
+            ]
+          }
+        },
+        {
+          "id": "rebuild",
+          "label": "최종 정리 전에 검사·지급·안내 기록을 다시 점검한다",
+          "hint": "어떤 경로에서도 다시 세울 수 있다.",
+          "feedback": "마친 일과 확인이 더 필요한 일을 나누어 다시 펼쳤다. 이미 적법하게 마친 절차까지 되돌리는 선택은 아니다.",
+          "delta": {},
+          "next": "m_end_rebuild",
+          "setFlags": [
+            "rebuild_plan"
+          ]
+        }
+      ]
+    },
+    {
+      "id": "m_debrief",
+      "chapter": "aftercare",
+      "title": "계약이 남긴 세 가지 다음 길",
+      "location": "환경교실 회고 자리",
+      "speaker": "하린 · 환경교실 운영 담당",
+      "text": [
+        "필요한 검사와 대금 절차를 마치고 회고 자리에 앉았다. 계약 하나는 끝났지만 다음 교실을 위해 할 일은 남아 있다.",
+        "하린은 수업 일지를, 서윤은 제품 점검표를 펼친다. 당신은 이번에 얻은 경험을 어디까지 이어 갈지 결정한다."
+      ],
+      "scene": "celebration",
+      "choices": [
+        {
+          "id": "share",
+          "label": "검증한 사용 사례와 관리 기록을 다음 팀에 전한다",
+          "hint": "수요부터 인계까지 이어 낸 경로.",
+          "feedback": "한 번의 구매가 다음 사업의 시작 자료가 됐다. 누가 읽어도 판단의 이유를 따라갈 수 있다.",
+          "delta": {
+            "trust": 3
+          },
+          "next": "m_end_master",
+          "setFlags": [
+            "shared_playbook"
+          ],
+          "requires": {
+            "allFlags": [
+              "inspected",
+              "payment_checked",
+              "field_notes",
+              "handoff_ready",
+              "transparent_answers"
+            ],
+            "min": {
+              "trust": 70,
+              "quality": 75
+            }
+          }
+        },
+        {
+          "id": "partners",
+          "label": "운영팀과 업체가 함께 점검할 개선 목록을 만든다",
+          "hint": "이행과 지급, 인계를 마친 경로.",
+          "feedback": "서윤은 장비의 질문을, 하린은 수업의 질문을 적었다. 두 목록이 다음 점검에서 만날 약속을 잡았다.",
+          "delta": {
+            "trust": 3
+          },
+          "next": "m_end_partner",
+          "setFlags": [
+            "aftercare_team"
+          ],
+          "requires": {
+            "allFlags": [
+              "inspected",
+              "payment_checked",
+              "handoff_ready"
+            ],
+            "min": {
+              "trust": 50,
+              "quality": 55
+            }
+          }
+        },
+        {
+          "id": "finish",
+          "label": "남은 운영 과제를 인계하고 첫 계약을 닫는다",
+          "hint": "검사와 대금 절차를 마친 경로.",
+          "feedback": "수업을 이어 갈 담당자에게 기록을 넘겼다. 아쉬운 선택도 회고에 남겨 다음 업무의 기준으로 삼았다.",
+          "delta": {},
+          "next": "m_end_finish",
+          "setFlags": [
+            "closed_record"
+          ]
+        }
+      ]
+    },
+    {
+      "id": "m_end_master",
+      "chapter": "aftercare",
+      "title": "모두의 교실을 만든 설계자",
+      "location": "국립새봄과학관",
+      "speaker": "당신의 계약 기록",
+      "text": [
+        "아이들의 작은 손에서 시작한 요구가 공정한 안내, 분명한 계약, 확인된 이행과 대금 지급으로 이어졌다. 환경교실을 운영할 준비를 갖췄고, 당신의 기록은 다음 조달을 돕는 지도가 되었다.",
+        "하린이 첫날의 그림을 다시 꺼낸다. 초록색 바람 아래에 작은 글씨가 더해져 있다. “다음 교실도 함께 준비해요.” 당신은 새 노트의 첫 장을 펼친다."
+      ],
+      "scene": "celebration",
+      "choices": [],
+      "ending": {
+        "id": "master",
+        "title": "모두의 교실을 만든 설계자",
+        "body": "아이들의 작은 손에서 시작한 요구가 공정한 안내, 분명한 계약, 확인된 이행과 대금 지급으로 이어졌다. 환경교실을 운영할 준비를 갖췄고, 당신의 기록은 다음 조달을 돕는 지도가 되었다.",
+        "badge": "모두의 교실"
+      }
+    },
+    {
+      "id": "m_end_partner",
+      "chapter": "aftercare",
+      "title": "다음 수업까지 이어진 동료",
+      "location": "국립새봄과학관",
+      "speaker": "당신의 계약 기록",
+      "text": [
+        "납품이 끝난 뒤에도 운영팀과 공급자의 대화가 이어진다. 계약을 이행하고 정당한 대금을 처리한 뒤, 당신은 장비를 오래 쓰기 위한 다음 점검을 남겼다.",
+        "서윤과 하린이 같은 점검표를 나눠 가진다. 누군가 자리를 옮겨도 다음 담당자가 이어받을 수 있도록, 연락 방법과 남은 질문을 마지막 칸에 적었다."
+      ],
+      "scene": "celebration",
+      "choices": [],
+      "ending": {
+        "id": "partner",
+        "title": "다음 수업까지 이어진 동료",
+        "body": "납품이 끝난 뒤에도 운영팀과 공급자의 대화가 이어진다. 계약을 이행하고 정당한 대금을 처리한 뒤, 당신은 장비를 오래 쓰기 위한 다음 점검을 남겼다.",
+        "badge": "이어지는 신뢰"
+      }
+    },
+    {
+      "id": "m_end_finish",
+      "chapter": "aftercare",
+      "title": "첫 계약을 완주한 담당자",
+      "location": "국립새봄과학관",
+      "speaker": "당신의 계약 기록",
+      "text": [
+        "필요한 검사와 대금 절차를 마무리했다. 모든 선택이 매끄럽지는 않았지만 기록과 인계가 남았다. 다음 사업에서는 수요와 운영 준비를 더 일찍 연결할 수 있다.",
+        "늦은 사무실에서 기록철을 닫는다. 첫날에는 낯설었던 공고와 검사 기록이 이제 하나의 이야기로 읽힌다. 당신은 다음번에 먼저 물어볼 질문 세 가지를 적는다."
+      ],
+      "scene": "celebration",
+      "choices": [],
+      "ending": {
+        "id": "finish",
+        "title": "첫 계약을 완주한 담당자",
+        "body": "필요한 검사와 대금 절차를 마무리했다. 모든 선택이 매끄럽지는 않았지만 기록과 인계가 남았다. 다음 사업에서는 수요와 운영 준비를 더 일찍 연결할 수 있다.",
+        "badge": "첫 계약 완주"
+      }
+    },
+    {
+      "id": "m_end_responsible",
+      "chapter": "aftercare",
+      "title": "문을 늦추더라도 지킨 약속",
+      "location": "국립새봄과학관",
+      "speaker": "당신의 계약 기록",
+      "text": [
+        "불확실한 상태를 완료로 포장하지 않았다. 개장 일정은 조정됐고 일부 계약 업무는 계속 남아 있지만, 담당자·조치·안내가 공개되어 있다. 안전하게 다시 시작할 토대를 만든 결말이다.",
+        "빈 교실 문에 새 안내가 붙었다. 하린이 말한다. “기다리는 분들에게 지금 어디까지 준비됐는지 설명할 수 있게 됐어요.” 당신은 다음 확인 약속을 달력에 표시한다."
+      ],
+      "scene": "celebration",
+      "choices": [],
+      "ending": {
+        "id": "responsible",
+        "title": "문을 늦추더라도 지킨 약속",
+        "body": "불확실한 상태를 완료로 포장하지 않았다. 개장 일정은 조정됐고 일부 계약 업무는 계속 남아 있지만, 담당자·조치·안내가 공개되어 있다. 안전하게 다시 시작할 토대를 만든 결말이다.",
+        "badge": "책임 있는 유예"
+      }
+    },
+    {
+      "id": "m_end_rebuild",
+      "chapter": "aftercare",
+      "title": "다시 펼친 계약 지도",
+      "location": "국립새봄과학관",
+      "speaker": "당신의 계약 기록",
+      "text": [
+        "계약을 최종 정리하기 전에 기록을 다시 점검하기로 했다. 검사·지급·안내 중 확인이 더 필요한 항목은 담당자와 끝까지 정리한다. 이미 마친 절차도 구분하여 기록하고 다음 계약의 출발점으로 삼는다.",
+        "당신은 붉은 수정 표시를 지우지 않는다. 어디서 길을 놓쳤는지 알아야 다시 찾을 수 있으니까. 기록철 맨 앞에 담당자와 다음 확인 순서를 붙였다."
+      ],
+      "scene": "celebration",
+      "choices": [],
+      "ending": {
+        "id": "rebuild",
+        "title": "다시 펼친 계약 지도",
+        "body": "계약을 최종 정리하기 전에 기록을 다시 점검하기로 했다. 검사·지급·안내 중 확인이 더 필요한 항목은 담당자와 끝까지 정리한다. 이미 마친 절차도 구분하여 기록하고 다음 계약의 출발점으로 삼는다.",
+        "badge": "재정비의 시작"
+      }
+    }
+  ]
+}

@@ -1,0 +1,262 @@
+{
+  "id": "supplier",
+  "title": "새봄기술의 첫 번째 약속",
+  "subtitle": "납품 사장님 · 24대의 키트가 아이들을 만나기까지",
+  "intro": "당신은 작은 제조기업 새봄기술의 사장님이다. 가상의 국가기관 국립새봄과학관이 어린이 환경교실에 쓸 이동형 환경측정 키트 24대를 구매한다. 공고를 발견한 아침부터 납품 이후의 전화 한 통까지, 당신의 선택으로 회사의 첫 조달 이야기를 완성한다. 운영 여력·신뢰·완성도·남은 여유는 모두 0~100의 가상 게임 자원이며 원화·법정 기한·실제 평가점수가 아니다. 공고와 계약의 구체 조건은 이 이야기에서 정한 가정이다.",
+  "start": "s_start",
+  "chapters": [
+    {"id":"prepare","title":"1. 작은 공장의 아침"},
+    {"id":"notice","title":"2. 공고 속 약속"},
+    {"id":"design","title":"3. 질문으로 여는 문"},
+    {"id":"bid","title":"4. 봉투를 닫기 전에"},
+    {"id":"contract","title":"5. 함께 쓰는 계약"},
+    {"id":"fulfill","title":"6. 공장의 갈림길"},
+    {"id":"delivery","title":"7. 스물네 개의 상자"},
+    {"id":"aftercare","title":"8. 납품 다음 날"}
+  ],
+  "nodes": [
+    {
+      "id":"s_start","chapter":"prepare","title":"책상 위의 푸른 체크노트","location":"새봄기술 사무실","speaker":"민호 · 운영 담당","scene":"office",
+      "text":["“사장님, 과학관에서 우리 키트와 비슷한 제품을 찾고 있어요.” 민호가 공고를 띄운다. 다음 화면에는 빈 원가표, 옆 책상에는 아직 조립 중인 시제품이 놓여 있다.","품질 담당 서윤이 푸른 체크노트를 건넨다. “한 번 팔고 끝낼 물건은 아니잖아요. 무엇부터 확인할까요?”"],
+      "choices":[
+        {"id":"team","label":"공장에 가서 만들 수 있는 범위부터 확인한다","hint":"완성도를 챙기는 대신 준비 시간이 든다.","feedback":"팀이 생산량과 시험 기록을 함께 펼쳤다. 이번 입찰을 제품과 연결해서 볼 준비가 됐다.","delta":{"money":0,"trust":3,"quality":5,"time":-4},"next":"s_workshop","setFlags":["team_first"]},
+        {"id":"notice","label":"공고 원문과 첨부 서류부터 펼친다","hint":"요구조건을 먼저 알아야 준비 순서를 정할 수 있다.","feedback":"먼저 상대가 무엇을 사려는지 읽기로 했다. 민호가 수정 공고를 확인할 목록도 옆에 만들었다.","delta":{"money":0,"trust":0,"quality":2,"time":2},"next":"s_notice","setFlags":[]}
+      ]
+    },
+    {
+      "id":"s_workshop","chapter":"prepare","title":"시제품은 약속이 될 수 있을까","location":"조립 작업대","speaker":"서윤 · 제품·품질 담당","scene":"workshop",
+      "text":["서윤이 센서를 켜자 화면에 교실의 온도와 습도가 뜬다. “시연은 돼요. 다만 24대를 같은 상태로 만들려면 부품과 검사 시간을 따로 잡아야 해요.”","민호는 주문이 들어오면 바로 만들자는 메모를 지운다. 지금 가진 능력과 아직 확인하지 않은 능력 사이에 선을 그을 때다."],
+      "choices":[
+        {"id":"capacity","label":"부품·조립·시험 담당을 나눠 생산 가능표를 만든다","hint":"한 대의 성공을 전체 수량의 보장으로 넘기지 않는다.","feedback":"24대를 만드는 흐름이 보이기 시작했다. 공고의 조건과 비교할 내부 자료도 생겼다.","delta":{"money":-3,"trust":4,"quality":7,"time":-3},"next":"s_notice","setFlags":["capacity_map"]},
+        {"id":"stock","label":"재고부터 센다. 부족한 조건은 별도 목록에 남긴다","hint":"빠르게 빈틈을 찾아 참가 가능성을 판단한다.","feedback":"센서는 충분하지만 운반함 시험 자료가 없다. 없는 자료를 있는 것처럼 쓰지 않고 빈칸으로 표시했다.","delta":{"money":0,"trust":3,"quality":2,"time":-1},"next":"s_gap","setFlags":["gap_found"]}
+      ]
+    },
+    {
+      "id":"s_notice","chapter":"notice","title":"제품 이름보다 작은 글씨","location":"사무실 공고 화면","speaker":"민호 · 운영 담당","scene":"notice",
+      "text":["공고에는 참가자격, 제출 서류, 규격, 낙찰자 결정방법과 전자 제출 안내가 따로 적혀 있다. 이번 공고는 정해진 참가요건과 규격 적합성, 이행능력 및 가격을 확인하는 물품 경쟁입찰이다.","“제품만 비슷하면 되는 줄 알았는데, 서로 다른 확인란이네요.” 민호가 자격 서류와 제출 목록을 두 장으로 나눈다."],
+      "choices":[
+        {"id":"separate","label":"자격·제출 서류·규격·평가방법을 각각 대조한다","hint":"모르는 조건은 질의할 질문으로 바꾼다.","feedback":"자격과 서류는 확인됐지만 ‘교실 이동 중 안정성’의 시험 방법은 모호하다. 질문할 핵심이 정리됐다.","delta":{"money":0,"trust":4,"quality":4,"time":-3},"next":"s_query","setFlags":["eligibility_checked"],"knowledge":{"title":"자격과 제출 절차는 따로 확인","body":"국가계약 입찰공고에서는 참가자격, 참가등록·입찰서류, 낙찰자 결정방법, 전자 제출 절차 등을 각각 확인한다. 조건부 항목은 해당 입찰방식에 맞춰 읽는다.","atomId":"JP-20260916-A03","sourceUrl":"https://www.law.go.kr/lsInfoP.do?lsiSeq=285893","sourceChecked":"2026-09-16"}},
+        {"id":"gaps","label":"먼저 빠진 서류와 증명하지 못한 규격을 표시한다","hint":"충족하지 못하는 조건이 있으면 진행 여부를 다시 정한다.","feedback":"중요한 빈칸을 빨리 찾았다. 이제 보완할 수 있는 것과 이번에는 약속할 수 없는 것을 구분해야 한다.","delta":{"money":1,"trust":2,"quality":1,"time":-1},"next":"s_gap","setFlags":["gap_found"]}
+      ]
+    },
+    {
+      "id":"s_gap","chapter":"notice","title":"빈칸을 채우는 두 가지 방법","location":"회의용 화이트보드","speaker":"서윤 · 제품·품질 담당","scene":"meeting",
+      "text":["팀이 원본 서류를 대조하니 참가자격은 갖추고 있다. 다만 운반함의 시험 조건은 공고만으로 확신하기 어렵고, 우리가 준비할 수 있는지도 아직 모른다.","서윤이 말한다. “확인해서 준비하거나, 입찰 전에 멈추거나. 확인하지 않은 성능을 약속하는 칸은 없어요.”"],
+      "choices":[
+        {"id":"ask","label":"공식 질의로 시험 조건을 확인하고 참가 여부를 판단한다","hint":"모호함을 없앤 뒤 할 수 있는 약속을 정한다.","feedback":"자격 서류 확인을 마치고 규격 질문을 남겼다. 답변을 보고 다음 단계를 결정할 수 있다.","delta":{"money":-1,"trust":4,"quality":3,"time":-3},"next":"s_query","setFlags":["eligibility_checked"]},
+        {"id":"hold","label":"이번 입찰은 보류하고 시험 자료부터 갖춘다","hint":"입찰 제출 전에 사업 판단으로 멈춘다.","feedback":"무리한 약속을 줄이고 다음 준비에 여력을 남겼다. 민호가 이번 공고를 첫 준비 교본으로 묶었다.","delta":{"money":6,"trust":4,"quality":2,"time":5},"next":"s_end_hold","setFlags":["honest_pause"]}
+      ]
+    },
+    {
+      "id":"s_query","chapter":"design","title":"질문은 약점일까","location":"공고의 공식 질의 창구","speaker":"하린 · 과학관 담당자","scene":"notice",
+      "text":["질의 마감 전, 화면에 ‘운반 중 안정성의 확인 방법’이라는 제목을 쓴다. 영업 연락처를 아는 민호가 전화로 먼저 물어볼지 고민한다.","공고는 공식 질의 답변을 참가자에게 함께 안내하도록 정했다. 우리만 이해한 조건으로 제작하면 나중에 다시 설명해야 할지 모른다."],
+      "choices":[
+        {"id":"official","label":"모호한 문구와 제안한 시험 방법을 적어 공식 질의한다","hint":"답변을 기록으로 남기고 공통 기준을 확인한다.","feedback":"하린이 질문을 접수했다. ‘어떤 제품이 좋으냐’ 대신 확인할 조건을 물으니 필요한 답변이 분명해졌다.","delta":{"money":0,"trust":5,"quality":3,"time":-3},"next":"s_reply","setFlags":["written_query"]},
+        {"id":"prototype","label":"질의는 제출하고 답을 기다리는 동안 시제품을 시험한다","hint":"기다림을 시험 시간으로 쓰지만 재시험 가능성이 있다.","feedback":"같은 질문을 공식 창구에 남겼다. 답변이 오기 전 시험은 내부 준비 자료로만 쓰기로 했다.","delta":{"money":-4,"trust":3,"quality":5,"time":-1},"next":"s_demo","setFlags":["written_query","parallel_test"]}
+      ]
+    },
+    {
+      "id":"s_reply","chapter":"design","title":"모두에게 열린 답변","location":"공식 답변 게시 화면","speaker":"하린 · 과학관 담당자","scene":"notice",
+      "text":["답변에는 운반함을 닫아 이동한 뒤 측정과 화면 표시가 정상 작동하는지 확인한다는 기준이 적혀 있다. 새로운 제품 기능을 요구한 것은 아니며, 기존 규격의 확인 방법을 설명한 답변이다.","서윤은 화면을 저장하고 공고·규격서와 함께 묶는다. “이제 우리끼리 상상한 기준이 아니라 같은 문서를 보고 준비할 수 있겠네요.”"],
+      "choices":[
+        {"id":"test","label":"답변의 확인 방법으로 시제품을 다시 시험한다","hint":"검사 때 사용할 증거를 미리 만든다.","feedback":"시험의 조건과 기록 양식을 맞췄다. 자료에 남는 성공을 만들기 위해 작업대로 향한다.","delta":{"money":-3,"trust":3,"quality":5,"time":-3},"next":"s_demo","setFlags":["spec_confirmed"]},
+        {"id":"quote","label":"기존 시험 기록과 대조하고 생산 원가를 계산한다","hint":"기존 기록이 같은 조건을 다루는지 먼저 확인한다.","feedback":"동일 조건의 기존 기록으로 확인할 수 있는 부분을 정리했다. 추가 시험은 생산계획에 넣고 원가표를 펼쳤다.","delta":{"money":2,"trust":2,"quality":2,"time":1},"next":"s_cost","setFlags":["spec_confirmed"]}
+      ]
+    },
+    {
+      "id":"s_demo","chapter":"design","title":"움직이는 교실 시험","location":"공장 복도와 시험대","speaker":"서윤 · 제품·품질 담당","scene":"workshop",
+      "text":["공식 답변을 확인한 뒤 운반함을 들고 공장 복도를 오간다. 센서는 정상인데, 뚜껑을 여는 순간 충전선이 바닥으로 떨어진다.","규격에 없는 장식을 늘릴 필요는 없다. 대신 실제 사용자가 매번 겪을 작은 문제를 지금 발견했다."],
+      "choices":[
+        {"id":"organize","label":"선 정리 구조를 개선하고 규격 충족 여부를 함께 재시험한다","hint":"시험과 사용성을 연결한다.","feedback":"기본 성능을 유지하면서 선 정리 방법이 안정됐다. 출하 때 활용할 운반 점검 기록을 얻었다.","delta":{"money":-5,"trust":4,"quality":9,"time":-4},"next":"s_cost","setFlags":["spec_confirmed","prototype_tested"]},
+        {"id":"pause","label":"현재 인력으로 재현 시험이 어렵다며 입찰을 보류한다","hint":"확인할 수 없는 성능을 약속하지 않는다.","feedback":"작은 시험에서 큰 불확실성을 찾았다. 이번에는 제작 표준을 먼저 완성하기로 팀이 뜻을 모았다.","delta":{"money":4,"trust":5,"quality":3,"time":3},"next":"s_end_hold","setFlags":["honest_pause"]}
+      ]
+    },
+    {
+      "id":"s_cost","chapter":"bid","title":"이익은 상자 안에만 있지 않다","location":"사무실 원가표","speaker":"민호 · 운영 담당","scene":"office",
+      "text":["민호의 첫 원가표에는 센서와 운반함만 있다. 서윤이 조립, 시험, 운송, 설명자료, 계약상 사후지원에 드는 작업을 옆에 적는다.","“싸게 부르면 이기는 게임인 줄 알았어요.” 민호가 멈춘다. 이 이야기에서는 공고의 기준을 충족하면서 실제로 끝까지 이행할 가격이 필요하다."],
+      "choices":[
+        {"id":"full_cost","label":"납품 이후까지 포함한 원가와 감당 가능한 가격을 정한다","hint":"가상 운영 여력을 남겨 후반 문제에 대비한다.","feedback":"숫자가 조금 올라갔지만 무엇을 약속할 수 있는지 분명해졌다. 검토한 가격과 수행계획을 함께 제출할 준비가 됐다.","delta":{"money":4,"trust":3,"quality":4,"time":-3},"next":"s_bid","setFlags":["full_costed"]},
+        {"id":"decline","label":"이번 조건에서는 지속 가능한 가격이 안 나온다고 판단한다","hint":"입찰 전에 멈추고 원가 구조를 개선한다.","feedback":"매출보다 이행 가능성을 먼저 보았다. 확보한 원가표는 다음 기회의 출발점이 된다.","delta":{"money":7,"trust":2,"quality":2,"time":4},"next":"s_end_hold","setFlags":["honest_pause"]}
+      ]
+    },
+    {
+      "id":"s_bid","chapter":"bid","title":"제출 버튼 앞의 마지막 회의","location":"전자입찰 제출 화면","speaker":"민호 · 운영 담당","scene":"notice",
+      "text":["공고상 제출 시각 전에 서류를 다시 연다. 제출 자료를 공고 기준에 대조하면 우리 제품과 이행계획을 확인할 수 있어야 한다.","기술 자료의 첨부 목록과 가격 입력란이 보인다. 마지막 검토 시간을 어디에 쓸지 결정해야 한다."],
+      "choices":[
+        {"id":"evidence","label":"가격·첨부·자격과 규격 입증 자료를 서로 대조한 뒤 제출한다","hint":"가격만 따로 맞고 자료는 엇갈리지 않게 한다.","feedback":"중복 첨부를 고치고 올바른 자료가 접수됐는지 확인했다. 공고 기준에 따른 심사 결과를 기다린다.","delta":{"money":0,"trust":5,"quality":4,"time":-4},"next":"s_result","setFlags":["bid_checked"],"knowledge":{"title":"최저 숫자만으로 낙찰을 단정하지 않기","body":"국고 부담 경쟁입찰은 해당 공고와 법령이 정한 낙찰 기준을 적용한다. 이행능력이나 정해진 평가기준을 빼고 가장 낮은 숫자만 비교해서는 안 된다.","atomId":"A1114","sourceUrl":"https://www.law.go.kr/lsInfoP.do?lsiSeq=283877","sourceChecked":"2026-09-16"}},
+        {"id":"price_only","label":"가격 검토에 집중하고 규격 자료의 일부 공백은 남긴 채 제출한다","hint":"빠르게 제출하지만 입증이 부족한 부분이 남는다.","feedback":"제출은 끝났지만 규격 확인 자료가 부족했다. 이 이야기의 심사에서는 충족 여부를 인정받지 못해 계약 기회를 얻지 못했다.","delta":{"money":1,"trust":-3,"quality":-5,"time":2},"next":"s_loss_review","setFlags":["lost_bid"]}
+      ]
+    },
+    {
+      "id":"s_result","chapter":"contract","title":"낙찰 통보, 아직 남은 한 단계","location":"새봄기술 사무실","speaker":"서윤 · 제품·품질 담당","scene":"office",
+      "text":["공고 기준에 따른 확인을 거쳐 새봄기술이 낙찰자로 통보됐다. 팀은 잠깐 환호하지만 서윤은 아직 생산 시작 버튼을 누르지 않는다.","“통보와 계약 확정은 다르죠. 계약 내용과 필요한 절차를 끝내고 시작해요.” 민호가 계약안과 공고 자료를 나란히 놓는다."],
+      "choices":[
+        {"id":"read","label":"계약안의 이행 범위와 필요한 사항을 먼저 읽는다","hint":"낙찰 통보를 계약 확정과 구분한다.","feedback":"납품 수량·기간·책임과 필요한 조건을 함께 확인하기로 했다. 생산은 계약 확정 뒤 시작한다.","delta":{"money":0,"trust":4,"quality":3,"time":-2},"next":"s_contract","setFlags":[],"knowledge":{"title":"낙찰자 결정과 계약 확정","body":"계약서를 작성하는 국가계약은 담당 공무원과 계약상대자가 기명날인하거나 서명하여 확정한다. 전자계약이면 그에 맞는 성립 절차도 따로 확인한다.","atomId":"A0184","sourceUrl":"https://www.law.go.kr/lsInfoP.do?lsiSeq=283877","sourceChecked":"2026-09-16"}},
+        {"id":"clarify","label":"계약안의 모호한 사후지원 문구부터 협의한다","hint":"작업 범위를 명확히 한 뒤 계약한다.","feedback":"‘필요한 모든 지원’이라는 문구를 그대로 넘기지 않았다. 지원 범위와 책임을 확인할 회의가 잡혔다.","delta":{"money":1,"trust":3,"quality":2,"time":-3},"next":"s_terms","setFlags":[]}
+      ]
+    },
+    {
+      "id":"s_loss_review","chapter":"bid","title":"선정되지 않은 날의 노트","location":"불 꺼진 회의실","speaker":"서윤 · 제품·품질 담당","scene":"meeting",
+      "text":["낙찰자가 된 다른 업체의 이름을 보고 민호가 노트북을 닫으려 한다. 서윤은 가격표보다 제출 자료의 공백을 먼저 짚는다.","“진 이유를 상상으로 채우지는 말아요. 확인할 수 있는 결과와 우리 자료를 나눠 보죠.” 이번 계약은 끝났지만 회사의 이야기는 여기서 방향을 바꿀 수 있다."],
+      "choices":[
+        {"id":"learn","label":"확인 가능한 결과와 제출 기록으로 다음 준비 목록을 만든다","hint":"낙찰 실패를 근거 있는 개선으로 바꾼다.","feedback":"규격 입증 자료와 제출 점검을 보완할 일이 선명해졌다. 다음 공고를 보기 전에 완료할 목록이 남았다.","delta":{"money":2,"trust":4,"quality":5,"time":2},"next":"s_end_loss","setFlags":["loss_reviewed"]},
+        {"id":"refocus","label":"새 입찰은 잠시 멈추고 제품·시험 기록에 집중한다","hint":"속도보다 준비의 빈틈을 먼저 메운다.","feedback":"여기서 멈추는 이유가 막연한 두려움은 아니다. 팀은 아직 증명하지 못한 성능부터 다시 확인하기로 했다.","delta":{"money":4,"trust":2,"quality":4,"time":3},"next":"s_end_hold","setFlags":["honest_pause"]}
+      ]
+    },
+    {
+      "id":"s_contract","chapter":"contract","title":"서로 같은 약속을 읽는가","location":"과학관 계약 협의실","speaker":"하린 · 과학관 담당자","scene":"meeting",
+      "text":["계약안에는 목적, 금액, 이행기간, 계약보증금, 위험부담, 지체상금과 필요한 사항이 정리되어 있다. 이번 거래는 계약서를 작성하는 것으로 설정했다.","하린이 말한다. “수업 안내에 필요한 설명자료도 규격서에 있었죠. 표현이 넓은 사후지원 문장은 작업 범위를 함께 확인해 주세요.”"],
+      "choices":[
+        {"id":"confirm","label":"공고·규격·계약안을 대조하고 필요한 절차로 계약을 확정한다","hint":"생산팀이 따를 약속을 하나의 목록으로 만든다.","feedback":"계약 내용과 필요한 절차가 확인됐다. 확정된 범위를 생산팀에 전달하고 키트 제작에 들어간다.","delta":{"money":0,"trust":5,"quality":4,"time":-3},"next":"s_production","setFlags":["contract_confirmed","terms_checked"],"knowledge":{"title":"계약에 무엇을 분명히 적는가","body":"국가계약법 제11조는 계약서 작성 시 목적·금액·이행기간·보증금·위험부담·지체상금 등 필요한 사항을 명백히 기재하도록 한다. 각 항목을 우리 이행계획과 연결해 읽는다.","atomId":"A1072","sourceUrl":"https://www.law.go.kr/lsInfoP.do?lsiSeq=283877","sourceChecked":"2026-09-16"}},
+        {"id":"terms","label":"지원 범위의 해석이 달라 먼저 문구를 협의한다","hint":"이견을 남긴 채 서명하지 않는다.","feedback":"서로 다르게 읽은 부분을 찾았다. 설명자료의 수정 범위와 연락 창구를 분명히 하기 위해 협의가 이어진다.","delta":{"money":1,"trust":3,"quality":3,"time":-3},"next":"s_terms","setFlags":[]}
+      ]
+    },
+    {
+      "id":"s_terms","chapter":"contract","title":"좋은 관계에도 선은 필요하다","location":"과학관 계약 협의실","speaker":"하린 · 과학관 담당자","scene":"meeting",
+      "text":["하린과 당신은 규격서의 설명자료 제공 범위와 계약안의 표현을 대조한다. 관련 없는 새 업무까지 무조건 떠맡기로 약속한 것으로 읽히지 않도록 문구를 정리한다.","양측은 기존 사업 범위 안에서 해석 차이를 해소했다. 계약 확정에 필요한 절차를 마친 뒤 그 약속을 현장까지 어떻게 전달할지 정한다."],
+      "choices":[
+        {"id":"matrix","label":"합의한 업무·담당·완료 증거를 표로 만들어 공유한다","hint":"계약 해석을 실제 작업으로 옮긴다.","feedback":"협의된 내용이 정리되고 필요한 절차로 계약이 확정됐다. 변경 이야기가 나와도 처음의 약속을 찾을 수 있다.","delta":{"money":0,"trust":6,"quality":5,"time":-3},"next":"s_production","setFlags":["contract_confirmed","terms_checked"]},
+        {"id":"briefing","label":"같은 문서를 놓고 전 직원에게 계약 범위를 설명한다","hint":"인수인계에 시간을 써 후반 지원을 준비한다.","feedback":"협의된 내용으로 계약을 확정하고 팀 설명회를 열었다. 민호도 납품 후 연락을 혼자 넘기지 않고 담당에게 연결할 수 있게 됐다.","delta":{"money":-2,"trust":5,"quality":4,"time":-4},"next":"s_production","setFlags":["contract_confirmed","terms_checked","team_briefed"],"knowledge":{"title":"대등한 합의와 신의성실","body":"국가계약도 대등한 입장에서 합의하고 신의성실하게 이행한다. 법령상 계약상 이익을 부당하게 제한하는 특약은 서명했다는 이유만으로 유효해지지 않는다.","atomId":"A1187","sourceUrl":"https://www.law.go.kr/lsInfoP.do?lsiSeq=283877","sourceChecked":"2026-09-16"}}
+      ]
+    },
+    {
+      "id":"s_production","chapter":"fulfill","title":"납품일까지 이어지는 선","location":"새봄기술 생산 게시판","speaker":"서윤 · 제품·품질 담당","scene":"workshop",
+      "text":["계약이 확정되고 24대의 일련번호가 작업판에 붙는다. 조립·시험·포장 순서마다 누가 확인했는지 작은 칸이 생긴다.","예비 부품을 확보하면 운영 여력을 더 써야 한다. 주문한 물량만 받아 진행하면 지금은 가볍지만 공급 변동에 대응할 준비가 필요하다."],
+      "choices":[
+        {"id":"reserve","label":"계약 규격에 맞는 예비 부품을 확보하고 전량 점검한다","hint":"운영 여력을 써서 공급·품질 위험을 줄인다.","feedback":"예비 물량을 활용해 조립과 점검을 마쳤다. 상자마다 시험 기록을 붙이고 납품 준비로 넘어간다.","delta":{"money":-9,"trust":3,"quality":7,"time":-2},"next":"s_delivery","setFlags":["batch_checked"]},
+        {"id":"lean","label":"필요한 수량을 나눠 받고 수급 상황을 자주 확인한다","hint":"여력을 남기되 공급 문제가 생기면 직접 대응해야 한다.","feedback":"초기 비용은 줄였다. 그런데 마지막 부품 배송을 앞두고 공급사의 연락이 도착한다.","delta":{"money":6,"trust":0,"quality":1,"time":2},"next":"s_shortage","setFlags":["lean_stock"]}
+      ]
+    },
+    {
+      "id":"s_shortage","chapter":"fulfill","title":"부품 공급사의 전화","location":"새봄기술 자재 창고","speaker":"민호 · 운영 담당","scene":"workshop",
+      "text":["공급사가 약속한 부품의 일부를 제때 보내기 어렵다고 알린다. 외형이 비슷한 다른 모델은 바로 구할 수 있지만, 계약 규격 충족 여부는 아직 확인하지 못했다.","서윤이 두 부품을 나란히 놓는다. “이름이 비슷하다고 같은 부품은 아니에요. 무엇이 달라지는지부터 봐야 해요.”"],
+      "choices":[
+        {"id":"document","label":"규격·성능·일정 영향을 정리해 계약 담당자와 협의한다","hint":"변경 가능 여부와 필요한 절차를 먼저 확인한다.","feedback":"공급 사정과 대안의 근거를 숨기지 않고 정리했다. 승인 여부를 예단하지 않은 채 협의를 요청했다.","delta":{"money":-2,"trust":5,"quality":3,"time":-4},"next":"s_change","setFlags":["change_disclosed"]},
+        {"id":"shortcut","label":"먼저 대체 부품을 써 보고 외관상 같으면 그대로 보내려 한다","hint":"지금은 빨라 보여도 검증하지 않은 약속이 남는다.","feedback":"조립은 빨랐지만 시험 중 기록값의 차이가 발견됐다. 포장하기 전에 이 문제를 어떻게 처리할지 정해야 한다.","delta":{"money":3,"trust":-5,"quality":-7,"time":3},"next":"s_unapproved","setFlags":["unapproved_attempt"]}
+      ]
+    },
+    {
+      "id":"s_change","chapter":"fulfill","title":"변경은 혼자 결정하는 일이 아니다","location":"기관과 업체의 일정 협의","speaker":"하린 · 과학관 담당자","scene":"meeting",
+      "text":["하린은 공급 사정, 규격 충족 자료와 납품 영향을 함께 요청한다. “다른 부품이라는 이유만으로 허용도 거절도 미리 정하지 않겠습니다. 계약과 필요한 절차에 따라 확인하죠.”","검토를 마치자 두 대안이 남았다. 필요한 변경 절차를 완료하고 허용된 대체안으로 이행하거나, 추가 운송을 써 원래 부품을 확보할 수 있다."],
+      "choices":[
+        {"id":"approved","label":"필요한 절차를 완료한 대체안으로 제작하고 변경 기록을 붙인다","hint":"허용된 범위와 실제 제품을 일치시킨다.","feedback":"검토·합의·필요 절차를 마친 범위만 반영했다. 대체품이라는 사실을 감추지 않고 시험 기록을 다시 만들었다.","delta":{"money":-4,"trust":6,"quality":6,"time":-3},"next":"s_delivery","setFlags":["approved_change","batch_checked"]},
+        {"id":"original","label":"원래 부품을 확보해 점검·출고까지 추가 운송으로 이어 간다","hint":"운영 여력을 써서 원규격의 제품을 현장 확인까지 연결한다.","feedback":"다른 경로로 확보한 원래 부품으로 제작·점검을 마쳤다. 일련번호와 구성품 기록을 붙여 운송을 완료하고 과학관의 확인 절차로 넘어간다.","delta":{"money":-11,"trust":4,"quality":6,"time":-3},"next":"s_inspection","setFlags":["original_parts","batch_checked","delivery_manifest"]}
+      ]
+    },
+    {
+      "id":"s_unapproved","chapter":"fulfill","title":"뚜껑을 닫기 전의 경고","location":"조립 완료품 옆","speaker":"서윤 · 제품·품질 담당","scene":"workshop",
+      "text":["“사장님, 이 기록값이면 같다고 말할 수 없어요.” 서윤이 포장 테이프를 내려놓는다. 대체 부품을 쓴 사실을 지금 알리면 다시 검토할 시간이 필요하다.","그대로 보내면 상대가 계약 규격과 다르다는 것을 뒤늦게 발견할 수 있다. 아직 출고 전이므로 선택을 되돌릴 기회가 남아 있다."],
+      "choices":[
+        {"id":"stop","label":"출고를 멈추고 대체 사실과 시험 결과를 모두 알린다","hint":"잘못된 지름길에서 공식 협의로 돌아온다.","feedback":"불편한 설명을 먼저 했다. 하린은 현재 상태를 확인하고 검토할 자료를 요청했다.","delta":{"money":-3,"trust":4,"quality":4,"time":-5},"next":"s_change","setFlags":["change_disclosed","recovered_early"]},
+        {"id":"send","label":"외관이 같다는 이유로 부품 차이를 알리지 않고 출고 준비한다","hint":"납품 후 확인 단계에서 다시 설명해야 할 위험이 커진다.","feedback":"겉모습은 같지만 확인하지 않은 차이는 남았다. 제품 기록과 계약 규격을 비교하는 단계에서 복구가 필요해진다.","delta":{"money":1,"trust":-9,"quality":-9,"time":2},"next":"s_delivery","setFlags":["unapproved_delivery"]}
+      ]
+    },
+    {
+      "id":"s_delivery","chapter":"delivery","title":"스물네 개의 상자와 한 장의 목록","location":"과학관으로 가는 출고장","speaker":"민호 · 운영 담당","scene":"delivery",
+      "text":["출고장에 24개의 상자가 늘어선다. 수량만 세면 빨리 끝나지만, 일련번호·구성품·시험 기록을 연결해야 어느 상자에 무엇이 들어갔는지 알 수 있다.","운송 업체는 상차를 기다린다. 민호가 묻는다. “한 번 더 묶어 확인할까요, 도착해서 같이 확인할까요?”"],
+      "choices":[
+        {"id":"manifest","label":"상자·일련번호·구성품·시험 기록을 대조한 뒤 인계한다","hint":"지금 시간을 써 도착 뒤의 설명을 줄인다.","feedback":"납품 목록과 제품이 서로 연결됐다. 과학관의 확인 절차에서 자료를 바로 찾을 수 있다.","delta":{"money":-2,"trust":4,"quality":5,"time":-3},"next":"s_inspection","setFlags":["delivery_manifest"]},
+        {"id":"arrival","label":"기본 포장으로 먼저 이동하고 도착 후 전체를 풀어 대조한다","hint":"출발은 빠르지만 현장 정리에 여유가 더 든다.","feedback":"도착 후 상자를 열자 구성품 목록과 실물을 다시 맞추는 작업이 생겼다. 접수만으로 검사가 끝난 것은 아니다.","delta":{"money":2,"trust":-2,"quality":-3,"time":-4},"next":"s_repair","setFlags":["onsite_rework"]},
+        {"id":"tested_pack","label":"검증한 운반 점검표와 제품 기록을 납품·확인까지 연결한다","hint":"시제품 시험을 했고, 충분한 완성도와 무단 대체 문제가 없을 때다.","feedback":"미리 찾았던 선 정리 문제까지 점검해 출고했다. 과학관에서 제품과 기록을 계약 조건에 대조해 확인을 마쳤고, 검사 완료 결과를 받아 청구 단계로 넘어간다.","delta":{"money":-1,"trust":5,"quality":6,"time":1},"next":"s_payment","setFlags":["delivery_manifest","inspection_complete"],"requires":{"allFlags":["prototype_tested"],"noFlags":["unapproved_delivery"],"min":{"quality":60}}}
+      ]
+    },
+    {
+      "id":"s_inspection","chapter":"delivery","title":"도착과 완료 사이","location":"과학관 확인 작업대","speaker":"하린 · 과학관 담당자","scene":"inspection",
+      "text":["상자가 도착했다고 일이 끝나지는 않는다. 계약에서 정한 규격과 수량을 확인하는 과정에서 제출 기록과 제품을 하나씩 연결한다.","일부 기록이 부족하거나 규격 차이가 남아 있으면 그 부분을 먼저 해소해야 한다. 하린은 확인한 결과를 함께 보며 다음 순서를 정하자고 한다."],
+      "choices":[
+        {"id":"matched","label":"일치하는 제품과 기록으로 확인을 마치고 완료 결과를 받는다","hint":"충분한 완성도와 미해결 무단 대체가 없는 경우다.","feedback":"제품과 기록이 계약 조건에 맞는 것으로 확인됐다. 이제 검사 완료와 청구를 구분해 대금 절차를 준비한다.","delta":{"money":0,"trust":6,"quality":4,"time":1},"next":"s_payment","setFlags":["inspection_complete"],"requires":{"noFlags":["unapproved_delivery"],"min":{"quality":60}}},
+        {"id":"resolve","label":"불일치·누락을 확인하고 수정·재확인 계획을 제시한다","hint":"완료로 밀어붙이지 않고 복구할 순서를 정한다.","feedback":"하린과 수정할 부분을 목록으로 남겼다. 이미 도착한 물건이라고 우기지 않고 계약 조건에 맞추기로 했다.","delta":{"money":-4,"trust":2,"quality":1,"time":-4},"next":"s_repair","setFlags":["inspection_issue"]}
+      ]
+    },
+    {
+      "id":"s_repair","chapter":"delivery","title":"돌아온 것은 실패가 아니라 목록","location":"과학관 임시 점검실","speaker":"서윤 · 제품·품질 담당","scene":"inspection",
+      "text":["팀은 누락·불일치 목록과 계약 조건을 대조한다. 자료가 빠졌다면 실제 기록을 찾아 연결하고, 제품이 다르면 계약에 맞는 제품으로 바로잡아 다시 확인받는다.","필요한 수정과 재확인을 거쳐 검사가 완료됐다. 그 과정에 시간과 비용을 썼지만, 서윤의 목록에는 확인된 결과가 하나씩 채워졌다."],
+      "choices":[
+        {"id":"fix","label":"수정한 제품·기록과 재확인 결과를 묶어 인계한다","hint":"문제를 닫았다는 증거까지 남긴다.","feedback":"수정과 재확인이 완료됐다. 서윤이 처음의 목록에 확인 결과를 덧붙이고 대금 준비로 넘겼다.","delta":{"money":-7,"trust":6,"quality":11,"time":-5},"next":"s_payment","setFlags":["inspection_complete","repaired"]},
+        {"id":"joint","label":"현장 담당자와 함께 재확인을 마치고 청구 자료도 대조한다","hint":"추가 시간을 써 다음 단계의 누락을 줄인다.","feedback":"제품 재확인과 인계는 끝났다. 청구 자료를 정리하면서 발생 원인도 함께 기록했다.","delta":{"money":-6,"trust":7,"quality":9,"time":-6},"next":"s_docs","setFlags":["inspection_complete","repaired","joint_check"]}
+      ]
+    },
+    {
+      "id":"s_payment","chapter":"aftercare","title":"납품 트럭이 떠난 뒤의 청구","location":"새봄기술 사무실","speaker":"민호 · 운영 담당","scene":"office",
+      "text":["검사 완료 결과가 도착했다. 민호가 매출표를 열지만, 실제로는 청구를 준비하고 접수 상태를 확인할 일이 남아 있다.","“상자가 도착한 날만 적으면 되는 게 아니었네요.” 푸른 체크노트에 검사 완료와 청구 접수 칸이 따로 생긴다."],
+      "choices":[
+        {"id":"claim","label":"확인된 검사 결과와 맞는 청구를 제출하고 접수를 확인한다","hint":"이행 완료·청구·지급을 서로 다른 사건으로 기록한다.","feedback":"올바른 자료로 청구가 접수됐고 이후 대금이 지급됐다. 납품 뒤 지원을 맡을 여력이 생겼다.","delta":{"money":16,"trust":4,"quality":1,"time":-2},"next":"s_support","setFlags":["paid"],"knowledge":{"title":"검사 완료와 청구를 연결하기","body":"국가계약의 통상 최종 대가는 검사 완료 후 계약상대자의 청구 수령을 기준으로 지급 절차를 본다. 납품 도착일을 검사 완료일이나 청구일로 바꾸어 읽지 않는다. 기성·기납 대가의 별도 규정은 구분한다.","atomId":"A1266","sourceUrl":"https://www.law.go.kr/lsInfoP.do?lsiSeq=285893","sourceChecked":"2026-09-16"}},
+        {"id":"wait","label":"물건을 받았으니 자동 지급될 것으로 생각하고 기다린다","hint":"청구와 접수 확인을 빠뜨릴 수 있다.","feedback":"청구가 접수되지 않았다는 연락을 받았다. 민호가 검사 결과와 청구에 필요한 자료를 다시 모은다.","delta":{"money":-3,"trust":-2,"quality":0,"time":-4},"next":"s_docs","setFlags":["claim_missed"]}
+      ]
+    },
+    {
+      "id":"s_docs","chapter":"aftercare","title":"돈을 받는 일에도 기록이 필요하다","location":"기관과 업체의 서류 확인","speaker":"민호 · 운영 담당","scene":"office",
+      "text":["민호는 검사 완료 결과, 계약 내용과 청구 금액을 대조한다. 자료를 맞추고 나니 청구에 필요한 준비가 끝났다.","이번 청구만 마무리할 수도 있지만, 같은 누락을 다음 납품에서 반복하지 않도록 회사의 확인 방법을 남길 수도 있다."],
+      "choices":[
+        {"id":"complete","label":"이번 청구를 정확히 마치고 접수·지급 기록을 남긴다","hint":"현재 거래를 끝까지 닫는다.","feedback":"확인된 자료로 청구를 접수하고 지급까지 확인했다. 운영 여력을 회복한 뒤 사용 현장의 목소리를 기다린다.","delta":{"money":14,"trust":3,"quality":2,"time":-3},"next":"s_support","setFlags":["paid"]},
+        {"id":"teach","label":"청구를 마치고 팀원끼리 서로 확인하는 순서를 만든다","hint":"추가 시간을 써 다음 거래의 재작업을 줄인다.","feedback":"지급을 확인한 뒤 담당자가 없어도 찾을 수 있는 기록을 만들었다. 팀원들이 납품 후 업무도 나눠 맡을 수 있게 됐다.","delta":{"money":12,"trust":5,"quality":4,"time":-4},"next":"s_support","setFlags":["paid","team_briefed"]}
+      ]
+    },
+    {
+      "id":"s_support","chapter":"aftercare","title":"첫 수업 날 걸려 온 전화","location":"과학관 어린이 환경교실","speaker":"하린 · 과학관 담당자","scene":"meeting",
+      "text":["대금이 지급된 뒤 첫 수업을 시작한 과학관에서 전화가 온다. “한 키트의 화면이 안 켜져요. 수업은 잠시 다른 키트로 진행하고 있습니다.”","사용 방법의 문제인지 제품의 하자인지는 아직 모른다. 연락 한 통을 어떤 순서로 다룰지 정해야 한다."],
+      "choices":[
+        {"id":"diagnose","label":"증상과 일련번호를 받아 안전한 확인 방법부터 안내한다","hint":"원인을 단정하지 않고 지원 범위를 확인한다.","feedback":"담당자가 사용을 멈추고 상태를 기록했다. 실제 제품과 계약상 지원 범위를 확인할 차례다.","delta":{"money":-2,"trust":5,"quality":3,"time":-3},"next":"s_recall","setFlags":["support_logged"]},
+        {"id":"onsite","label":"담당자와 방문 점검을 잡고 전체 사용 방법도 함께 확인한다","hint":"시간·여력을 더 써 현장의 인수인계를 보강한다.","feedback":"현장에서 전원 연결 상태를 확인하니 제품은 정상 작동했다. 사용 설명을 보강할 부분이 보여 인수인계를 다시 살핀다.","delta":{"money":-5,"trust":6,"quality":4,"time":-5},"next":"s_handover","setFlags":["support_logged","onsite_support"]}
+      ]
+    },
+    {
+      "id":"s_recall","chapter":"aftercare","title":"하자인지부터 함께 확인한다","location":"제품 지원 작업대","speaker":"서윤 · 제품·품질 담당","scene":"inspection",
+      "text":["현장 기록과 제품을 확인하니 이번 키트는 전원 연결부의 조립 상태에 문제가 있다. 계약상 지원 범위에도 해당하여 팀이 수리하고 정상 작동을 재확인한다.","민호가 말한다. “수리만 끝낼까요, 같은 상태가 다른 제품에도 있는지 확인할까요?” 서윤이 같은 작업일의 조립 기록을 펼친다."],
+      "choices":[
+        {"id":"prevent","label":"해당 제품을 복구하고 같은 원인이 있을 제품도 점검한다","hint":"원인 확인을 다음 예방으로 연결한다.","feedback":"복구 결과를 알리고 같은 조립 기록을 확인했다. 원인을 반영한 설명과 점검 방법을 현장에 전달한다.","delta":{"money":-6,"trust":7,"quality":8,"time":-4},"next":"s_handover","setFlags":["support_resolved","prevented_repeat"]},
+        {"id":"close_case","label":"약속된 수리·재확인을 마치고 이번 지원 기록을 닫는다","hint":"현재 문제를 해결하고 회사 여력을 지킨다.","feedback":"수리한 제품의 정상 작동과 인계를 확인했다. 더 넓은 예방 점검은 이후 회사 과제로 남겼다.","delta":{"money":-3,"trust":4,"quality":4,"time":-2},"next":"s_closure","setFlags":["support_resolved"]}
+      ]
+    },
+    {
+      "id":"s_handover","chapter":"aftercare","title":"담당자가 바뀌어도 열리는 상자","location":"과학관 환경교실","speaker":"하린 · 과학관 담당자","scene":"meeting",
+      "text":["하린이 다음 수업을 맡을 동료를 데려온다. 제품은 준비됐지만 사람은 바뀔 수 있다. 상자를 열고 시작하는 방법, 멈춰야 할 상황과 연락처를 다시 정리한다.","이번 계약의 인수인계를 마친 뒤에도 남는 것은 많다. 어떤 것을 회사의 다음 자산으로 만들지 고른다."],
+      "choices":[
+        {"id":"guide","label":"실제 질문을 반영한 사용 안내와 지원 연락 방법을 남긴다","hint":"현장에서 다시 찾아 쓸 수 있게 만든다.","feedback":"새 담당자도 안내를 보고 작동을 확인했다. 필요한 지원과 인수인계가 마무리되어 첫 거래를 돌아볼 시간이 왔다.","delta":{"money":-2,"trust":7,"quality":6,"time":-3},"next":"s_closure","setFlags":["handover_complete"]},
+        {"id":"repeatable","label":"회사 내부 작업 기록도 묶어 다음 납품을 준비한다","hint":"팀이 함께 배운 순서가 있어 더 수월하다.","feedback":"사용자 안내와 회사의 조립·검사·청구 기록을 함께 정리했다. 첫 거래의 경험을 다음 기회에 쓸 준비를 시작한다.","delta":{"money":-3,"trust":5,"quality":7,"time":-4},"next":"s_next","setFlags":["handover_complete","playbook_ready"],"requires":{"allFlags":["team_briefed"]}},
+        {"id":"debrief","label":"팀 전원이 거래 기록을 함께 정리하는 회고를 연다","hint":"앞에서 설명회를 못 했다면 지금 경험을 공유한다.","feedback":"인수인계를 마친 뒤 조금 더 시간을 써 준비부터 지원까지의 기록을 모았다. 다음 사람이 같은 빈칸을 만나지 않게 한다.","delta":{"money":-4,"trust":4,"quality":5,"time":-6},"next":"s_next","setFlags":["handover_complete","playbook_ready","team_briefed"],"requires":{"noFlags":["team_briefed"]}}
+      ]
+    },
+    {
+      "id":"s_closure","chapter":"aftercare","title":"푸른 노트의 마지막 칸","location":"새봄기술 저녁 회의","speaker":"민호 · 운영 담당","scene":"celebration",
+      "text":["공고에서 시작한 목록에 계약, 생산, 검사, 청구와 지원 기록이 채워졌다. 이번 계약의 납품·검사·대금 처리와 발생한 지원은 마무리됐다.","서윤이 묻는다. “우리 회사가 잘한 것은 무엇이고, 다음에는 어디에 시간을 더 쓸까요?” 결과를 어떤 이름으로 남길지 고른다."],
+      "choices":[
+        {"id":"trusted","label":"사용자까지 이어진 인수인계를 회사의 첫 기준으로 남긴다","hint":"신뢰·완성도와 실제 인수인계 기록이 충분할 때다.","feedback":"계약서의 약속이 사용자의 손까지 이어졌다. 팀은 잘된 과정을 다시 해낼 기준으로 남겼다.","delta":{"money":0,"trust":3,"quality":2,"time":0},"next":"s_end_trusted","setFlags":[],"requires":{"allFlags":["handover_complete"],"min":{"trust":70,"quality":70}}},
+        {"id":"recovered","label":"고친 문제와 남은 개선 과제를 솔직하게 기록한다","hint":"어려움까지 포함해 첫 거래를 완결한다.","feedback":"빈틈을 숨기지 않고 어떻게 복구했는지 기록했다. 첫 계약의 끝은 다음번에 덜 헤매게 해 줄 출발점이 됐다.","delta":{"money":0,"trust":4,"quality":3,"time":0},"next":"s_end_recovered","setFlags":[]}
+      ]
+    },
+    {
+      "id":"s_next","chapter":"aftercare","title":"다음 공고가 도착했다","location":"새봄기술 사무실","speaker":"서윤 · 제품·품질 담당","scene":"office",
+      "text":["메일함에 다른 기관의 공고가 도착했다. 민호는 지난 서류를 그대로 복사하려다 멈춘다. 이번 공고의 조건은 다시 확인해야 한다.","하지만 아무것도 없는 첫날과는 다르다. 원가, 시험, 변경 협의, 청구와 지원을 잇는 회사의 기록이 있다."],
+      "choices":[
+        {"id":"grow","label":"새 공고를 처음부터 대조하되 검증한 작업 방법을 활용한다","hint":"첫 경험을 새 조건에 맞춰 활용한다.","feedback":"실적이나 경험이 다음 낙찰을 보장하지는 않는다. 다만 팀은 무엇을 확인하고 무엇을 약속해야 하는지 배웠다.","delta":{"money":2,"trust":4,"quality":4,"time":2},"next":"s_end_growth","setFlags":[],"requires":{"allFlags":["playbook_ready"]}},
+        {"id":"rest","label":"확장을 서두르지 않고 첫 거래의 개선부터 마친다","hint":"운영 여력을 회복한 뒤 다음 기회를 본다.","feedback":"다음 수주보다 지금의 약속을 안정적으로 반복할 힘을 먼저 골랐다. 팀은 첫 거래를 닫고 개선 목록을 정리했다.","delta":{"money":4,"trust":3,"quality":3,"time":4},"next":"s_end_recovered","setFlags":[]}
+      ]
+    },
+    {
+      "id":"s_end_trusted","chapter":"aftercare","title":"엔딩 · 상자가 열린 뒤에도 남는 신뢰","location":"어린이 환경교실","speaker":"하린 · 과학관 담당자","scene":"celebration",
+      "text":["교실에서 아이들이 서로 다른 장소의 온도를 비교한다. 선생님은 남겨 둔 안내를 보고 키트를 정리한다.","당신의 첫 조달 거래는 공고 읽기에서 사용자 인수인계까지 이어졌다. 다음 계약도 보장되는 것은 아니지만, 이번 약속을 끝까지 이행한 기록은 남았다."],
+      "choices":[],"ending":{"id":"supplier_trusted","title":"신뢰로 완주한 사장님","body":"조건 확인, 이행, 기록과 인수인계를 연결해 첫 거래를 마쳤습니다. 선택이 달라지면 현장 재작업이나 사후지원의 경로도 달라집니다.","badge":"약속의 연결자"}
+    },
+    {
+      "id":"s_end_recovered","chapter":"aftercare","title":"엔딩 · 완벽하지 않았기에 남긴 지도","location":"새봄기술 회의실","speaker":"서윤 · 제품·품질 담당","scene":"celebration",
+      "text":["푸른 노트에는 동그라미와 수정 표시가 함께 남았다. 납품·검사·청구와 발생한 지원을 마치고, 다음에 개선할 일을 따로 묶었다.","민호가 마지막 줄을 적는다. “문제를 없었던 일로 만드는 대신, 어떻게 고쳤는지 남길 것.” 첫 거래를 완결한 회사의 방식이 생겼다."],
+      "choices":[],"ending":{"id":"supplier_recovered","title":"경험을 남긴 완주","body":"현재 거래를 끝까지 처리하고 다음 과제를 정리했습니다. 문제를 만났더라도 자료 확인과 수정·재확인으로 진행을 복구할 수 있습니다.","badge":"끝까지 책임지는 사람"}
+    },
+    {
+      "id":"s_end_loss","chapter":"bid","title":"엔딩 · 낙찰되지 않은 첫 입찰","location":"새봄기술 사무실","speaker":"민호 · 운영 담당","scene":"office",
+      "text":["이번 키트는 다른 업체가 공급한다. 새봄기술은 결과에서 확인할 수 있는 것과 스스로 보완할 일을 나눠 기록했다.","빈 출고장에 새 시험대가 들어온다. 이번 이야기의 계약은 얻지 못했지만, 다음 공고를 읽는 눈과 제출 자료를 점검하는 순서는 달라졌다."],
+      "choices":[],"ending":{"id":"supplier_loss","title":"다음 도전의 설계자","body":"낙찰 실패를 확인 가능한 자료로 돌아보고 준비 목록을 만들었습니다. 낮은 가격만으로 이행능력과 규격 입증을 대신할 수 없다는 경험을 남겼습니다.","badge":"실패를 읽는 눈"}
+    },
+    {
+      "id":"s_end_hold","chapter":"bid","title":"엔딩 · 하지 않을 약속을 고른 날","location":"새봄기술 작업대","speaker":"서윤 · 제품·품질 담당","scene":"workshop",
+      "text":["새봄기술은 이번 계약을 맡지 않았다. 불확실한 규격·시험·원가를 해결하지 못한 채 약속을 늘리는 대신, 아직 준비할 일을 분명히 했다.","첫 수주 소식은 없지만 회사의 여력과 정직한 기록이 남았다. 팀은 자신 있게 제시할 수 있는 제품과 자료를 만드는 데 집중한다."],
+      "choices":[],"ending":{"id":"supplier_hold","title":"준비를 선택한 사장님","body":"진행 가능한 범위를 확인하고 도전을 보류했습니다. 이번 계약을 맡기 전에 준비할 자료와 조건을 찾아 회사의 여력을 남겼습니다.","badge":"정직한 멈춤"}
+    },
+    {
+      "id":"s_end_growth","chapter":"aftercare","title":"엔딩 · 혼자 아는 일을 회사의 힘으로","location":"새봄기술 새 프로젝트 게시판","speaker":"민호 · 운영 담당","scene":"celebration",
+      "text":["다음 게시판에는 지난 계약서의 복사본 대신 새 공고의 확인 목록이 붙는다. 옆에는 회사가 함께 만든 조립·검사·청구·지원 방법이 놓여 있다.","사장님 혼자 기억하던 일이 팀이 다시 해낼 수 있는 과정이 됐다. 당신은 첫 거래를 완결하고, 조건이 다른 다음 기회를 준비한다."],
+      "choices":[],"ending":{"id":"supplier_growth","title":"두 번째 도전을 여는 회사","body":"첫 거래의 경험을 팀의 기록과 작업 방법으로 바꿨습니다. 다음 입찰의 조건은 다시 확인하면서, 검증한 경험은 활용할 수 있습니다.","badge":"다음 장의 개척자"}
+    }
+  ]
+}
