@@ -11,6 +11,7 @@
   ];
   var STEPS = [1, 3, 7, 14, 30];
   var SRS = "ppm.srs.v1";
+  var ATOM_REVISION = "20260916-v006";
   var MARK = "①②③④⑤";
   var NUM = /[0-9０-９]/;
   var PART = /(은|는|이|가|을|를|의|에|에서|으로|로|와|과|도|만|부터|까지|에게|보다|이나|나|며|고|하여|하고|한다|된다|이다|있다|없다)$/;
@@ -47,9 +48,14 @@
     try { localStorage.setItem(SRS, JSON.stringify(memory)); memoryOnly = false; return true; }
     catch (e) { memoryOnly = true; return false; }
   }
+  function progressKey(id, mode) {
+    // Retain old records, but a substantively new judgment is a new recall task.
+    var reviewedId = mode !== "quiz" && /^A\d{4}$/.test(id) ? id + "@" + ATOM_REVISION : id;
+    return reviewedId + "|" + mode;
+  }
   function grade(id, mode, ok) {
     if (typeof id !== "string" || !id || !/^(quiz|blank|recall)$/.test(mode)) return false;
-    var o = srsGet(), k = id + "|" + mode, st = o[k], t = today();
+    var o = srsGet(), k = progressKey(id, mode), st = o[k], t = today();
     if (!st) st = { n: -1, due: t };
     // Early/same-day practice must not turn one recall into several spaced reviews.
     if (!ok) { st.n = 0; st.due = t + STEPS[0]; }
@@ -106,7 +112,7 @@
     if (pending[key]) return pending[key];
     var controller = typeof AbortController === "function" ? new AbortController() : null;
     var timer;
-    var request = fetch("../data/" + key + ".json", controller ? { signal: controller.signal } : {}).then(function (r) {
+    var request = fetch("../data/" + key + ".json?v=20260916-v006", controller ? { signal: controller.signal } : {}).then(function (r) {
       if (!r.ok) throw new Error("데이터 응답 오류: " + r.status);
       return r.json();
     }).then(function (j) {
@@ -140,11 +146,11 @@
     if (policy) return Promise.resolve(policy);
     if (policyRequest) return policyRequest;
     var controller = typeof AbortController === "function" ? new AbortController() : null, timer;
-    var request = fetch("../data/review-policy.json", controller ? { signal: controller.signal } : {}).then(function (r) {
+    var request = fetch("../data/review-policy.json?v=20260916-v006", controller ? { signal: controller.signal } : {}).then(function (r) {
       if (!r.ok) throw new Error("검토 상태를 불러오지 못했습니다.");
       return r.json();
     }).then(function (j) {
-      if (!j || ![j.excludedQuizIds, j.approvedExamQuizIds].every(function (a) {
+      if (!j || ![j.excludedQuizIds, j.approvedExamQuizIds, j.approvedPracticeQuizIds].every(function (a) {
         return Array.isArray(a) && a.every(function (id) { return typeof id === "string" && id.length > 0; });
       })) throw new Error("검토 상태의 형식이 올바르지 않습니다.");
       return j;
@@ -163,7 +169,7 @@
       var subject = SUBJECTS.filter(function (s) { return s.slug === slug; })[0];
       var items = j.items.filter(function (q) {
         var key = q.id || q.atom;
-        if (rules.excludedQuizIds.indexOf(q.id) >= 0 || ids.has(key) || q.subject !== subject.s) return false;
+        if (rules.approvedPracticeQuizIds.indexOf(q.id) < 0 || rules.excludedQuizIds.indexOf(q.id) >= 0 || ids.has(key) || q.subject !== subject.s) return false;
         ids.add(key); return true;
       });
       return Object.assign({}, j, { items: items, n: items.length });
@@ -175,12 +181,22 @@
       return Object.assign({}, r[0], { items: items, n: items.length });
     });
   }
-  function loadCards(slug) { return loadData("cards", slug, CD); }
+  function loadCards(slug) {
+    return loadData("cards", slug, CD).then(function (j) {
+      var cards = j.cards.filter(function (c) {
+        return c.content_status === "verified" && c.game_eligible === true &&
+          typeof c.decision_prompt === "string" && c.decision_prompt.trim() &&
+          Array.isArray(c.required_elements) && c.required_elements.length > 0 &&
+          typeof c.source_url === "string" && /^https:\/\//.test(c.source_url) && c.source_checked;
+      });
+      return Object.assign({}, j, { cards: cards, n: cards.length, held_n: j.cards.length - cards.length });
+    });
+  }
 
   window.PPMQ = {
     SUBJECTS: SUBJECTS, MARK: MARK, esc: esc, norm: norm, shuffle: shuffle,
     maskHtml: maskHtml, maskAns: maskAns, grade: grade, srsGet: srsGet, srsPut: srsPut,
-    today: today, loadQuiz: loadQuiz, loadCards: loadCards, loadExamQuiz: loadExamQuiz,
+    today: today, loadQuiz: loadQuiz, loadCards: loadCards, loadExamQuiz: loadExamQuiz, progressKey: progressKey,
     storageOk: function () { return !memoryOnly; }
   };
 })();

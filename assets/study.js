@@ -95,6 +95,7 @@
     var nodes = document.querySelectorAll(".atom");
     var items = [];
     for (var i = 0; i < nodes.length; i++) {
+      if (nodes[i].getAttribute("data-game") !== "true") continue;
       var body = nodes[i].querySelector(".atom-body");
       var h = nodes[i].querySelector(".atom-h");
       var src = nodes[i].querySelector(".atom-src");

@@ -17,7 +17,7 @@
 
 <main id="main-content" class="wrap card-wrap">
   <h1>문제풀이·시간 연습</h1>
-  <p class="lede">먼저 <b>과목별 개념 확인</b>으로 점검해 보세요. 자체 제작 문항을 검토 중이며 공식 문항이나 출제 예측 자료가 아닙니다. 80문항 시간 연습은 과목별 검수 문항이 충분할 때 제공합니다.</p>
+  <p class="lede">공식 근거와 보기를 대조한 <b>자체 작성 12문항</b>으로 판단을 연습합니다. 기존 자동 생성 문항은 atom 개정에 맞춰 재검토 중입니다. 80문항 시간 연습은 과목별 검수 문항이 충분할 때 제공합니다.</p>
 
   <div class="card-setup" id="setup">
     <div class="row"><label>방식</label><select id="selKind">
@@ -49,7 +49,7 @@
   </div>
   <div id="result" tabindex="-1" hidden></div>
 </main>
-<script src="../assets/quiz.js?v=20260916"></script>
+<script src="../assets/quiz.js?v=20260916-v006"></script>
 <script>
 var E = null, TMR = null, starting = false, startVersion = 0, lastWrong = [];
 function $(id) { return document.getElementById(id); }
@@ -165,7 +165,8 @@ function cSubmit(automatic) {
     s.n++;
     var ok = E.pick[i] === q.answer;
     if (ok) s.ok++; else wrong.push({ q: q, i: i, pick: E.pick[i] });
-    grades[q.atom] = Object.prototype.hasOwnProperty.call(grades, q.atom) ? grades[q.atom] && ok : ok;
+    var questionId = q.id || q.atom;
+    grades[questionId] = Object.prototype.hasOwnProperty.call(grades, questionId) ? grades[questionId] && ok : ok;
   });
   Object.keys(grades).forEach(function (id) { PPMQ.grade(id, "quiz", grades[id]); });
   lastWrong = wrong.map(function (w) { return w.q; });

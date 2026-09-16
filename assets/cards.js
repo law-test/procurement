@@ -94,14 +94,17 @@
     if (DATA[slug]) return Promise.resolve(DATA[slug]);
     if (pending[slug]) return pending[slug];
     var controller = typeof AbortController === "function" ? new AbortController() : null, timer;
-    var request = fetch("../data/cards." + slug + ".json", controller ? { signal: controller.signal } : {}).then(function (r) {
+    var request = fetch("../data/cards." + slug + ".json?v=20260916-v006", controller ? { signal: controller.signal } : {}).then(function (r) {
       if (!r.ok) throw new Error("카드 응답 오류");
       return r.json();
     }).then(function (j) {
       if (!j || !Array.isArray(j.cards) || !j.cards.every(function (c) {
         return c && typeof c.id === "string" && typeof c.s === "string";
       })) throw new Error("카드 형식 오류");
-      return j;
+      return Object.assign({}, j, { cards: j.cards.filter(function (c) {
+        return c.content_status === "verified" && c.game_eligible === true && c.source_url && c.source_checked &&
+          c.decision_prompt && Array.isArray(c.required_elements) && c.required_elements.length;
+      }) });
     });
     var timeout = new Promise(function (_, reject) {
       timer = setTimeout(function () {
@@ -235,7 +238,7 @@
       '<div class="modal-top"><span>' + (Q.i + 1) + " / " + Q.items.length + " · " +
       (it.mode === "blank" ? "빈칸" : "직접회상") + '</span><span>' + esc(c.y) +
       (c.i === "높음" ? " · 중요" : "") + " · " + esc(c.id) + "</span></div>" +
-      '<div class="modal-q">' + esc(c.t) + "</div>" +
+      '<div class="modal-q">' + esc(c.recall_prompt || c.decision_prompt) + "</div>" +
       body +
       '<div class="modal-fb" id="cFb" role="status"></div>' +
       '<div class="modal-btns" id="cBtns">' +

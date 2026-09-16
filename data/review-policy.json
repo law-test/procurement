@@ -1,7 +1,27 @@
 {
-  "revision": "2026-09-16",
-  "excludedQuizIds": ["CONTRACT-0017", "CONTRACT-0033", "PRACTICE-0057", "PRACTICE-0110"],
+  "revision": "20260916-v006",
+  "excludedQuizIds": [
+    "CONTRACT-0017",
+    "CONTRACT-0033",
+    "PRACTICE-0057",
+    "PRACTICE-0110"
+  ],
   "approvedExamQuizIds": [],
   "reason": "발문에 정답이 드러나는 4문항을 제외했습니다. 기존 자동 생성 자료는 개념 확인용이며, 80문항 시험 구성에 필요한 문항별 검수는 완료되지 않았습니다.",
-  "independentLearningPath": "../learn/"
+  "independentLearningPath": "../learn/",
+  "approvedPracticeQuizIds": [
+    "JP-20260916-Q01",
+    "JP-20260916-Q02",
+    "JP-20260916-Q03",
+    "JP-20260916-Q04",
+    "JP-20260916-Q05",
+    "JP-20260916-Q06",
+    "JP-20260916-Q07",
+    "JP-20260916-Q08",
+    "JP-20260916-Q09",
+    "JP-20260916-Q10",
+    "JP-20260916-Q11",
+    "JP-20260916-Q12"
+  ],
+  "note": "기존 자동생성 문항은 원장 개정에 따라 재검토 대기. 현재 객관식은 공식 근거와 선택지를 검토한 독립 작성 12문항만 제공한다."
 }

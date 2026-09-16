@@ -1,0 +1,15 @@
+{
+  "revision": "20260916-v006",
+  "total": 1892,
+  "mapped": 1652,
+  "unmapped": 240,
+  "status": {
+    "verified": 383,
+    "background": 196,
+    "needs_source": 1313
+  },
+  "eligible": 369,
+  "objective_questions": 12,
+  "source_checked": "2026-09-16",
+  "scope": "개별 판단형 재작성 완료. 법령·문서 대조 여부는 각 atom 상태로 구분하며 전체 내용 검수 완료를 의미하지 않는다."
+}

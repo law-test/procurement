@@ -3,12 +3,13 @@
 <head>
 <meta charset="utf-8"/>
 <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
-<title>외우기 — 조달프로</title>
+<title>판단 복습 — 조달프로</title>
 <meta name="description" content="자체 제작한 개념 연습문제와 회상 카드로 복습합니다. 과목·주요항목을 고르고 오답을 다시 풀어 보세요."/>
 <meta name="theme-color" content="#0f5f7a"/>
 <link rel="stylesheet" href="https://cdn.jsdelivr.net/gh/orioncactus/pretendard@v1.3.9/dist/web/static/pretendard.css"/>
 <link rel="stylesheet" href="../assets/site.css"/>
 <link rel="stylesheet" href="../assets/study.css"/>
+<link rel="stylesheet" href="../assets/atoms.css?v=20260916-v006"/>
 <link rel="stylesheet" href="../assets/experience.css?v=20260916">
 </head>
 <body>
@@ -16,16 +17,17 @@
 <header><div class="wrap hrow"><a class="logo" href="../">조달프로<small>공공조달관리사 학습·실무</small></a><button class="menu-toggle" aria-expanded="false" aria-controls="site-menu" type="button">메뉴</button><nav id="site-menu" class="menu" aria-label="주 메뉴"><a href="../">게임</a><a href="../drill/">복습</a><a href="../library/">자료</a><a href="../future/">취업·활용</a></nav></div></header>
 
 <main id="main-content" class="wrap card-wrap">
-  <h1>외우기</h1>
-  <p class="lede">자체 제작한 <b>개념 연습문제와 회상 카드</b>입니다. 문항을 검토 중이며 공식 문항이나 출제 예측 자료가 아닙니다. 과목과 항목을 골라 공부하고 오답을 다시 풀어 보세요. 실기 객관식과 빈칸은 개념 복습용이며, 필답형 답안 작성·채점 연습을 대신하지 않습니다.</p>
+  <h1>판단 복습</h1>
+  <p class="lede">상황을 읽고 <b>결론과 이유를 직접 답해 보세요.</b> 답을 펼친 뒤 꼭 들어가야 할 요소와 대조합니다. 공식 근거를 확인한 atom만 복습하며, 정식 모의시험·실기 채점 결과는 아닙니다.</p>
+  <p class="note">1,892개 원장을 판단형으로 개정했습니다. <a href="../c/">전체 atom과 검토 상태</a>를 확인할 수 있습니다. 이전 기록은 보존하며, 달라진 판단 질문은 새 복습으로 시작합니다.</p>
 
   <div class="card-setup" id="setup">
     <div class="row"><label>과목</label><select id="selSubject"></select></div>
     <div class="row"><label>주요항목</label><select id="selMajor"><option value="all">전부</option></select></div>
     <div class="row"><label>방식</label><select id="selMode">
       <option value="quiz">4지선다</option>
-      <option value="recall">직접회상</option>
-      <option value="mix" selected>섞기</option>
+      <option value="recall" selected>판단·답안 작성</option>
+      <option value="mix">섞기</option>
       <option value="blank" hidden>빈칸 채우기</option>
     </select></div>
     <div class="row"><label></label><span class="note" id="modeNote"></span></div>
@@ -50,7 +52,7 @@
   </div>
   <div id="run" tabindex="-1" hidden></div>
 </main>
-<script src="../assets/quiz.js?v=20260916"></script>
+<script src="../assets/quiz.js?v=20260916-v006"></script>
 <script>
 var Q = null, POOL = { quiz: [], card: [] }, loadVersion = 0, ready = false, GROUPS = [], DAY = "";
 function $(id) { return document.getElementById(id); }
@@ -79,6 +81,7 @@ function clearScope() {
   GROUPS = []; DAY = "";
   return load();
 }
+function majorKey(value) { return String(value || "").replace(/\s+/g, ""); }
 function load(major) {
   var slug = $("selSubject").value, version = ++loadVersion;
   var slugs = GROUPS.length ? ["law", "plan", "contract"].filter(function (_, i) {
@@ -104,20 +107,29 @@ function load(major) {
     if (GROUPS.length) {
       POOL.card = POOL.card.filter(function (c) { return GROUPS.indexOf(c.g) >= 0; });
       var ids = new Set(POOL.card.map(function (c) { return c.id; }));
-      POOL.quiz = POOL.quiz.filter(function (q) { return ids.has(q.atom); });
+      POOL.quiz = POOL.quiz.filter(function (q) {
+        var group = typeof q.gid === "string" ? q.gid.split(".").slice(0, -1).join(".") : "";
+        return ids.has(q.atom) || GROUPS.indexOf(group) >= 0;
+      });
     }
     var seen = [];
     POOL.card.forEach(function (c) { if (seen.indexOf(c.m) < 0) seen.push(c.m); });
-    POOL.quiz.forEach(function (q) { if (seen.indexOf(q.major) < 0) seen.push(q.major); });
+    POOL.quiz.forEach(function (q) {
+      var same = seen.findIndex(function (m) { return majorKey(m) === majorKey(q.major); });
+      if (same < 0) seen.push(q.major); else seen[same] = q.major;
+    });
     $("selMajor").innerHTML = '<option value="all">전부</option>' +
       seen.map(function (m) { return '<option>' + PPMQ.esc(m) + '</option>'; }).join("");
-    if (typeof major === "string" && seen.indexOf(major) >= 0) $("selMajor").value = major;
+    if (typeof major === "string") {
+      var selected = seen.find(function (m) { return majorKey(m) === majorKey(major); });
+      if (selected) $("selMajor").value = selected;
+    }
     $("selMajor").disabled = false;
     ready = true; $("start").disabled = false;
     var srs = PPMQ.srsGet(), t = PPMQ.today(), done = 0, due = 0;
     var keys = new Set();
-    POOL.quiz.forEach(function (q) { keys.add(q.atom + "|quiz"); });
-    POOL.card.forEach(function (c) { keys.add(c.id + "|recall"); if (slug === "practice") keys.add(c.id + "|blank"); });
+    POOL.quiz.forEach(function (q) { keys.add(PPMQ.progressKey(q.id || q.atom, "quiz")); });
+    POOL.card.forEach(function (c) { keys.add(PPMQ.progressKey(c.id, "recall")); if (slug === "practice") keys.add(PPMQ.progressKey(c.id, "blank")); });
     keys.forEach(function (k) { if (srs[k]) { done++; if (srs[k].due <= t) due++; } });
     $("stat").textContent = "선택 범위 개념 " + POOL.card.length + "개 · 객관식 " + POOL.quiz.length +
       "문항. 이 범위의 방식별 학습 기록 " + done + "개 중 " + due + "개가 복습 차례입니다." +
@@ -144,17 +156,17 @@ function dStart() {
     return true;
   }
   var cards = POOL.card.filter(function (c) {
-    return (major === "all" || c.m === major) && impOk(c) && PPMQ.norm(c.s).length >= 12;
+    return (major === "all" || majorKey(c.m) === majorKey(major)) && impOk(c) && PPMQ.norm(c.s).length >= 12;
   });
   var quiz = POOL.quiz.filter(function (q) {
-    return (major === "all" || q.major === major) && impOk(q);
+    return (major === "all" || majorKey(q.major) === majorKey(major)) && impOk(q);
   });
   var srs = PPMQ.srsGet(), t = PPMQ.today();
   var review = $("selReview").value;
-  function rank(id, m) { var st = srs[id + "|" + m]; return !st ? 1 : (st.due <= t ? 0 : 2); }
-  function include(id, m) { var st = srs[id + "|" + m]; return review === "all" || (review === "wrong" ? !!st && st.wrong === true : !st || st.due <= t); }
-  var queues = { quiz: PPMQ.shuffle(quiz.filter(function (q) { return include(q.atom, "quiz"); })).sort(function (a, b) {
-    return rank(a.atom, "quiz") - rank(b.atom, "quiz");
+  function rank(id, m) { var st = srs[PPMQ.progressKey(id, m)]; return !st ? 1 : (st.due <= t ? 0 : 2); }
+  function include(id, m) { var st = srs[PPMQ.progressKey(id, m)]; return review === "all" || (review === "wrong" ? !!st && st.wrong === true : !st || st.due <= t); }
+  var queues = { quiz: PPMQ.shuffle(quiz.filter(function (q) { return include(q.id || q.atom, "quiz"); })).sort(function (a, b) {
+    return rank(a.id || a.atom, "quiz") - rank(b.id || b.atom, "quiz");
   }).map(function (q) { return { mode: "quiz", q: q }; }) };
   ["blank", "recall"].forEach(function (m) {
     queues[m] = PPMQ.shuffle(cards.filter(function (c) {
@@ -173,7 +185,7 @@ function dStart() {
     if (!added) break;
   }
   if (!items.length) { $("stat").textContent = "현재 조건에 맞는 문항이 없습니다. 복습 범위나 주요항목을 바꿔 보세요."; return; }
-  items.sort(function (a, b) { return rank(a.q ? a.q.atom : a.c.id, a.mode) - rank(b.q ? b.q.atom : b.c.id, b.mode); });
+  items.sort(function (a, b) { return rank(a.q ? (a.q.id || a.q.atom) : a.c.id, a.mode) - rank(b.q ? (b.q.id || b.q.atom) : b.c.id, b.mode); });
   Q = { items: items, i: 0, hit: 0, ratio: 60, phase: "question", wrong: [], objective: 0, objectiveHit: 0, recalled: 0, recallHit: 0, requested: n };
   $("setup").hidden = true; $("run").hidden = false;
   paint();
@@ -197,11 +209,11 @@ function paint() {
     var c = it.c;
     h = '<div class="modal-top"><span>' + (Q.i + 1) + " / " + Q.items.length + " · " + label +
       '</span><span>' + PPMQ.esc(c.y) + (c.i === "높음" ? " · 중요" : "") + '</span></div>' +
-      '<div class="modal-q">' + PPMQ.esc(c.t) + '</div>' +
+      '<div class="modal-q">' + PPMQ.esc(c.recall_prompt || c.decision_prompt) + '</div>' +
       (it.mode === "blank"
         ? '<div class="modal-s" id="sBox">' + PPMQ.maskHtml(c.s, Q.ratio) + '</div>' +
           '<input type="text" id="in" aria-label="빈칸 정답" autocomplete="off" placeholder="가려진 말을 순서대로, 빈칸으로 띄어 쓰세요"/>'
-        : '<div class="modal-s" id="sBox"><i>답을 떠올린 뒤 확인을 누르세요.</i></div>') +
+        : '<div class="modal-s" id="sBox"><label for="recallDraft">내 판단과 이유</label><textarea class="recall-answer" id="recallDraft" placeholder="결론 → 적용조건 → 이유 순으로 적거나 말해 보세요. 입력 내용은 서버로 전송되지 않습니다."></textarea></div>') +
       '<div class="modal-fb" id="fb" role="status"></div><div class="modal-btns" id="btns">' +
       (it.mode === "blank" ? '<button class="btn" onclick="dCheck()">확인</button>' : '') +
       '<button class="btn ' + (it.mode === "blank" ? "ghost" : "") + '" onclick="dReveal()">정답 보기</button>' +
@@ -221,7 +233,8 @@ function explain(x) {
     (x.c && x.c !== "없음" ? '<div class="atom-cond"><b>조건·예외</b> ' + PPMQ.esc(x.c) + '</div>' : "") +
     (x.conf && x.conf !== "없음" ? '<div class="atom-conf"><b>혼동</b> ' + PPMQ.esc(x.conf) + '</div>' : "") +
     (x.x && x.x !== "없음" ? '<div class="atom-conf"><b>혼동</b> ' + PPMQ.esc(x.x) + '</div>' : "") +
-    ((x.src || x.r) ? '<div class="modal-src">' + PPMQ.esc(x.src || x.r) + '</div>' : "");
+    ((x.src || x.r) ? '<div class="modal-src">' + PPMQ.esc(x.src || x.r) + '</div>' : "") +
+    (typeof x.source_url === "string" && /^https:\/\//.test(x.source_url) ? '<p class="modal-src"><a href="' + PPMQ.esc(x.source_url) + '" target="_blank" rel="noopener">공식 근거 열기</a> · 확인 ' + PPMQ.esc(x.source_checked) + '</p>' : "");
 }
 
 function dPick(k) {
@@ -274,26 +287,41 @@ function dReveal() {
 }
 function finishCard(c) {
   var it = Q.items[Q.i];
-  $("sBox").innerHTML = "";
+  var draft = $("recallDraft");
+  var draftText = draft ? draft.value : "";
+  $("sBox").innerHTML = draftText ? '<div class="recall-draft"><b>내 답안</b><br>' + PPMQ.esc(draftText) + '</div>' : "";
   $("btns").innerHTML = (Q.phase === "answered" ? '<button class="btn" onclick="dNext()">다음</button>' :
-    '<button class="btn" onclick="dGrade(1)">알았음</button><button class="btn ghost" onclick="dGrade(0)">몰랐음</button>') +
+    '<button class="btn" id="rubricPass" disabled onclick="dGrade(1)">요소 모두 설명함</button><button class="btn ghost" onclick="dGrade(0)">빠진 요소가 있음</button>') +
     (c.g && c.g !== "etc" ? '<a class="btn ghost" href="../c/' + encodeURIComponent(c.g) + '/#' + encodeURIComponent(c.id) + '">개념에서 보기</a>' : "") +
     (window.PPMReport ? PPMReport.btn({ id: c.id, kindLabel: it.mode === "blank" ? "빈칸 카드" : "회상 카드",
                     quote: (c.t ? c.t + " — " : "") + (c.s || "") }) : "") +
     '<button class="btn ghost" onclick="dQuit()">그만</button>';
   $("btns").insertAdjacentHTML("beforebegin", explain(c));
+  if (Q.phase === "revealed") {
+    $("btns").insertAdjacentHTML("beforebegin", '<div class="rubric-list"><b>내 답에 포함한 요소를 체크하세요</b>' + c.required_elements.map(function (part) {
+      return '<label><input class="rubric-check" type="checkbox" onchange="dRubricReady()"><span>' + PPMQ.esc(part) + '</span></label>';
+    }).join("") + '</div><p class="note">직접 대조한 자기평가입니다. 문장 의미를 자동 채점하지 않습니다.</p>');
+  }
   var inp = $("in"); if (inp) inp.remove();
   $("btns").querySelector("button").focus();
 }
+function dRubricReady() {
+  var checks = document.querySelectorAll(".rubric-check"), pass = $("rubricPass");
+  if (pass) pass.disabled = !checks.length || !Array.from(checks).every(function (x) { return x.checked; });
+}
 function dGrade(ok) {
   if (!Q || Q.phase !== "revealed") return;
+  if (ok) {
+    var checks = document.querySelectorAll(".rubric-check");
+    if (!checks.length || !Array.from(checks).every(function (x) { return x.checked; })) return;
+  }
   var it = Q.items[Q.i];
   Q.phase = "answered";
   recordAnswer(it, !!ok);
   dNext();
 }
 function recordAnswer(it, ok) {
-  PPMQ.grade(it.q ? it.q.atom : it.c.id, it.mode, ok);
+  PPMQ.grade(it.q ? (it.q.id || it.q.atom) : it.c.id, it.mode, ok);
   if (ok) Q.hit++; else Q.wrong.push(it);
   if (it.mode === "recall") { Q.recalled++; if (ok) Q.recallHit++; }
   else { Q.objective++; if (ok) Q.objectiveHit++; }
