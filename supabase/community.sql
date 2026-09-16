@@ -7,8 +7,8 @@ CREATE TABLE IF NOT EXISTS public.jp_comm_posts (
   id uuid PRIMARY KEY,
   player_id uuid NOT NULL REFERENCES public.jp_rank_profiles(player_id) ON DELETE CASCADE,
   kind text NOT NULL CHECK(kind IN ('free','news')),
-  title text NOT NULL CHECK(char_length(title) BETWEEN 2 AND 100),
-  body text NOT NULL CHECK(char_length(body) BETWEEN 10 AND 5000),
+  title text NOT NULL CHECK(char_length(title) BETWEEN 1 AND 100 AND title ~ '[^[:space:]]'),
+  body text NOT NULL CHECK(char_length(body) BETWEEN 1 AND 5000 AND body ~ '[^[:space:]]'),
   source_url text NOT NULL DEFAULT '',
   source_name text NOT NULL DEFAULT '',
   created_at timestamptz NOT NULL DEFAULT now(),
@@ -35,7 +35,7 @@ CREATE TABLE IF NOT EXISTS public.jp_comm_comments (
   id uuid PRIMARY KEY,
   post_id uuid NOT NULL REFERENCES public.jp_comm_posts(id) ON DELETE CASCADE,
   player_id uuid NOT NULL REFERENCES public.jp_rank_profiles(player_id) ON DELETE CASCADE,
-  body text NOT NULL CHECK(char_length(body) BETWEEN 2 AND 2000),
+  body text NOT NULL CHECK(char_length(body) BETWEEN 1 AND 2000 AND body ~ '[^[:space:]]'),
   created_at timestamptz NOT NULL DEFAULT now(),
   updated_at timestamptz NOT NULL DEFAULT now(),
   deleted boolean NOT NULL DEFAULT false
@@ -94,10 +94,10 @@ DECLARE previous public.jp_comm_posts;
 BEGIN
   PERFORM public.jp_rank_auth(p_player,p_secret);
   PERFORM 1 FROM public.jp_rank_profiles WHERE player_id=p_player FOR UPDATE;
-  p_title:=btrim(p_title);p_body:=btrim(p_body);p_source_url:=btrim(coalesce(p_source_url,''));p_source_name:=btrim(coalesce(p_source_name,''));
-  IF p_id IS NULL OR p_kind IS NULL OR p_kind NOT IN ('free','news') OR p_title IS NULL OR char_length(p_title) NOT BETWEEN 2 AND 100
-    OR p_body IS NULL OR char_length(p_body) NOT BETWEEN 10 AND 5000 THEN
-    RAISE EXCEPTION USING ERRCODE='22023',MESSAGE='제목은 2~100자, 본문은 10~5000자로 입력해 주세요.';
+  p_title:=regexp_replace(p_title,'^[[:space:]]+|[[:space:]]+$','','g');p_body:=regexp_replace(p_body,'^[[:space:]]+|[[:space:]]+$','','g');p_source_url:=btrim(coalesce(p_source_url,''));p_source_name:=btrim(coalesce(p_source_name,''));
+  IF p_id IS NULL OR p_kind IS NULL OR p_kind NOT IN ('free','news') OR p_title IS NULL OR char_length(p_title) NOT BETWEEN 1 AND 100
+    OR p_body IS NULL OR char_length(p_body) NOT BETWEEN 1 AND 5000 THEN
+    RAISE EXCEPTION USING ERRCODE='22023',MESSAGE='제목과 내용을 입력해 주세요. 제목은 100자, 본문은 5000자까지 쓸 수 있습니다.';
   END IF;
   IF char_length(p_source_name)>120 OR char_length(p_source_url)>2000 OR
     (p_source_url<>'' AND p_source_url !~ '^https://[A-Za-z0-9]([A-Za-z0-9.-]*[A-Za-z0-9])?(:[0-9]{1,5})?([/?#][^[:space:]<>"\\]*)?$') THEN
@@ -183,9 +183,9 @@ DECLARE previous public.jp_comm_comments; saved public.jp_comm_comments; author 
 BEGIN
   PERFORM public.jp_rank_auth(p_player,p_secret);
   SELECT * INTO author FROM public.jp_rank_profiles WHERE player_id=p_player FOR UPDATE;
-  p_body:=btrim(p_body);
-  IF p_id IS NULL OR p_post IS NULL OR p_body IS NULL OR char_length(p_body) NOT BETWEEN 2 AND 2000 THEN
-    RAISE EXCEPTION USING ERRCODE='22023',MESSAGE='댓글은 2~2000자로 입력해 주세요.';
+  p_body:=regexp_replace(p_body,'^[[:space:]]+|[[:space:]]+$','','g');
+  IF p_id IS NULL OR p_post IS NULL OR p_body IS NULL OR char_length(p_body) NOT BETWEEN 1 AND 2000 THEN
+    RAISE EXCEPTION USING ERRCODE='22023',MESSAGE='댓글을 입력해 주세요. 2000자까지 쓸 수 있습니다.';
   END IF;
   IF NOT EXISTS(SELECT 1 FROM public.jp_comm_posts WHERE id=p_post AND NOT deleted) THEN
     RAISE EXCEPTION USING ERRCODE='22023',MESSAGE='이 글에는 댓글을 작성할 수 없습니다.';
