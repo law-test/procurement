@@ -40,3 +40,15 @@ document.addEventListener('DOMContentLoaded', ppmRenderDday);
   s.defer = true;
   (document.head || document.documentElement).appendChild(s);
 })();
+
+/* 방문 집계 — visits.js 를 한 번만 불러온다. */
+(function () {
+  if (window.__jodalVisitsTag) return;
+  window.__jodalVisitsTag = true;
+  var logo = document.querySelector('header a.logo');
+  var base = logo ? (logo.getAttribute('href') || './') : './';
+  var s = document.createElement('script');
+  s.src = base + 'assets/visits.js?v=20260916-v1';
+  s.defer = true;
+  (document.head || document.documentElement).appendChild(s);
+})();
