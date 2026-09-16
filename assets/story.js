@@ -21,8 +21,26 @@
       });
     } catch (e) { storageNote = '저장 기록을 읽지 못했어요. 새로 시작하면 새 기록이 저장됩니다.'; memoryOnly = true; }
   }
+  function latestSave() {
+    try {
+      var latest = JSON.parse(localStorage.getItem(KEY));
+      return latest && latest.version === 1 && latest.runs && typeof latest.runs === 'object' && !Array.isArray(latest.runs) ? latest : null;
+    } catch (e) { return null; }
+  }
+  function mergeCollections(latest) {
+    if (!latest || !latest.collection) return;
+    roles.forEach(function (r) {
+      var remote = Array.isArray(latest.collection[r]) ? latest.collection[r] : [];
+      store.collection[r] = Array.from(new Set((store.collection[r] || []).concat(remote).filter(function (id) { return typeof id === 'string'; }))).slice(0, 30);
+    });
+  }
   function persist() {
-    try { localStorage.setItem(KEY, JSON.stringify(store)); memoryOnly = false; storageNote = ''; }
+    try {
+      var latest = latestSave();
+      if (latest && !memoryOnly) roles.forEach(function (r) { if (r !== active && latest.runs[r]) store.runs[r] = latest.runs[r]; });
+      mergeCollections(latest);
+      localStorage.setItem(KEY, JSON.stringify(store)); memoryOnly = false; storageNote = '';
+    }
     catch (e) { memoryOnly = true; storageNote = '지금은 이 화면에서만 이어집니다. 브라우저 저장이 막혀 있어 창을 닫으면 이번 진행을 잃을 수 있어요.'; }
   }
   function sourceLink(k) {
@@ -94,6 +112,9 @@
   }
   function openRole(role) {
     if (!campaigns[role]) return;
+    var latest = latestSave();
+    if (latest && !memoryOnly && latest.runs[role]) store.runs[role] = latest.runs[role];
+    mergeCollections(latest);
     active = role;
     if (!store.runs[role]) { store.runs[role] = C.create(campaigns[role]); persist(); }
     render();
