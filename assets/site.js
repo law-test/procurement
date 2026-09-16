@@ -11,11 +11,9 @@ window.PPM = {
 };
 
 function ppmDaysUntil(iso) {
-  var t = new Date(iso + 'T00:00:00+09:00');
-  var now = new Date();
-  var kst = new Date(now.getTime() + (now.getTimezoneOffset() * 60000) + (9 * 3600000));
-  kst.setHours(0, 0, 0, 0);
-  return Math.round((t - kst) / 86400000);
+  var targetDay = Math.floor(Date.parse(iso + 'T00:00:00Z') / 86400000);
+  var currentDay = Math.floor((Date.now() + 9 * 3600000) / 86400000);
+  return targetDay - currentDay;
 }
 
 function ppmRenderDday() {

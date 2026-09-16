@@ -1,6 +1,12 @@
 #!/usr/bin/env python3
 # -*- coding: utf-8 -*-
 """학습방(홈)·외우기·모의시험·소식 화면 생성기."""
+# 2026-09-16: 검수 정책과 게임 홈을 구형 템플릿으로 덮어쓰지 않는다.
+raise SystemExit(
+    "중단: build_ui.py는 최신 게임 홈·학습 화면과 호환되지 않는 레거시 생성기입니다. "
+    "tools/README.md를 확인하고 tools/refresh_experience.py의 현재 갱신 흐름을 사용하세요."
+)
+
 import json, os, importlib.util
 
 OUT = os.environ.get("PPM_OUT", "/home/claude/procurement")

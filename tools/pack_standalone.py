@@ -2,6 +2,12 @@
 # -*- coding: utf-8 -*-
 """사이트 페이지를 파일 하나로 합친다(CSS·JS·데이터 인라인).
 채팅에서 내려받아 더블클릭으로 열어 보기 위한 것. 서버 없이 동작한다."""
+# 구형 포장기는 원장 기반 카드·문항 전체를 HTML에 삽입하고 새 검수 정책은 누락한다.
+raise SystemExit(
+    "중단: pack_standalone.py는 미검수 데이터가 포함될 수 있는 구형 단일파일 포장기입니다. "
+    "검수 정책을 반영한 내보내기가 마련되기 전까지 사용하지 않습니다. tools/README.md를 확인하세요."
+)
+
 import json, os, re
 
 OUT = os.environ.get("PPM_OUT", "/home/claude/procurement")

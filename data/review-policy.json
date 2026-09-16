@@ -1,0 +1,7 @@
+{
+  "revision": "2026-09-16",
+  "excludedQuizIds": ["CONTRACT-0017", "CONTRACT-0033", "PRACTICE-0057", "PRACTICE-0110"],
+  "approvedExamQuizIds": [],
+  "reason": "발문에 정답이 드러나는 4문항을 제외했습니다. 기존 자동 생성 자료는 개념 확인용이며, 80문항 시험 구성에 필요한 문항별 검수는 완료되지 않았습니다.",
+  "independentLearningPath": "../learn/"
+}

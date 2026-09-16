@@ -11,6 +11,12 @@
 
 원칙 : 원장(xlsx)에서 단방향으로만 생성한다. 생성물을 직접 편집하지 않는다.
 """
+# 2026-09-16: 원장 본문 공개 및 최신 학습 화면의 덮어쓰기를 차단한다.
+raise SystemExit(
+    "중단: build_pages.py는 검수 전 카드·본문과 구형 화면을 출력하는 레거시 생성기입니다. "
+    "실행 및 다른 생성기에서의 가져오기를 중단합니다. tools/README.md의 검수·갱신 흐름을 확인하세요."
+)
+
 import json, os, re, html, collections, sys
 
 BUILD = os.environ.get("PPM_BUILD", "/home/claude/build")

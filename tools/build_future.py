@@ -1,6 +1,11 @@
 #!/usr/bin/env python3
 # -*- coding: utf-8 -*-
 """자격의 앞날 — 이 자격이 왜 생겼고 어디로 가는지."""
+raise SystemExit(
+    "중단: build_future.py는 구형 공통 화면을 사용하는 레거시 생성기입니다. "
+    "출력 전에 중단했습니다. tools/README.md의 현재 갱신 흐름을 확인하세요."
+)
+
 import os, importlib.util
 
 OUT = os.environ.get("PPM_OUT", "/home/claude/procurement")

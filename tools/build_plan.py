@@ -1,6 +1,11 @@
 #!/usr/bin/env python3
 # -*- coding: utf-8 -*-
 """1주일 완성 × 3회독 학습계획 화면 생성기."""
+raise SystemExit(
+    "중단: build_plan.py는 최신 학습계획 화면을 덮어쓰는 레거시 생성기입니다. "
+    "출력 전에 중단했습니다. tools/README.md의 현재 갱신 흐름을 확인하세요."
+)
+
 import json, os, importlib.util
 
 BUILD = os.environ.get("PPM_BUILD", "/home/claude/build")

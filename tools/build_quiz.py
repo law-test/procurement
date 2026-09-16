@@ -25,6 +25,13 @@
   올큐패스 실제 문항이 붙은 atom, 중요도 높음, 또는 유형이 수치·구별·예외인 것.
   나머지는 교재에서 읽기만 하고 문항으로 만들지 않는다.
 """
+# 2026-09-16: 자동 생성물은 독립작성·선택지·법령 검수 없이 공개할 수 없다.
+# 환경변수나 import로 우회하지 않도록 입출력보다 먼저 중단한다.
+raise SystemExit(
+    "중단: build_quiz.py는 검수 전 원장 기반 문항을 공개 data/에 쓰는 레거시 생성기입니다. "
+    "출력 경로와 관계없이 실행하지 않습니다. 검수된 독립 작성 데이터의 흐름은 tools/README.md를 확인하세요."
+)
+
 import json, os, re, random, collections
 
 BUILD = os.environ.get("PPM_BUILD", "/home/claude/build")

@@ -18,3 +18,7 @@ setup_log.txt
 deploy_log.txt
 site_update.zip
 _source/
+
+# Python screen builders
+__pycache__/
+*.pyc

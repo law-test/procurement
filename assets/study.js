@@ -35,7 +35,7 @@
   function render(sentence, ratio, revealSet) {
     var parts = tokenize(sentence);
     var cand = maskable(parts);
-    var n = Math.round(cand.length * (ratio / 100));
+    var n = Math.round(cand.length * (clampRatio(ratio) / 100));
     var hide = {};
     for (var k = 0; k < n; k++) hide[cand[k].i] = true;
     var html = "";
@@ -43,7 +43,7 @@
       if (hide[i] && !(revealSet && revealSet[i])) {
         var core = parts[i].replace(PARTICLE, "");
         var tail = parts[i].slice(core.length);
-        html += '<span class="blank">' + "　".repeat(Math.max(1, Math.min(4, Math.ceil(core.length / 2)))) + "</span>" + esc(tail);
+        html += '<span class="blank" role="img" aria-label="빈칸">' + "　".repeat(Math.max(1, Math.min(4, Math.ceil(core.length / 2)))) + "</span>" + esc(tail);
       } else {
         html += esc(parts[i]);
       }
@@ -58,30 +58,40 @@
   function answers(sentence, ratio) {
     var parts = tokenize(sentence);
     var cand = maskable(parts);
-    var n = Math.round(cand.length * (ratio / 100));
+    var n = Math.round(cand.length * (clampRatio(ratio) / 100));
     return cand.slice(0, n).sort(function (a, b) { return a.i - b.i; })
       .map(function (c) { return c.t.replace(PARTICLE, ""); });
   }
 
   function norm(s) {
-    return (s || "").replace(/[\s·,.\/()\[\]:;'"「」『』%％-]/g, "").toLowerCase();
+    // Preserve decimal points, signs, fractions and units: 1.5, 15, 5% and 5 differ.
+    return String(s == null ? "" : s).normalize("NFKC")
+      .replace(/[\s()\[\]'"「」『』]/g, "").replace(/\.$/, "").toLowerCase();
+  }
+
+  function clampRatio(v) {
+    return Math.max(0, Math.min(100, Number(v) || 0));
   }
 
   /* ---- 페이지 전체 가리기 ---- */
   window.ppmGauge = function (v) {
+    v = clampRatio(v);
     var g = document.getElementById("ppmGaugeV");
     if (g) g.textContent = v;
     var list = document.querySelectorAll(".atom-body");
     for (var i = 0; i < list.length; i++) {
-      var src = list[i].getAttribute("data-drill") || "";
+      var src = list[i].getAttribute("data-drill");
+      if (src == null) continue;
       list[i].innerHTML = +v === 0 ? esc(src) : render(src, +v);
     }
   };
 
   /* ---- 절 단위 드릴 ---- */
-  var D = null;
+  var D = null, opener = null, priorOverflow = "";
 
   window.ppmDrillStart = function () {
+    var modal = document.getElementById("ppmModal");
+    if (!modal) return;
     var nodes = document.querySelectorAll(".atom");
     var items = [];
     for (var i = 0; i < nodes.length; i++) {
@@ -90,7 +100,7 @@
       var src = nodes[i].querySelector(".atom-src");
       if (!body) continue;
       var s = body.getAttribute("data-drill") || "";
-      if (norm(s).length < 12) continue;
+      if (norm(s).length < 12 || !answers(s, 60).length) continue;
       items.push({
         id: nodes[i].getAttribute("data-atom") || "",
         title: (h ? h.textContent : "").replace(/^\d+/, "").replace(/(개념|구별|수치|절차|예외|계산|중요)\s*$/g, "").trim(),
@@ -99,7 +109,12 @@
       });
     }
     if (!items.length) return;
-    D = { items: items, i: 0, ratio: 60, done: 0, hit: 0 };
+    if (modal.hidden) {
+      opener = document.activeElement;
+      priorOverflow = document.documentElement.style.overflow;
+    }
+    document.documentElement.style.overflow = "hidden";
+    D = { items: items, i: 0, ratio: 60, hit: 0, answered: false };
     paint();
   };
 
@@ -107,34 +122,38 @@
     var m = document.getElementById("ppmModal");
     if (!m || !D) return;
     var it = D.items[D.i];
+    D.answered = false;
     var pct = Math.round((D.i / D.items.length) * 100);
     m.hidden = false;
     m.innerHTML =
-      '<div class="modal-in">' +
-      '<div class="bar"><i style="width:' + pct + '%"></i></div>' +
+      '<div class="modal-in" role="dialog" aria-modal="true" aria-labelledby="ppmQuestion">' +
+      '<div class="bar" role="progressbar" aria-label="학습 진도" aria-valuemin="0" aria-valuemax="100" aria-valuenow="' + pct + '"><i style="width:' + pct + '%"></i></div>' +
       '<div class="modal-top"><span>' + (D.i + 1) + " / " + D.items.length +
       '</span><span>맞힘 ' + D.hit + " · " + esc(it.id) + "</span></div>" +
-      '<div class="modal-q">' + esc(it.title) + "</div>" +
+      '<div class="modal-q" id="ppmQuestion">' + esc(it.title) + "</div>" +
       '<div class="modal-s" id="ppmS">' + render(it.s, D.ratio) + "</div>" +
-      '<input type="text" id="ppmIn" autocomplete="off" placeholder="가려진 말을 순서대로, 빈칸으로 띄어 쓰세요"/>' +
-      '<div class="modal-fb" id="ppmFb"></div>' +
+      '<label for="ppmIn">빈칸 답안 (가려진 순서대로 띄어 쓰기)</label>' +
+      '<input type="text" id="ppmIn" autocomplete="off" aria-describedby="ppmFb" placeholder="가려진 말을 순서대로, 빈칸으로 띄어 쓰세요"/>' +
+      '<div class="modal-fb" id="ppmFb" role="status" aria-live="polite"></div>' +
       '<div class="modal-btns">' +
-      '<button class="btn" onclick="ppmDrillCheck()">확인</button>' +
-      '<button class="btn ghost" onclick="ppmDrillReveal()">정답 보기</button>' +
-      '<button class="btn ghost" onclick="ppmDrillNext()">다음</button>' +
-      '<button class="btn ghost" onclick="ppmDrillClose()">닫기</button>' +
+      '<button class="btn" id="ppmCheck" type="button" onclick="ppmDrillCheck()">확인</button>' +
+      '<button class="btn ghost" id="ppmReveal" type="button" onclick="ppmDrillReveal()">정답 보기</button>' +
+      '<button class="btn ghost" id="ppmNext" type="button" onclick="ppmDrillNext()" disabled>다음</button>' +
+      '<button class="btn ghost" type="button" onclick="ppmDrillClose()">닫기</button>' +
       "</div>" +
       (it.src ? '<div class="modal-src">' + esc(it.src) + "</div>" : "") +
       "</div>";
     var inp = document.getElementById("ppmIn");
     if (inp) {
       inp.focus();
-      inp.onkeydown = function (ev) { if (ev.key === "Enter") window.ppmDrillCheck(); };
+      inp.onkeydown = function (ev) {
+        if (ev.key === "Enter" && !ev.isComposing && !ev.repeat) { ev.preventDefault(); window.ppmDrillCheck(); }
+      };
     }
   }
 
   window.ppmDrillCheck = function () {
-    if (!D) return;
+    if (!D || D.answered || D.i >= D.items.length) return;
     var it = D.items[D.i];
     var want = answers(it.s, D.ratio);
     var got = (document.getElementById("ppmIn").value || "").split(/\s+/).filter(Boolean);
@@ -143,38 +162,49 @@
       if (got[i] && norm(got[i]) === norm(want[i])) ok++;
     }
     var fb = document.getElementById("ppmFb");
-    if (ok === want.length && want.length) {
+    if (ok === want.length && got.length === want.length && want.length) {
       fb.className = "modal-fb ok";
       fb.textContent = "맞았습니다 (" + ok + "/" + want.length + ")";
       D.hit++;
       document.getElementById("ppmS").innerHTML = esc(it.s);
-      setTimeout(window.ppmDrillNext, 700);
     } else {
       fb.className = "modal-fb no";
       fb.textContent = ok + " / " + want.length + " 맞음. 정답: " + want.join(" , ");
       document.getElementById("ppmS").innerHTML = esc(it.s);
     }
+    lockAnswer();
   };
 
   window.ppmDrillReveal = function () {
-    if (!D) return;
+    if (!D || D.answered || D.i >= D.items.length) return;
     var it = D.items[D.i];
     document.getElementById("ppmS").innerHTML = esc(it.s);
     var fb = document.getElementById("ppmFb");
     fb.className = "modal-fb no";
     fb.textContent = "정답: " + answers(it.s, D.ratio).join(" , ");
+    lockAnswer();
   };
 
+  function lockAnswer() {
+    D.answered = true;
+    document.getElementById("ppmIn").readOnly = true;
+    document.getElementById("ppmCheck").disabled = true;
+    document.getElementById("ppmReveal").disabled = true;
+    document.getElementById("ppmNext").disabled = false;
+    document.getElementById("ppmNext").focus();
+  }
+
   window.ppmDrillNext = function () {
-    if (!D) return;
+    if (!D || !D.answered || D.i >= D.items.length) return;
     D.i++;
     if (D.i >= D.items.length) {
       var m = document.getElementById("ppmModal");
       m.innerHTML =
-        '<div class="modal-in"><div class="modal-q">이 절을 끝냈습니다</div>' +
+        '<div class="modal-in" role="dialog" aria-modal="true" aria-labelledby="ppmComplete"><div class="modal-q" id="ppmComplete" tabindex="-1">이 절을 끝냈습니다</div>' +
         '<p class="modal-s">' + D.items.length + "장 중 " + D.hit + "장을 한 번에 맞혔습니다.</p>" +
-        '<div class="modal-btns"><button class="btn" onclick="ppmDrillStart()">다시</button>' +
-        '<button class="btn ghost" onclick="ppmDrillClose()">닫기</button></div></div>';
+        '<div class="modal-btns"><button class="btn" type="button" onclick="ppmDrillStart()">다시</button>' +
+        '<button class="btn ghost" type="button" onclick="ppmDrillClose()">닫기</button></div></div>';
+      document.getElementById("ppmComplete").focus();
       return;
     }
     paint();
@@ -182,11 +212,27 @@
 
   window.ppmDrillClose = function () {
     var m = document.getElementById("ppmModal");
+    if (!m || m.hidden) return;
     if (m) { m.hidden = true; m.innerHTML = ""; }
     D = null;
+    document.documentElement.style.overflow = priorOverflow;
+    if (opener && opener.isConnected) opener.focus();
+    opener = null;
   };
 
   document.addEventListener("keydown", function (ev) {
-    if (ev.key === "Escape") window.ppmDrillClose();
+    var m = document.getElementById("ppmModal");
+    if (!m || m.hidden || document.querySelector(".rep-mask:not([hidden])")) return;
+    if (ev.key === "Escape") { ev.preventDefault(); window.ppmDrillClose(); }
+    if (ev.key !== "Tab") return;
+    var focusable = m.querySelectorAll('button:not([disabled]), input:not([disabled]), a[href], [tabindex="0"]');
+    var first = focusable[0], last = focusable[focusable.length - 1];
+    if (!first) return;
+    var outside = Array.prototype.indexOf.call(focusable, document.activeElement) < 0;
+    if (ev.shiftKey && (document.activeElement === first || outside)) {
+      ev.preventDefault(); last.focus();
+    } else if (!ev.shiftKey && (document.activeElement === last || outside)) {
+      ev.preventDefault(); first.focus();
+    }
   });
 })();

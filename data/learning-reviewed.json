@@ -1,0 +1,1064 @@
+{
+  "schema_version": "1.0",
+  "package_id": "jodal-independent-20260916",
+  "created_at": "2026-09-16",
+  "title": "판단 연습: 6개 주제",
+  "scope": "공식 예제가 다루는 6개 주제의 판단 기능을 참고한 자체 작성 학습 묶음. 실전 출제빈도·과목 비율 또는 전 범위 학습을 의미하지 않음.",
+  "exam_type": "필기",
+  "official_questions_reproduced": false,
+  "answer_status": "공식 답안이 아닌 자체 작성 문항의 검수 정답",
+  "source_checked": "2026-09-16",
+  "atoms": [
+    {
+      "id": "JP-20260916-A01",
+      "title": "수의계약의 효율과 정당성 구분",
+      "subject": "공공조달과 법제도 이해",
+      "decision": "수의계약의 절차상 이점을 공정성·적법성의 자동 확보로 확대하지 않는다.",
+      "rule": "수의계약은 상대자를 직접 선정하므로 신속하고 특수한 수요에 대응하기 쉬울 수 있지만, 경쟁을 통한 검증이 줄어드는 만큼 가격과 선정 근거를 따로 살펴야 한다.",
+      "conditions": [
+        "국가계약에서 일반경쟁이 원칙이며 수의계약은 법 제7조와 대통령령상 허용사유·절차를 전제로 한다.",
+        "법 제5조의 대등한 합의·신의성실과 부당특약 금지는 수의계약에서도 구분해 검토한다.",
+        "모든 수의계약이 더 싸거나 더 빠르다는 보장은 아니다."
+      ],
+      "confusion": "익숙한 업체 또는 빠른 진행이라는 사정과 법적 허용사유·선정 정당성을 혼동하기 쉽다.",
+      "source_ids": [
+        "SRC-T1-117",
+        "SRC-N5",
+        "SRC-N7"
+      ],
+      "example_skill": "조달방식의 일반적 이점과 그 이점이 보장하지 않는 결과를 구분",
+      "recall": {
+        "prompt": "수의계약을 빠르게 처리할 수 있다는 사실만으로 무엇이 보장되지는 않는가?",
+        "answer": "허용사유 충족·가격 적정성·선정 공정성·투명성이 자동 보장되지는 않는다."
+      },
+      "criterion": {
+        "id": "W1.2.4.1",
+        "major": "2. 공공조달 원칙 및 방법",
+        "minor": "4. 비경쟁적 공공조달 방법",
+        "detail": "1. 수의계약",
+        "page": 2,
+        "source_id": "SRC-CRITERIA"
+      },
+      "source_checked": "2026-09-16",
+      "publication_review": {
+        "status": "ready",
+        "reviewed_at": "2026-09-16",
+        "reviewer": "Codex source_audit",
+        "review_type": "공식 원문 대조 및 독립 작성·정답·조건의 AI 검수",
+        "reuse_basis": "공식 규범과 일반 개념에 근거한 자체 작성",
+        "copied_question_text": false,
+        "official_answer_claim": false,
+        "source_checked": true,
+        "number_policy": "법정값 유지; 가상사례값은 새로 설계",
+        "scope": "이 묶음의 학습내용에 대한 검수. 사이트 전체 또는 미검토 기존 문항의 검수를 의미하지 않음.",
+        "pending_issues": []
+      },
+      "match_prompt": "거래상대자를 직접 정해 시간을 줄일 수 있어도, 가격과 선정 근거의 검토가 없어지는 것은 아니다.",
+      "match_answer": "수의계약의 이점과 한계"
+    },
+    {
+      "id": "JP-20260916-A02",
+      "title": "해지와 해제의 사후 효과 구분",
+      "subject": "공공조달과 법제도 이해",
+      "decision": "적법하게 종료된 계약에서 과거 이행까지 되돌리는 문제인지 앞으로 효력을 없애는 문제인지 구분한다.",
+      "rule": "민법상 해지는 장래의 계약효력을 없애고, 해제는 당사자에게 원상회복의무를 발생시킨다.",
+      "conditions": [
+        "계약 또는 법률상 해지·해제권과 상대방에 대한 적법한 행사 및 효력 발생을 전제로 한다.",
+        "해제는 제3자의 권리를 해하지 못하며, 반환 금전에는 받은 날부터 이자를 더한다.",
+        "해지·해제 자체로 손해배상청구가 배제되는 것은 아니다. 실제 청구 성립요건은 별도 판단한다."
+      ],
+      "confusion": "해지를 하면 이미 적법하게 완료된 모든 이행도 자동으로 반환한다고 생각하거나, 해제하면 손해배상청구가 사라진다고 생각하기 쉽다.",
+      "source_ids": [
+        "SRC-C543",
+        "SRC-C548",
+        "SRC-C550",
+        "SRC-C551"
+      ],
+      "example_skill": "법률용어의 명칭 암기에 그치지 않고 시간적 효과와 사후조치를 판별",
+      "recall": {
+        "prompt": "해지와 해제를 구분할 때 먼저 확인할 시간적 차이는?",
+        "answer": "해지는 장래효, 해제는 원상회복 문제다. 제3자 보호와 손해배상 문제도 따로 확인한다."
+      },
+      "criterion": {
+        "id": "W1.5.1.3",
+        "major": "5. 공공조달법률 이해",
+        "minor": "1. 공공계약 관련 민법 규정의 이해",
+        "detail": "3. 계약의 해제·해지에 관한 규정",
+        "page": 3,
+        "source_id": "SRC-CRITERIA"
+      },
+      "source_checked": "2026-09-16",
+      "publication_review": {
+        "status": "ready",
+        "reviewed_at": "2026-09-16",
+        "reviewer": "Codex source_audit",
+        "review_type": "공식 원문 대조 및 독립 작성·정답·조건의 AI 검수",
+        "reuse_basis": "공식 규범과 일반 개념에 근거한 자체 작성",
+        "copied_question_text": false,
+        "official_answer_claim": false,
+        "source_checked": true,
+        "number_policy": "법정값 유지; 가상사례값은 새로 설계",
+        "scope": "이 묶음의 학습내용에 대한 검수. 사이트 전체 또는 미검토 기존 문항의 검수를 의미하지 않음.",
+        "pending_issues": []
+      },
+      "match_prompt": "이미 적법하게 이행한 부분을 모두 되돌리는 것과 앞으로의 효력을 끝내는 것은 서로 구분해야 한다.",
+      "match_answer": "해제와 해지"
+    },
+    {
+      "id": "JP-20260916-A03",
+      "title": "입찰공고의 공통·조건부 항목 구분",
+      "subject": "공공조달계획 수립 및 분석",
+      "decision": "입찰공고 검토 시 조문이 공통적으로 요구하는 사항과 특정 방식에서 요구하는 사항을 구분한다.",
+      "rule": "국가계약법 시행령 제36조의 공고 명시사항을 적용하되, 전자입찰·공사 현장설명·협상계약 제안요청서 설명 등은 해당 호의 전제까지 읽는다.",
+      "conditions": [
+        "국가계약법 시행령이 적용되는 입찰공고를 대상으로 한다.",
+        "입찰참가자의 자격과 참가등록·입찰서류는 각각 제4호와 제4호의2의 확인 대상이다.",
+        "제안요청서 설명의 장소·일시는 협상계약에서 그 설명을 실시하는 경우의 제3호의2 사항이다.",
+        "전자조달시스템으로 입찰서를 제출하도록 하는 경우에는 제12호의 절차·방법을 명시한다."
+      ],
+      "confusion": "참가자격을 적었다는 이유로 참가등록·서류 안내까지 충족됐다고 보거나, 조건부 항목을 모든 공고에 무조건 요구하기 쉽다.",
+      "source_ids": [
+        "SRC-N36"
+      ],
+      "example_skill": "입찰공고를 법정 명시사항과 대조해 누락 및 적용 조건을 판별",
+      "recall": {
+        "prompt": "제36조에 열거된 항목을 검사할 때 항목 이름 외에 함께 볼 것은?",
+        "answer": "그 호에 붙은 계약방식·제출방법 등 적용 조건과 공고에 실제 적힌 정보다."
+      },
+      "criterion": {
+        "id": "W2.2.3.2",
+        "major": "2. 조달요구 응대 및 제안",
+        "minor": "3. 입찰공고문 분석",
+        "detail": "2. 입찰공고 내용 검토 및 분석",
+        "page": 6,
+        "source_id": "SRC-CRITERIA"
+      },
+      "source_checked": "2026-09-16",
+      "publication_review": {
+        "status": "ready",
+        "reviewed_at": "2026-09-16",
+        "reviewer": "Codex source_audit",
+        "review_type": "공식 원문 대조 및 독립 작성·정답·조건의 AI 검수",
+        "reuse_basis": "공식 규범과 일반 개념에 근거한 자체 작성",
+        "copied_question_text": false,
+        "official_answer_claim": false,
+        "source_checked": true,
+        "number_policy": "법정값 유지; 가상사례값은 새로 설계",
+        "scope": "이 묶음의 학습내용에 대한 검수. 사이트 전체 또는 미검토 기존 문항의 검수를 의미하지 않음.",
+        "pending_issues": []
+      },
+      "match_prompt": "자격·등록서류처럼 따로 확인할 항목과, 전자 제출 등 특정 방식을 택했을 때 필요한 항목을 나눠 본다.",
+      "match_answer": "입찰공고 명시사항"
+    },
+    {
+      "id": "JP-20260916-A04",
+      "title": "협상 성립 후 계약체결 기한",
+      "subject": "공공조달계획 수립 및 분석",
+      "decision": "협상을 진행하는 기간과 협상이 성립한 뒤 계약을 체결하는 기간을 구분한다.",
+      "rule": "(계약예규) 협상에 의한 계약체결기준 제15조제1항에 따른 계약체결 기한은 협상 성립 후 10일 이내이다.",
+      "conditions": [
+        "이 예규가 적용되는 국가계약을 전제로 한다.",
+        "제13조의 협상기간 규정과 제15조의 계약체결 기한은 다른 단계다.",
+        "제14조에 따른 협상결과 서면통보가 제15조의 기준 사건을 바꾸는 것으로 읽지 않는다.",
+        "실제 날짜 계산에는 적용되는 기간 계산 규정·휴일 등을 별도 확인한다. 이 묶음의 경과일수 사례는 그 계산에 다툼이 없는 것으로 명시한다."
+      ],
+      "confusion": "협상기간의 15일 또는 협상결과 통보일을 계약체결 기한에 잘못 적용하기 쉽다.",
+      "source_ids": [
+        "SRC-NEG"
+      ],
+      "example_skill": "법정 기간의 숫자와 기산 사건을 함께 기억하고 절차 단계를 구분",
+      "recall": {
+        "prompt": "협상 성립 후 계약체결 기한과 그 기준 사건은?",
+        "answer": "협상이 성립한 후 10일 이내. 협상기간이나 결과 통보일부터의 기간과 혼동하지 않는다."
+      },
+      "criterion": {
+        "id": "W2.3.4.2",
+        "major": "3. 입찰·제안평가 및 계약체결",
+        "minor": "4. 낙찰자 결정방법",
+        "detail": "2. 협상계약 절차 및 낙찰자 결정",
+        "page": 7,
+        "source_id": "SRC-CRITERIA"
+      },
+      "source_checked": "2026-09-16",
+      "publication_review": {
+        "status": "ready",
+        "reviewed_at": "2026-09-16",
+        "reviewer": "Codex source_audit",
+        "review_type": "공식 원문 대조 및 독립 작성·정답·조건의 AI 검수",
+        "reuse_basis": "공식 규범과 일반 개념에 근거한 자체 작성",
+        "copied_question_text": false,
+        "official_answer_claim": false,
+        "source_checked": true,
+        "number_policy": "법정값 유지; 가상사례값은 새로 설계",
+        "scope": "이 묶음의 학습내용에 대한 검수. 사이트 전체 또는 미검토 기존 문항의 검수를 의미하지 않음.",
+        "pending_issues": []
+      },
+      "match_prompt": "당사자 간 조율이 성립한 뒤에는 10일 이내에 계약을 맺어야 하며, 결과를 알린 날로 기준을 바꾸지 않는다.",
+      "match_answer": "협상 후 계약체결 기한"
+    },
+    {
+      "id": "JP-20260916-A05",
+      "title": "용역 MAS 예외요청과 예외허용 구분",
+      "subject": "공공계약관리",
+      "decision": "용역 MAS 2단계경쟁의 예외사유를 검토한 뒤 요청 주체와 허용 권한을 구분한다.",
+      "rule": "제20조제1항의 사유에 따라 수요기관의 장이 예외를 요청하면 조달청장이 이를 허용할 수 있다. 사유 발생이나 요청만으로 자동 제외되는 구조가 아니다.",
+      "conditions": [
+        "용역 다수공급자계약 업무처리규정의 적용을 받는 용역을 대상으로 한다.",
+        "재해복구·방역사업·이상기후 발생 시 필요한 용역의 긴급 구매 또는 2단계경쟁 회피가 아닌 명백한 사유를 확인한다.",
+        "2단계경쟁 회피 목적의 기준금액 미만 분할 납품요구는 제21조제1항에서 금지한다.",
+        "제20조제2항의 품명 특성·심의회 심의에 따른 제외 경로와 제1항 요청 경로를 혼동하지 않는다."
+      ],
+      "confusion": "긴급 사유가 있으면 수요기관이 단독으로 자동 면제 처리할 수 있다고 생각하기 쉽다.",
+      "source_ids": [
+        "SRC-MAS"
+      ],
+      "example_skill": "예외의 사유·행위자·재량과 회피 목적을 함께 판별",
+      "recall": {
+        "prompt": "긴급한 이상기후 대응 용역의 2단계경쟁 예외는 누가 요청하고 누가 허용할 수 있는가?",
+        "answer": "수요기관의 장이 요청하고 조달청장이 허용할 수 있다."
+      },
+      "criterion": {
+        "id": "W3.3.2.4",
+        "major": "3. 용역·다수공급자 계약 관리",
+        "minor": "2. 다수공급자계약(MAS) 절차 및 이행관리",
+        "detail": "4. 다수공급자계약 2단계경쟁",
+        "page": 9,
+        "source_id": "SRC-CRITERIA"
+      },
+      "source_checked": "2026-09-16",
+      "publication_review": {
+        "status": "ready",
+        "reviewed_at": "2026-09-16",
+        "reviewer": "Codex source_audit",
+        "review_type": "공식 원문 대조 및 독립 작성·정답·조건의 AI 검수",
+        "reuse_basis": "공식 규범과 일반 개념에 근거한 자체 작성",
+        "copied_question_text": false,
+        "official_answer_claim": false,
+        "source_checked": true,
+        "number_policy": "법정값 유지; 가상사례값은 새로 설계",
+        "scope": "이 묶음의 학습내용에 대한 검수. 사이트 전체 또는 미검토 기존 문항의 검수를 의미하지 않음.",
+        "pending_issues": []
+      },
+      "match_prompt": "긴급한 폭설 대응 용역이라도 수요기관의 장의 요청과 조달청장의 허용을 구분하고 자동 면제로 처리하지 않는다.",
+      "match_answer": "용역 MAS 2단계경쟁 예외"
+    },
+    {
+      "id": "JP-20260916-A06",
+      "title": "소규모 공사의 일부 하도급 제한",
+      "subject": "공공계약관리",
+      "decision": "하도급하려는 부분의 금액이 아니라 도급받은 1건 공사의 금액과 상대방 등록업종을 함께 판정한다.",
+      "rule": "건설산업기본법 제29조제4항은 1건 공사금액이 10억원 미만인 건설공사의 일부를 종합공사를 시공하는 업종을 등록한 건설사업자에게 하도급하는 것을 금지한다.",
+      "conditions": [
+        "도급받은 1건 공사금액, 10억원 미만, 일부 하도급, 상대방의 종합공사업종 등록이라는 조건을 모두 확인한다.",
+        "정확히 10억원은 '10억원 미만'에 포함되지 않는다.",
+        "제4항에는 발주자의 서면승낙을 예외로 정한 단서가 없다. 다른 항의 예외를 자동으로 옮기지 않는다.",
+        "제4항의 금액요건에 해당하지 않아도 다른 하도급 제한·자격요건은 별도로 확인한다."
+      ],
+      "confusion": "일부 하도급 금액으로 10억원을 비교하거나, 제4항의 적용이 없다는 이유만으로 전체 하도급이 허용된다고 결론내리기 쉽다.",
+      "source_ids": [
+        "SRC-BUILD29"
+      ],
+      "example_skill": "금액의 기준 대상·미만의 경계·상대방의 업종을 묶어서 적용",
+      "recall": {
+        "prompt": "제29조제4항의 10억원은 어떤 금액이며, 제한되는 상대방은?",
+        "answer": "도급받은 1건 공사의 금액이다. 종합공사를 시공하는 업종을 등록한 건설사업자에 대한 일부 하도급을 제한한다."
+      },
+      "criterion": {
+        "id": "W3.4.1.1",
+        "major": "4. 공사계약관리",
+        "minor": "1. 공사계약 일반개요",
+        "detail": "1. 건설산업기본법 이해",
+        "page": 9,
+        "source_id": "SRC-CRITERIA"
+      },
+      "source_checked": "2026-09-16",
+      "publication_review": {
+        "status": "ready",
+        "reviewed_at": "2026-09-16",
+        "reviewer": "Codex source_audit",
+        "review_type": "공식 원문 대조 및 독립 작성·정답·조건의 AI 검수",
+        "reuse_basis": "공식 규범과 일반 개념에 근거한 자체 작성",
+        "copied_question_text": false,
+        "official_answer_claim": false,
+        "source_checked": true,
+        "number_policy": "법정값 유지; 가상사례값은 새로 설계",
+        "scope": "이 묶음의 학습내용에 대한 검수. 사이트 전체 또는 미검토 기존 문항의 검수를 의미하지 않음.",
+        "pending_issues": []
+      },
+      "match_prompt": "전체 1건 금액이 10억원 미만일 때 일부를 종합공사를 시공하는 업종 등록자에게 맡기는 제한이다.",
+      "match_answer": "소규모 공사 하도급 제한"
+    }
+  ],
+  "questions": [
+    {
+      "id": "JP-20260916-Q01",
+      "atom_id": "JP-20260916-A01",
+      "type": "case_mcq",
+      "stem": "이 계획의 이점과 남은 검토 과제를 가장 적절하게 구분한 것은?",
+      "context": "국가기관이 연구장비의 특수 부품을 구매한다. 수의계약의 법정 허용사유와 필요한 절차는 충족하는 것으로 가정한다. 담당자는 검증된 공급업체와 바로 협의하면 요구 규격에 맞추기 쉽고 선정에 드는 시간을 줄일 수 있다고 보고했다. 다만 최근의 가격 비교자료는 아직 검토하지 않았다.",
+      "options": [
+        "규격 적합성이 높으므로 가격 적정성도 함께 확인된 것으로 본다.",
+        "경쟁을 거치지 않으므로 시간 절약 가능성도 인정할 수 없다.",
+        "요구 규격과 처리 속도에 이점이 있을 수 있지만 가격·선정 근거의 검토는 별도로 필요하다.",
+        "법정 허용사유를 충족했으므로 공정성·투명성에 관한 설명은 불필요하다."
+      ],
+      "answer_index": 2,
+      "explanation": "직접 협의의 효율과 검증이 필요한 결과는 다르다. 수의계약의 일반적 이점을 인정하면서 가격과 선정 정당성의 확인을 남겨 두는 판단이 적절하다.",
+      "option_explanations": [
+        "규격이 맞는다는 사실은 지급할 가격까지 적정하다는 증거가 아니다.",
+        "비경쟁 방식의 절차상 이점 자체를 부정하는 것은 타당하지 않다.",
+        "효율상 이점과 별도의 검증 필요를 함께 반영한다.",
+        "허용사유 충족과 공정성·투명성에 관한 책임 있는 설명은 구분된다."
+      ],
+      "source_ids": [
+        "SRC-T1-117",
+        "SRC-N5",
+        "SRC-N7"
+      ],
+      "source_checked": "2026-09-16",
+      "criterion": {
+        "id": "W1.2.4.1",
+        "major": "2. 공공조달 원칙 및 방법",
+        "minor": "4. 비경쟁적 공공조달 방법",
+        "detail": "1. 수의계약",
+        "page": 2,
+        "source_id": "SRC-CRITERIA"
+      },
+      "number_roles": [],
+      "publication_review": {
+        "status": "ready",
+        "reviewed_at": "2026-09-16",
+        "reviewer": "Codex source_audit",
+        "review_type": "공식 원문 대조 및 독립 작성·정답·조건의 AI 검수",
+        "reuse_basis": "공식 규범과 일반 개념에 근거한 자체 작성",
+        "copied_question_text": false,
+        "official_answer_claim": false,
+        "source_checked": true,
+        "number_policy": "법정값 유지; 가상사례값은 새로 설계",
+        "scope": "이 묶음의 학습내용에 대한 검수. 사이트 전체 또는 미검토 기존 문항의 검수를 의미하지 않음.",
+        "pending_issues": []
+      }
+    },
+    {
+      "id": "JP-20260916-Q02",
+      "atom_id": "JP-20260916-A01",
+      "type": "judgment_mcq",
+      "stem": "검토회의에서 우선 바로잡아야 할 설명은?",
+      "context": "국가기관이 신규 전시시설에 맞춤형 서비스를 도입한다. 아직 수의계약 허용사유를 확인하지 않은 단계이며, 현재 판단의 대상은 계약방식 선정의 근거이다.",
+      "options": [
+        "맞춤형 요구에 잘 대응할 수 있다는 기대만으로 수의계약 요건 확인을 마친 것으로 처리한다.",
+        "업무에 맞는 공급자를 직접 찾는 방식의 이점과 계약방식의 법적 요건을 구분한다.",
+        "계약방식이 수의계약이어도 계약당사자의 이익을 부당하게 제한하는 조건을 검토한다.",
+        "계약방식의 효율을 비교하면서도 국가계약법상 일반경쟁 원칙과 예외의 근거를 확인한다."
+      ],
+      "answer_index": 0,
+      "explanation": "수요에 잘 맞을 것이라는 기대는 수의계약의 법정 허용사유 확인을 대신하지 않는다. 일반경쟁 원칙에서 예외를 선택하는 근거를 확인해야 한다.",
+      "option_explanations": [
+        "일반적 이점을 법정 요건 충족으로 바꾸어 읽은 오류다.",
+        "이점과 법적 요건을 분리하는 적절한 검토다.",
+        "법 제5조의 부당한 특약 금지는 계약방식과 별도로 확인할 사항이다.",
+        "법 제7조의 원칙과 예외를 고려한 적절한 설명이다."
+      ],
+      "source_ids": [
+        "SRC-T1-117",
+        "SRC-N5",
+        "SRC-N7"
+      ],
+      "source_checked": "2026-09-16",
+      "criterion": {
+        "id": "W1.2.4.1",
+        "major": "2. 공공조달 원칙 및 방법",
+        "minor": "4. 비경쟁적 공공조달 방법",
+        "detail": "1. 수의계약",
+        "page": 2,
+        "source_id": "SRC-CRITERIA"
+      },
+      "number_roles": [],
+      "publication_review": {
+        "status": "ready",
+        "reviewed_at": "2026-09-16",
+        "reviewer": "Codex source_audit",
+        "review_type": "공식 원문 대조 및 독립 작성·정답·조건의 AI 검수",
+        "reuse_basis": "공식 규범과 일반 개념에 근거한 자체 작성",
+        "copied_question_text": false,
+        "official_answer_claim": false,
+        "source_checked": true,
+        "number_policy": "법정값 유지; 가상사례값은 새로 설계",
+        "scope": "이 묶음의 학습내용에 대한 검수. 사이트 전체 또는 미검토 기존 문항의 검수를 의미하지 않음.",
+        "pending_issues": []
+      }
+    },
+    {
+      "id": "JP-20260916-Q03",
+      "atom_id": "JP-20260916-A02",
+      "type": "case_mcq",
+      "stem": "민법상 해지의 효과만으로 설명할 수 있는 판단은?",
+      "context": "정기 점검계약에서 계약상 해지권이 적법하게 행사되어 효력이 발생했다. 해지 이전의 점검은 정상적으로 이행되고 대금도 지급됐다. 과거 이행에 관한 다른 반환사유는 없다고 가정한다.",
+      "options": [
+        "계약은 처음부터 무효였던 것으로 보므로 모든 점검대금을 돌려받는다.",
+        "장래의 계약효력은 없어지지만, 해지 자체만으로 이미 적법하게 마친 모든 이행이 원상회복되는 것은 아니다.",
+        "해지가 효력을 발생했으므로 별도의 손해배상청구 가능성도 모두 없어진다.",
+        "이미 이행된 부분이 있으므로 이후 계약효력도 종료시킬 수 없다."
+      ],
+      "answer_index": 1,
+      "explanation": "민법 제550조에 따른 해지는 장래효를 갖는다. 과거의 정상 이행을 모두 되돌리는 해제의 원상회복 구조와 구분하고, 손해배상은 제551조에 따라 별도로 검토한다.",
+      "option_explanations": [
+        "해지를 처음부터의 무효와 혼동했다.",
+        "장래효와 과거 이행의 처리를 구분했다.",
+        "해지는 손해배상청구를 당연히 없애지 않는다.",
+        "적법한 해지권 행사라는 전제를 무시했다."
+      ],
+      "source_ids": [
+        "SRC-C543",
+        "SRC-C548",
+        "SRC-C550",
+        "SRC-C551"
+      ],
+      "source_checked": "2026-09-16",
+      "criterion": {
+        "id": "W1.5.1.3",
+        "major": "5. 공공조달법률 이해",
+        "minor": "1. 공공계약 관련 민법 규정의 이해",
+        "detail": "3. 계약의 해제·해지에 관한 규정",
+        "page": 3,
+        "source_id": "SRC-CRITERIA"
+      },
+      "number_roles": [],
+      "publication_review": {
+        "status": "ready",
+        "reviewed_at": "2026-09-16",
+        "reviewer": "Codex source_audit",
+        "review_type": "공식 원문 대조 및 독립 작성·정답·조건의 AI 검수",
+        "reuse_basis": "공식 규범과 일반 개념에 근거한 자체 작성",
+        "copied_question_text": false,
+        "official_answer_claim": false,
+        "source_checked": true,
+        "number_policy": "법정값 유지; 가상사례값은 새로 설계",
+        "scope": "이 묶음의 학습내용에 대한 검수. 사이트 전체 또는 미검토 기존 문항의 검수를 의미하지 않음.",
+        "pending_issues": []
+      }
+    },
+    {
+      "id": "JP-20260916-Q04",
+      "atom_id": "JP-20260916-A02",
+      "type": "case_mcq",
+      "stem": "해제 이후의 처리에 관한 의견 중 타당한 것은?",
+      "context": "계약상 해제권이 적법하게 행사되어 기자재 공급계약이 해제되었다. 발주자는 지급했던 선급금을 반환받고자 한다. 이 문항은 민법상 해제의 일반적 효과를 묻고, 제3자의 권리가 있으면 그 보호도 검토하는 것으로 한다.",
+      "options": [
+        "선급금은 계약이 해제된 날 이후의 이자만 붙여 반환한다.",
+        "해제되었으므로 제3자가 가진 권리도 별도 검토 없이 소멸한다.",
+        "선급금 반환청구를 선택하면 손해배상청구는 더 이상 검토할 수 없다.",
+        "상호 원상회복을 검토하고, 반환 금전에는 받은 날부터 이자를 더하며 제3자의 권리와 손해배상 문제를 구분한다."
+      ],
+      "answer_index": 3,
+      "explanation": "민법 제548조는 원상회복, 제3자 보호, 반환 금전의 받은 날부터의 이자를 정한다. 제551조에 따라 해제는 손해배상청구 자체를 배제하지 않는다.",
+      "option_explanations": [
+        "이자 기산을 받은 날이 아닌 해제일로 바꾸었다.",
+        "제548조제1항 단서의 제3자 권리 보호를 무시했다.",
+        "제551조와 맞지 않는다. 손해배상은 그 성립요건에 따라 별도 판단한다.",
+        "민법 제548조와 제551조를 함께 반영한다."
+      ],
+      "source_ids": [
+        "SRC-C543",
+        "SRC-C548",
+        "SRC-C550",
+        "SRC-C551"
+      ],
+      "source_checked": "2026-09-16",
+      "criterion": {
+        "id": "W1.5.1.3",
+        "major": "5. 공공조달법률 이해",
+        "minor": "1. 공공계약 관련 민법 규정의 이해",
+        "detail": "3. 계약의 해제·해지에 관한 규정",
+        "page": 3,
+        "source_id": "SRC-CRITERIA"
+      },
+      "number_roles": [],
+      "publication_review": {
+        "status": "ready",
+        "reviewed_at": "2026-09-16",
+        "reviewer": "Codex source_audit",
+        "review_type": "공식 원문 대조 및 독립 작성·정답·조건의 AI 검수",
+        "reuse_basis": "공식 규범과 일반 개념에 근거한 자체 작성",
+        "copied_question_text": false,
+        "official_answer_claim": false,
+        "source_checked": true,
+        "number_policy": "법정값 유지; 가상사례값은 새로 설계",
+        "scope": "이 묶음의 학습내용에 대한 검수. 사이트 전체 또는 미검토 기존 문항의 검수를 의미하지 않음.",
+        "pending_issues": []
+      }
+    },
+    {
+      "id": "JP-20260916-Q05",
+      "atom_id": "JP-20260916-A03",
+      "type": "case_mcq",
+      "stem": "공고 초안에서 참가 절차 안내를 보완하려면 무엇을 우선 확인해야 하는가?",
+      "context": "국가계약법 시행령 적용을 받는 입찰공고 초안에 참가 가능한 업종과 자격은 적혀 있다. 그러나 참가등록과 제출할 입찰 관련 서류에 대한 안내는 빠져 있다. 다른 공고항목의 충족 여부는 이 문항에서 판단하지 않는다.",
+      "options": [
+        "입찰참가등록 및 입찰관련서류에 관한 사항이 명시됐는지 확인한다.",
+        "낙찰자 결정방법을 한 번 더 적으면 참가등록 안내를 대신할 수 있다.",
+        "참가자격이 있으므로 참가등록·관련서류는 제36조의 검토대상이 아니다.",
+        "업체가 공고 외의 경로에서 알아볼 수 있으므로 공고의 누락을 보완할 필요가 없다."
+      ],
+      "answer_index": 0,
+      "explanation": "시행령 제36조는 참가자격(제4호)과 참가등록·입찰관련서류(제4호의2)를 나누어 명시한다. 하나의 정보가 있다고 다른 항목까지 충족한 것은 아니다.",
+      "option_explanations": [
+        "제4호의2에 맞는 보완 대상이다.",
+        "제6호의 낙찰자 결정방법과 제4호의2는 서로 다른 사항이다.",
+        "제4호의2를 누락한 해석이다.",
+        "외부에서 알아볼 가능성이 공고에 명시할 의무를 대신하지 않는다."
+      ],
+      "source_ids": [
+        "SRC-N36"
+      ],
+      "source_checked": "2026-09-16",
+      "criterion": {
+        "id": "W2.2.3.2",
+        "major": "2. 조달요구 응대 및 제안",
+        "minor": "3. 입찰공고문 분석",
+        "detail": "2. 입찰공고 내용 검토 및 분석",
+        "page": 6,
+        "source_id": "SRC-CRITERIA"
+      },
+      "number_roles": [],
+      "publication_review": {
+        "status": "ready",
+        "reviewed_at": "2026-09-16",
+        "reviewer": "Codex source_audit",
+        "review_type": "공식 원문 대조 및 독립 작성·정답·조건의 AI 검수",
+        "reuse_basis": "공식 규범과 일반 개념에 근거한 자체 작성",
+        "copied_question_text": false,
+        "official_answer_claim": false,
+        "source_checked": true,
+        "number_policy": "법정값 유지; 가상사례값은 새로 설계",
+        "scope": "이 묶음의 학습내용에 대한 검수. 사이트 전체 또는 미검토 기존 문항의 검수를 의미하지 않음.",
+        "pending_issues": []
+      }
+    },
+    {
+      "id": "JP-20260916-Q06",
+      "atom_id": "JP-20260916-A03",
+      "type": "conditional_mcq",
+      "stem": "아래 조건에서 국가계약법 시행령 제36조에 따라 공고에 명시할 사항은?",
+      "context": "공사나 부대입찰이 아닌 일반 물품 입찰이며, 협상에 의한 계약도 아니다. 입찰서는 전자조달시스템으로 제출하도록 한다. 이 문항은 아래 선지에 적힌 조건부 공고항목만 비교한다.",
+      "options": [
+        "공사 현장설명의 장소·일시·참가자격",
+        "실시하지 않는 협상계약 제안요청서 설명의 장소·일시",
+        "전자조달시스템을 이용한 입찰서 제출 절차·방법",
+        "적용하지 않는 부대입찰의 취지"
+      ],
+      "answer_index": 2,
+      "explanation": "전자 제출을 요구하므로 제36조제12호의 절차·방법이 적용된다. 나머지 선지의 전제인 공사·협상계약 설명·부대입찰은 사례에서 제외됐다.",
+      "option_explanations": [
+        "공사입찰을 전제로 하는 제3호의 항목이며 이 사례에 해당하지 않는다.",
+        "제3호의2의 계약방식과 설명 실시라는 조건이 없다.",
+        "전자입찰서 제출 조건에 맞는 제12호 사항이다.",
+        "부대입찰을 전제로 하는 제14호는 사례에서 적용하지 않는다."
+      ],
+      "source_ids": [
+        "SRC-N36"
+      ],
+      "source_checked": "2026-09-16",
+      "criterion": {
+        "id": "W2.2.3.2",
+        "major": "2. 조달요구 응대 및 제안",
+        "minor": "3. 입찰공고문 분석",
+        "detail": "2. 입찰공고 내용 검토 및 분석",
+        "page": 6,
+        "source_id": "SRC-CRITERIA"
+      },
+      "number_roles": [],
+      "publication_review": {
+        "status": "ready",
+        "reviewed_at": "2026-09-16",
+        "reviewer": "Codex source_audit",
+        "review_type": "공식 원문 대조 및 독립 작성·정답·조건의 AI 검수",
+        "reuse_basis": "공식 규범과 일반 개념에 근거한 자체 작성",
+        "copied_question_text": false,
+        "official_answer_claim": false,
+        "source_checked": true,
+        "number_policy": "법정값 유지; 가상사례값은 새로 설계",
+        "scope": "이 묶음의 학습내용에 대한 검수. 사이트 전체 또는 미검토 기존 문항의 검수를 의미하지 않음.",
+        "pending_issues": []
+      }
+    },
+    {
+      "id": "JP-20260916-Q07",
+      "atom_id": "JP-20260916-A04",
+      "type": "case_mcq",
+      "stem": "담당자의 계약체결 일정 검토 중 옳은 것은?",
+      "context": "협상에 의한 계약체결기준이 적용되는 국가계약이다. 협상이 이미 성립했는데 담당자는 '협상기간이 원칙적으로 15일이므로 성립 후 12일이 지난 때에 계약해도 된다'고 설명했다. 기간 계산과 휴일 조정에 따른 다툼은 없다고 가정한다.",
+      "options": [
+        "협상기간과 계약체결 기한은 같은 기간이므로 그 설명은 타당하다.",
+        "성립 후 계약체결은 10일 이내이므로 협상기간 규정을 그대로 적용한 설명을 수정해야 한다.",
+        "협상이 성립하면 계약체결 기한 규정은 더 이상 적용되지 않는다.",
+        "15일은 낙찰자 통보 이후 착수해야 할 기간이므로 계약체결과 함께 계산해야 한다."
+      ],
+      "answer_index": 1,
+      "explanation": "제13조의 협상 진행기간과 제15조제1항의 협상 성립 후 계약체결 기한은 별개다. 성립 후 계약은 10일 이내에 체결해야 한다.",
+      "option_explanations": [
+        "서로 다른 절차 단계의 기간을 하나로 보았다.",
+        "제15조제1항의 기한과 기준 사건을 바르게 적용했다.",
+        "협상 성립은 오히려 제15조의 계약체결 기한을 판단하는 기준 사건이다.",
+        "제13조를 계약 착수기간으로 바꾸어 설명했다."
+      ],
+      "source_ids": [
+        "SRC-NEG"
+      ],
+      "source_checked": "2026-09-16",
+      "criterion": {
+        "id": "W2.3.4.2",
+        "major": "3. 입찰·제안평가 및 계약체결",
+        "minor": "4. 낙찰자 결정방법",
+        "detail": "2. 협상계약 절차 및 낙찰자 결정",
+        "page": 7,
+        "source_id": "SRC-CRITERIA"
+      },
+      "number_roles": [
+        {
+          "value": "10일",
+          "role": "법정 기한",
+          "source_id": "SRC-NEG",
+          "locator": "제15조제1항"
+        },
+        {
+          "value": "15일",
+          "role": "비교 대상인 협상기간 원칙",
+          "source_id": "SRC-NEG",
+          "locator": "제13조제1항, 단서·연장 규정 별도"
+        },
+        {
+          "value": "12일",
+          "role": "새 가상사례 경과일수",
+          "calculation": "10일 이내를 초과"
+        }
+      ],
+      "publication_review": {
+        "status": "ready",
+        "reviewed_at": "2026-09-16",
+        "reviewer": "Codex source_audit",
+        "review_type": "공식 원문 대조 및 독립 작성·정답·조건의 AI 검수",
+        "reuse_basis": "공식 규범과 일반 개념에 근거한 자체 작성",
+        "copied_question_text": false,
+        "official_answer_claim": false,
+        "source_checked": true,
+        "number_policy": "법정값 유지; 가상사례값은 새로 설계",
+        "scope": "이 묶음의 학습내용에 대한 검수. 사이트 전체 또는 미검토 기존 문항의 검수를 의미하지 않음.",
+        "pending_issues": []
+      }
+    },
+    {
+      "id": "JP-20260916-Q08",
+      "atom_id": "JP-20260916-A04",
+      "type": "timeline_mcq",
+      "stem": "서면통보 때문에 계약체결 기한의 기준 사건이 바뀌는가?",
+      "context": "「(계약예규) 협상에 의한 계약체결기준」이 적용되는 국가계약에서 협상 성립 뒤 결과를 서면으로 통보했다. 담당자는 서면통보가 늦어졌으므로 계약체결 기한도 통보일부터 새로 계산할 수 있다고 말했다. 이 문항은 날짜 자체의 계산이 아니라 제15조의 기준 사건을 묻는다.",
+      "options": [
+        "서면통보한 날을 기준으로 제15조의 기한이 새로 시작한다.",
+        "입찰공고를 한 날을 기준으로 제15조의 기한을 계산한다.",
+        "제안서를 접수한 날을 기준으로 제15조의 기한을 계산한다.",
+        "제15조는 협상 성립 후를 기준으로 정하므로 결과 통보가 그 기준을 바꾸지는 않는다."
+      ],
+      "answer_index": 3,
+      "explanation": "협상결과 서면통보 의무는 제14조에 있고, 계약체결 기한의 기준 사건은 제15조제1항의 협상 성립이다. 두 절차를 혼동하지 않는다.",
+      "option_explanations": [
+        "통보일을 협상 성립이라는 기준 사건 대신 놓았다.",
+        "공고일은 제15조의 기준 사건이 아니다.",
+        "제안서 접수일도 제15조의 기준 사건이 아니다.",
+        "통보 의무와 계약체결 기한을 구분했다."
+      ],
+      "source_ids": [
+        "SRC-NEG"
+      ],
+      "source_checked": "2026-09-16",
+      "criterion": {
+        "id": "W2.3.4.2",
+        "major": "3. 입찰·제안평가 및 계약체결",
+        "minor": "4. 낙찰자 결정방법",
+        "detail": "2. 협상계약 절차 및 낙찰자 결정",
+        "page": 7,
+        "source_id": "SRC-CRITERIA"
+      },
+      "number_roles": [],
+      "publication_review": {
+        "status": "ready",
+        "reviewed_at": "2026-09-16",
+        "reviewer": "Codex source_audit",
+        "review_type": "공식 원문 대조 및 독립 작성·정답·조건의 AI 검수",
+        "reuse_basis": "공식 규범과 일반 개념에 근거한 자체 작성",
+        "copied_question_text": false,
+        "official_answer_claim": false,
+        "source_checked": true,
+        "number_policy": "법정값 유지; 가상사례값은 새로 설계",
+        "scope": "이 묶음의 학습내용에 대한 검수. 사이트 전체 또는 미검토 기존 문항의 검수를 의미하지 않음.",
+        "pending_issues": []
+      }
+    },
+    {
+      "id": "JP-20260916-Q09",
+      "atom_id": "JP-20260916-A05",
+      "type": "case_mcq",
+      "stem": "수요기관 담당자의 처리 의견 중 적절한 것은?",
+      "context": "용역 MAS의 2단계경쟁 대상 구매에서 갑작스러운 폭설 때문에 필요한 제설 지원 용역을 긴급하게 구매하려 한다. 실제로 이상기후 발생에 필요한 긴급 구매에 해당한다고 가정한다.",
+      "options": [
+        "수요기관의 장이 사유를 갖춰 예외를 요청하고 조달청장의 허용 여부를 확인한다.",
+        "긴급 구매이면 수요기관 담당자가 자동으로 2단계경쟁 제외 상태로 처리한다.",
+        "수요기관의 장이 요청서를 보내는 즉시 예외 허용의 효력이 완성된다.",
+        "용역 MAS의 예외는 재해복구에만 한정되므로 폭설 대응이라는 사유는 검토할 수 없다."
+      ],
+      "answer_index": 0,
+      "explanation": "제20조제1항제1호에는 이상기후 발생 시 필요한 용역의 긴급 구매가 포함된다. 수요기관의 장의 요청에 대해 조달청장이 허용할 수 있는 구조이므로 자동 예외로 처리하지 않는다.",
+      "option_explanations": [
+        "사유·요청 주체·허용 권한을 모두 유지했다.",
+        "사유가 있다는 사실을 자동 면제로 바꾸었다.",
+        "요청과 허용을 같은 것으로 보았다.",
+        "현행 제1호는 재해복구 외 방역·이상기후 긴급 구매도 규정한다."
+      ],
+      "source_ids": [
+        "SRC-MAS"
+      ],
+      "source_checked": "2026-09-16",
+      "criterion": {
+        "id": "W3.3.2.4",
+        "major": "3. 용역·다수공급자 계약 관리",
+        "minor": "2. 다수공급자계약(MAS) 절차 및 이행관리",
+        "detail": "4. 다수공급자계약 2단계경쟁",
+        "page": 9,
+        "source_id": "SRC-CRITERIA"
+      },
+      "number_roles": [],
+      "publication_review": {
+        "status": "ready",
+        "reviewed_at": "2026-09-16",
+        "reviewer": "Codex source_audit",
+        "review_type": "공식 원문 대조 및 독립 작성·정답·조건의 AI 검수",
+        "reuse_basis": "공식 규범과 일반 개념에 근거한 자체 작성",
+        "copied_question_text": false,
+        "official_answer_claim": false,
+        "source_checked": true,
+        "number_policy": "법정값 유지; 가상사례값은 새로 설계",
+        "scope": "이 묶음의 학습내용에 대한 검수. 사이트 전체 또는 미검토 기존 문항의 검수를 의미하지 않음.",
+        "pending_issues": []
+      }
+    },
+    {
+      "id": "JP-20260916-Q10",
+      "atom_id": "JP-20260916-A05",
+      "type": "judgment_mcq",
+      "stem": "용역 MAS 규정에 따른 검토 의견으로 타당한 것은?",
+      "context": "2단계경쟁 대상인 하나의 용역 구매를 담당자가 여러 납품요구로 나누려 한다. 분할의 실제 목적은 2단계경쟁을 피하는 것이며, 내부 문서의 사유만 '업무 편의'로 기재하려 한다. 다른 예외사유는 없다.",
+      "options": [
+        "각 납품요구가 기준금액 미만이면 실제 분할 목적은 검토하지 않는다.",
+        "기관 내부 결재를 받으면 제21조제1항의 회피금지가 적용되지 않는다.",
+        "회피 목적의 분할은 금지되며 문서의 명칭을 바꾸어 예외사유로 만들 수 없다.",
+        "처음 납품요구 한 건만 경쟁을 거치면 나머지 분할분의 회피 목적은 고려하지 않는다."
+      ],
+      "answer_index": 2,
+      "explanation": "제21조제1항은 회피 목적의 기준금액 미만 분할 납품요구를 금지한다. 제20조제1항제2호도 회피가 아닌 명백한 사유를 요구하므로 이 사례는 문구만 바꿔 예외로 처리할 수 없다.",
+      "option_explanations": [
+        "금액만 보고 실제 회피 목적이라는 요건을 누락했다.",
+        "내부 결재는 이 규정의 회피금지를 없애는 예외가 아니다.",
+        "제20조의 예외사유와 제21조의 회피금지를 함께 적용했다.",
+        "제시된 실제 분할 목적을 일부 절차로 무시할 수 없다."
+      ],
+      "source_ids": [
+        "SRC-MAS"
+      ],
+      "source_checked": "2026-09-16",
+      "criterion": {
+        "id": "W3.3.2.4",
+        "major": "3. 용역·다수공급자 계약 관리",
+        "minor": "2. 다수공급자계약(MAS) 절차 및 이행관리",
+        "detail": "4. 다수공급자계약 2단계경쟁",
+        "page": 9,
+        "source_id": "SRC-CRITERIA"
+      },
+      "number_roles": [],
+      "publication_review": {
+        "status": "ready",
+        "reviewed_at": "2026-09-16",
+        "reviewer": "Codex source_audit",
+        "review_type": "공식 원문 대조 및 독립 작성·정답·조건의 AI 검수",
+        "reuse_basis": "공식 규범과 일반 개념에 근거한 자체 작성",
+        "copied_question_text": false,
+        "official_answer_claim": false,
+        "source_checked": true,
+        "number_policy": "법정값 유지; 가상사례값은 새로 설계",
+        "scope": "이 묶음의 학습내용에 대한 검수. 사이트 전체 또는 미검토 기존 문항의 검수를 의미하지 않음.",
+        "pending_issues": []
+      }
+    },
+    {
+      "id": "JP-20260916-Q11",
+      "atom_id": "JP-20260916-A06",
+      "type": "case_mcq",
+      "stem": "건설산업기본법 제29조제4항만을 적용한 판단으로 옳은 것은?",
+      "context": "건설사업자가 도급받은 1건 공사의 금액은 9억 4천만원이다. 그중 1억 7천만원에 해당하는 일부 공사를 종합공사를 시공하는 업종을 등록한 다른 건설사업자에게 하도급하려 한다. 제시된 금액을 해당 조항의 공사금액으로 확정한 것으로 보고, 금액 산정방법에 관한 다른 쟁점은 없다.",
+      "options": [
+        "하도급할 부분이 작으므로 제4항의 금지 대상에서 제외된다.",
+        "1건 공사금액이 10억원 미만이고 상대방 업종 조건도 맞으므로 제4항에 따라 금지된다.",
+        "상대방이 종합공사업종을 등록했으므로 제4항은 적용되지 않는다.",
+        "발주자의 서면승낙만 받으면 제4항의 단서에 따라 허용된다."
+      ],
+      "answer_index": 1,
+      "explanation": "제4항의 비교 기준은 일부 하도급 금액이 아니라 도급받은 1건 공사의 금액이다. 9억 4천만원은 10억원 미만이며 금지 상대방의 등록업종도 충족한다. 제4항 자체에는 서면승낙 예외가 없다.",
+      "option_explanations": [
+        "일부의 규모를 법정 기준 대상과 혼동했다.",
+        "금액의 기준 대상·미만·상대방 업종을 모두 적용했다.",
+        "종합공사업종 등록은 이 항이 특정한 금지 상대방 조건이다.",
+        "다른 항의 예외를 제4항에 옮겨 적용했다."
+      ],
+      "source_ids": [
+        "SRC-BUILD29"
+      ],
+      "source_checked": "2026-09-16",
+      "criterion": {
+        "id": "W3.4.1.1",
+        "major": "4. 공사계약관리",
+        "minor": "1. 공사계약 일반개요",
+        "detail": "1. 건설산업기본법 이해",
+        "page": 9,
+        "source_id": "SRC-CRITERIA"
+      },
+      "number_roles": [
+        {
+          "value": "10억원 미만",
+          "role": "법정 기준값·경계",
+          "source_id": "SRC-BUILD29",
+          "locator": "제29조제4항"
+        },
+        {
+          "value": "9억 4천만원",
+          "role": "새 가상사례 1건 공사금액",
+          "calculation": "940000000 < 1000000000"
+        },
+        {
+          "value": "1억 7천만원",
+          "role": "새 가상사례 일부 하도급금액",
+          "calculation": "제4항 기준금액과 직접 비교할 대상이 아님"
+        }
+      ],
+      "publication_review": {
+        "status": "ready",
+        "reviewed_at": "2026-09-16",
+        "reviewer": "Codex source_audit",
+        "review_type": "공식 원문 대조 및 독립 작성·정답·조건의 AI 검수",
+        "reuse_basis": "공식 규범과 일반 개념에 근거한 자체 작성",
+        "copied_question_text": false,
+        "official_answer_claim": false,
+        "source_checked": true,
+        "number_policy": "법정값 유지; 가상사례값은 새로 설계",
+        "scope": "이 묶음의 학습내용에 대한 검수. 사이트 전체 또는 미검토 기존 문항의 검수를 의미하지 않음.",
+        "pending_issues": []
+      }
+    },
+    {
+      "id": "JP-20260916-Q12",
+      "atom_id": "JP-20260916-A06",
+      "type": "boundary_mcq",
+      "stem": "건설산업기본법 제29조제4항의 금액요건에 관한 검토 결과는?",
+      "context": "한 건설공사에서 도급받은 1건 공사금액은 정확히 10억원이다. 일부 공사를 종합공사를 시공하는 업종을 등록한 건설사업자에게 하도급할 계획이다. 여기서는 제29조제4항의 금액요건만 판정하며, 다른 하도급 제한의 검토는 아직 끝나지 않았다.",
+      "options": [
+        "정확히 10억원은 '10억원 미만'에 포함되므로 이 금액요건에 해당한다.",
+        "전체 공사금액 대신 일부 하도급 금액이 10억원 미만인지로 판정한다.",
+        "제4항 금액요건에 해당하지 않으므로 다른 요건도 모두 확인된 것으로 본다.",
+        "제4항의 '10억원 미만'에는 해당하지 않지만 다른 하도급 제한을 별도로 검토해야 한다."
+      ],
+      "answer_index": 3,
+      "explanation": "'미만'은 경계값을 포함하지 않는다. 정확히 10억원인 이 사례는 제4항의 금액요건에서 제외되지만, 그 결론은 다른 제한의 충족 여부까지 대신하지 않는다.",
+      "option_explanations": [
+        "미만을 이하로 바꾸어 읽었다.",
+        "제4항의 기준 대상은 도급받은 1건 공사금액이다.",
+        "특정 항의 금액요건 배제와 전면 허용을 혼동했다.",
+        "금액 경계와 판단 범위를 함께 지켰다."
+      ],
+      "source_ids": [
+        "SRC-BUILD29"
+      ],
+      "source_checked": "2026-09-16",
+      "criterion": {
+        "id": "W3.4.1.1",
+        "major": "4. 공사계약관리",
+        "minor": "1. 공사계약 일반개요",
+        "detail": "1. 건설산업기본법 이해",
+        "page": 9,
+        "source_id": "SRC-CRITERIA"
+      },
+      "number_roles": [
+        {
+          "value": "10억원",
+          "role": "법정 경계와 동일하게 설계한 가상사례 입력",
+          "source_id": "SRC-BUILD29",
+          "locator": "제29조제4항",
+          "calculation": "1000000000 < 1000000000 은 거짓"
+        }
+      ],
+      "publication_review": {
+        "status": "ready",
+        "reviewed_at": "2026-09-16",
+        "reviewer": "Codex source_audit",
+        "review_type": "공식 원문 대조 및 독립 작성·정답·조건의 AI 검수",
+        "reuse_basis": "공식 규범과 일반 개념에 근거한 자체 작성",
+        "copied_question_text": false,
+        "official_answer_claim": false,
+        "source_checked": true,
+        "number_policy": "법정값 유지; 가상사례값은 새로 설계",
+        "scope": "이 묶음의 학습내용에 대한 검수. 사이트 전체 또는 미검토 기존 문항의 검수를 의미하지 않음.",
+        "pending_issues": []
+      }
+    }
+  ],
+  "sources": [
+    {
+      "id": "SRC-N5",
+      "title": "국가를 당사자로 하는 계약에 관한 법률 제5조",
+      "institution": "국가법령정보센터",
+      "url": "https://www.law.go.kr/lsInfoP.do?lsiSeq=283877",
+      "published_at": "2026-03-10",
+      "effective_at": "2026-06-11",
+      "checked_at": "2026-09-16",
+      "verification": "현행 검색 후 해당 조문 전문 확인"
+    },
+    {
+      "id": "SRC-N7",
+      "title": "국가를 당사자로 하는 계약에 관한 법률 제7조",
+      "institution": "국가법령정보센터",
+      "url": "https://www.law.go.kr/lsInfoP.do?lsiSeq=283877",
+      "published_at": "2026-03-10",
+      "effective_at": "2026-06-11",
+      "checked_at": "2026-09-16",
+      "verification": "현행 검색 후 해당 조문 전문 확인"
+    },
+    {
+      "id": "SRC-N36",
+      "title": "국가를 당사자로 하는 계약에 관한 법률 시행령 제36조",
+      "institution": "국가법령정보센터",
+      "url": "https://www.law.go.kr/lsInfoP.do?lsiSeq=285893",
+      "published_at": "2026-05-19",
+      "effective_at": "2026-06-03",
+      "checked_at": "2026-09-16",
+      "verification": "현행 검색 후 해당 조문 전문 확인"
+    },
+    {
+      "id": "SRC-C543",
+      "title": "민법 제543조",
+      "institution": "국가법령정보센터",
+      "url": "https://www.law.go.kr/lsInfoP.do?lsiSeq=284415",
+      "published_at": "2026-03-17",
+      "effective_at": "2026-03-17",
+      "checked_at": "2026-09-16",
+      "verification": "현행 검색 후 해당 조문 전문 확인"
+    },
+    {
+      "id": "SRC-C548",
+      "title": "민법 제548조",
+      "institution": "국가법령정보센터",
+      "url": "https://www.law.go.kr/lsInfoP.do?lsiSeq=284415",
+      "published_at": "2026-03-17",
+      "effective_at": "2026-03-17",
+      "checked_at": "2026-09-16",
+      "verification": "현행 검색 후 해당 조문 전문 확인"
+    },
+    {
+      "id": "SRC-C550",
+      "title": "민법 제550조",
+      "institution": "국가법령정보센터",
+      "url": "https://www.law.go.kr/lsInfoP.do?lsiSeq=284415",
+      "published_at": "2026-03-17",
+      "effective_at": "2026-03-17",
+      "checked_at": "2026-09-16",
+      "verification": "현행 검색 후 해당 조문 전문 확인"
+    },
+    {
+      "id": "SRC-C551",
+      "title": "민법 제551조",
+      "institution": "국가법령정보센터",
+      "url": "https://www.law.go.kr/lsInfoP.do?lsiSeq=284415",
+      "published_at": "2026-03-17",
+      "effective_at": "2026-03-17",
+      "checked_at": "2026-09-16",
+      "verification": "현행 검색 후 해당 조문 전문 확인"
+    },
+    {
+      "id": "SRC-BUILD29",
+      "title": "건설산업기본법 제29조",
+      "institution": "국가법령정보센터",
+      "url": "https://www.law.go.kr/lsInfoP.do?lsiSeq=273435",
+      "published_at": "2025-08-26",
+      "effective_at": "2025-11-27",
+      "checked_at": "2026-09-16",
+      "verification": "현행 검색 후 해당 조문 전문 확인"
+    },
+    {
+      "id": "SRC-NEG",
+      "title": "(계약예규) 협상에 의한 계약체결기준 제13~15조",
+      "institution": "재정경제부 / 국가법령정보센터",
+      "url": "https://www.law.go.kr/admRulLsInfoP.do?admRulSeq=2100000272436",
+      "published_at": "2026-01-02",
+      "effective_at": "2026-01-02",
+      "checked_at": "2026-09-16",
+      "verification": "현행 검색 및 행정규칙 본문·부칙 조회"
+    },
+    {
+      "id": "SRC-MAS",
+      "title": "용역 다수공급자계약 업무처리규정 제2·20·21조",
+      "institution": "조달청 / 국가법령정보센터",
+      "url": "https://www.law.go.kr/admRulLsInfoP.do?admRulSeq=2100000282832",
+      "published_at": "2026-07-21",
+      "effective_at": "2026-07-21",
+      "checked_at": "2026-09-16",
+      "verification": "현행 검색 및 행정규칙 본문·부칙 조회"
+    },
+    {
+      "id": "SRC-T1-117",
+      "title": "공공조달관리사 표준교재 1권 공공조달의 이해, 117쪽",
+      "institution": "조달청 공공조달역량개발원",
+      "url": "https://www.pps.go.kr/kor/bbs/view.do?bbsSn=2601150031&key=00034",
+      "published_at": "2026-01-15",
+      "effective_at": null,
+      "checked_at": "2026-09-16",
+      "locator": "PDF·인쇄 117쪽, 비경쟁적 조달 방법 개요",
+      "verification": "공식 게시물 재조회 및 보유 원본 해당 쪽 재확인. 오늘 첨부 전체 동등성 재검증은 하지 않음.",
+      "usage": "기초 개념·아이디어 확인에 한정. 원문·표·교재 사례의 변형 또는 재게시 없음.",
+      "summary": "비경쟁 조달은 절차와 기간 단축·특화된 수요 대응의 이점이 있지만 가격·공정성·투명성에 관한 위험을 별도로 검토해야 한다."
+    },
+    {
+      "id": "SRC-CRITERIA",
+      "title": "공공조달관리사 출제기준(2026.3.1~2028.12.31), 보고서 9777/1254",
+      "institution": "한국산업인력공단 Q-Net",
+      "url": "https://www.q-net.or.kr/pageLink.do?link=cst/cstReport&jmCd=9777&mcrtrNo=1254",
+      "published_at": null,
+      "effective_at": "2026-03-01",
+      "valid_until": "2028-12-31",
+      "checked_at": "2026-09-16",
+      "verification": "2026-09-12 공식 다운로드 보관본의 2·3·6·7·9쪽을 2026-09-16 직접 재확인. 9/16 온라인 새 PDF 확보는 하지 않음.",
+      "numbering_note": "입찰공고 분석은 독립 기준서 세세항목 '2. 입찰공고 내용 검토 및 분석' 사용. 공식 예제에 표기된 '3.'는 동일한 번호로 강제 통합하지 않음."
+    }
+  ],
+  "publication_review": {
+    "status": "ready",
+    "reviewed_at": "2026-09-16",
+    "reviewer": "Codex source_audit",
+    "review_type": "공식 원문 대조 및 독립 작성·정답·조건의 AI 검수",
+    "reuse_basis": "공식 규범과 일반 개념에 근거한 자체 작성",
+    "copied_question_text": false,
+    "official_answer_claim": false,
+    "source_checked": true,
+    "number_policy": "법정값 유지; 가상사례값은 새로 설계",
+    "scope": "이 묶음의 학습내용에 대한 검수. 사이트 전체 또는 미검토 기존 문항의 검수를 의미하지 않음.",
+    "pending_issues": [],
+    "counts": {
+      "atoms": 6,
+      "questions": 12
+    },
+    "question_similarity_review": "공식 예제 원문과 대조하여 원문 지문·선지·특유 배열을 복제하지 않음. 현행 조문·공통 법률용어·법정 고정값은 정확성을 위해 유지.",
+    "unreviewed_material": "특정 박문각 문제집의 전체 문항과의 전수 유사성 검사는 수행하지 않음. 이 패키지는 그 문항을 입력으로 변형하지 않고 공식 근거에서 작성함."
+  },
+  "internal_notes": {
+    "criterion_numbering": "입찰공고 분석은 기준서 제2 세세항목 사용. 공식 예제의 제3 표기와 차이가 있음.",
+    "question_output_rules": "문제지에는 출제기준·제작 경위를 표시하지 않는다. criterion은 해답 및 내부 관리용이다. 다운로드 문제·해답 문서는 별도 MD·HWPX 제작 과정에서 생성한다.",
+    "status": "학습 데이터 완성. 사이트 게시 또는 MD·HWPX 문제지·해답지 출력 완료는 아님.",
+    "standalone_revision": "Q08 적용 예규·국가계약을 명시하고 Q12의 이전 문항 연결 표현을 제거하며 질문에 법령명을 명시했다. 정답·법정값·가상사례값은 동일하다."
+  },
+  "revision": 2
+}

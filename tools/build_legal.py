@@ -1,6 +1,11 @@
 #!/usr/bin/env python3
 # -*- coding: utf-8 -*-
 """푸터가 가리키는 두 페이지: 개인정보 처리방침 · 이용약관."""
+raise SystemExit(
+    "중단: build_legal.py는 구형 공통 화면을 사용하는 레거시 생성기입니다. "
+    "출력 전에 중단했습니다. tools/README.md의 현재 갱신 흐름을 확인하세요."
+)
+
 import os, importlib.util
 
 OUT = os.environ.get("PPM_OUT", "/home/claude/procurement")
