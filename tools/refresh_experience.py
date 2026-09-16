@@ -59,6 +59,7 @@ def run():
         text=re.sub(r'<main\b(?![^>]*\bid=)([^>]*)>',r'<main id="main-content"\1>',text,count=1)
         text=re.sub(r'<link[^>]*href="[^"<>]*assets/experience\.css[^"<>]*"[^>]*>\s*','',text)
         text=re.sub(r'<script[^>]*src="[^"<>]*assets/experience\.js[^"<>]*"[^>]*></script>\s*','',text)
+        text=re.sub(r'(src="[^"]*assets/(?:site|study|quiz|cards)\.js)(?:\?[^"]*)?(")', r'\1?v=20260916\2', text)
         text=text.replace('</head>',f'<link rel="stylesheet" href="{rel}assets/experience.css?v={VERSION}">\n</head>')
         text=text.replace('</body>',f'<script src="{rel}assets/experience.js?v={VERSION}"></script>\n</body>')
         text=text.replace('출제기준 273개 항목을 개념으로 정리하고, 문제로 묻고, 모의시험으로 점검합니다.', '게임으로 판단을 연습하고, 개념과 근거를 확인하며 복습합니다.')
