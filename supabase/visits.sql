@@ -6,7 +6,8 @@
 --                 브라우저 특성을 조합해 사람을 알아내는 방식(지문채취)은 쓰지 않는다.
 --                 같은 브라우저를 알아보는 근거는 우리가 심은 무작위 UUID 하나뿐이고,
 --                 저장소를 지우거나 시크릿 창으로 오면 새 방문자로 잡힌다.
--- 공개 범위   : 아래 세 뷰(합계 수치)만 누구나 읽는다. 원본 표는 직접 읽지 못한다.
+-- 열람 범위   : 아무도 못 읽는다. 운영자가 정한 열람 키를 아는 사람만 visit_report() 로 본다.
+--                 표·뷰에는 anon·authenticated 권한을 주지 않는다.
 
 create table if not exists public.visit_days (
   day       date not null,
@@ -97,10 +98,72 @@ revoke all on public.page_hits  from anon, authenticated;
 grant select, insert, update, delete on public.visit_days to service_role;
 grant select, insert, update, delete on public.page_hits  to service_role;
 
-grant select on public.visit_stats to anon, authenticated;
-grant select on public.visit_daily to anon, authenticated;
-grant select on public.visit_pages to anon, authenticated;
+-- 집계 뷰도 열지 않는다. 운영자(service_role)와 아래 visit_report() 만 본다.
+revoke all on public.visit_stats from anon, authenticated;
+revoke all on public.visit_daily from anon, authenticated;
+revoke all on public.visit_pages from anon, authenticated;
+grant select on public.visit_stats to service_role;
+grant select on public.visit_daily to service_role;
+grant select on public.visit_pages to service_role;
+
+-- 기록은 누구나 할 수 있어야 한다(방문자가 자기 방문을 남기는 것이므로).
 grant execute on function public.record_visit(uuid, text, jsonb, boolean) to anon, authenticated;
 
+-- ────────────────────────────────────────────── 운영자 열람 (열람 키)
+-- 숫자는 운영자만 본다. 열람 키의 해시만 저장하고, 키 자체는 보관하지 않는다.
+create table if not exists public.admin_keys (
+  name       text primary key,
+  key_hash   text not null,
+  updated_at timestamptz not null default now()
+);
+alter table public.admin_keys enable row level security;
+revoke all on public.admin_keys from anon, authenticated;
+grant select, insert, update, delete on public.admin_keys to service_role;
+
+create or replace function public.visit_report(p_key text)
+returns jsonb
+language plpgsql
+security definer
+set search_path = public
+as $$
+declare
+  v_hash text;
+  v_out  jsonb;
+begin
+  select key_hash into v_hash from public.admin_keys where name = 'stats';
+  if v_hash is null then
+    raise exception 'stats key not set';
+  end if;
+
+  if v_hash <> encode(sha256(convert_to(coalesce(p_key, ''), 'utf8')), 'hex') then
+    perform pg_sleep(0.4);   -- 무작위 대입을 늦춘다
+    raise exception 'forbidden';
+  end if;
+
+  select jsonb_build_object(
+    'stats', (select to_jsonb(s) from public.visit_stats s),
+    'daily', (select coalesce(jsonb_agg(to_jsonb(d) order by d.day desc), '[]'::jsonb)
+                from public.visit_daily d),
+    'pages', (select coalesce(jsonb_agg(to_jsonb(g) order by g.hits desc), '[]'::jsonb)
+                from public.visit_pages g)
+  ) into v_out;
+
+  return v_out;
+end;
+$$;
+
+grant execute on function public.visit_report(text) to anon, authenticated;
+
 notify pgrst, 'reload schema';
+
+-- ══════════════════════════════════════════════════════════════════════
+--  열람 키 설정 — 아래 '바꿀-열람키' 를 원하는 값으로 고치고 함께 실행하세요.
+--  이 값을 아는 사람만 /stats/ 에서 숫자를 봅니다. 다른 곳에 쓰는 비밀번호는 쓰지 마세요.
+--  나중에 바꾸려면 이 문장만 다시 실행하면 됩니다.
+-- ══════════════════════════════════════════════════════════════════════
+insert into public.admin_keys (name, key_hash)
+values ('stats', encode(sha256(convert_to('바꿀-열람키', 'utf8')), 'hex'))
+on conflict (name) do update
+  set key_hash = excluded.key_hash, updated_at = now();
+
 select 'jodal_pro_visits_ready' as status;
