@@ -60,3 +60,45 @@ footer a{color:var(--txt2)}
   nav.menu{margin-left:0;width:100%}
   nav.menu a{padding:6px 9px;font-size:13px}
 }
+
+/* ── 시험 범위대로 공부하기 (홈 진입 블록) ───────────────────────── */
+.study-entry { margin: 26px 0 30px; }
+.study-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(230px, 1fr));
+  gap: 12px;
+  margin-top: 12px;
+}
+.study-card {
+  display: block;
+  padding: 16px 16px 14px;
+  border: 1px solid rgba(23, 63, 57, .16);
+  border-radius: 12px;
+  background: #fff;
+  text-decoration: none;
+  color: inherit;
+  transition: border-color .15s, box-shadow .15s, transform .15s;
+}
+.study-card:hover, .study-card:focus-visible {
+  border-color: #2f7d6f;
+  box-shadow: 0 4px 16px rgba(23, 63, 57, .10);
+  transform: translateY(-1px);
+}
+.study-kicker {
+  display: inline-block;
+  font-size: .72rem;
+  font-weight: 700;
+  letter-spacing: .06em;
+  color: #2f7d6f;
+  background: rgba(47, 125, 111, .10);
+  border-radius: 999px;
+  padding: 3px 9px;
+  margin-bottom: 9px;
+}
+.study-card b { display: block; font-size: 1.06rem; line-height: 1.35; margin-bottom: 5px; }
+.study-card p { margin: 0 0 10px; font-size: .88rem; line-height: 1.55; opacity: .78; }
+.study-go { font-size: .85rem; font-weight: 600; color: #2f7d6f; }
+@media (max-width: 480px) {
+  .study-card { padding: 14px; }
+  .study-card b { font-size: 1rem; }
+}
