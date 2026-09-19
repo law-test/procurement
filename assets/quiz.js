@@ -112,7 +112,7 @@
     if (pending[key]) return pending[key];
     var controller = typeof AbortController === "function" ? new AbortController() : null;
     var timer;
-    var request = fetch("../data/" + key + ".json?v=20260916-v007", controller ? { signal: controller.signal } : {}).then(function (r) {
+    var request = fetch("../data/" + key + ".json?v=20260919-v008", controller ? { signal: controller.signal } : {}).then(function (r) {
       if (!r.ok) throw new Error("데이터 응답 오류: " + r.status);
       return r.json();
     }).then(function (j) {
@@ -146,13 +146,20 @@
     if (policy) return Promise.resolve(policy);
     if (policyRequest) return policyRequest;
     var controller = typeof AbortController === "function" ? new AbortController() : null, timer;
-    var request = fetch("../data/review-policy.json?v=20260916-v007", controller ? { signal: controller.signal } : {}).then(function (r) {
+    var request = fetch("../data/review-policy.json?v=20260919-v008", controller ? { signal: controller.signal } : {}).then(function (r) {
       if (!r.ok) throw new Error("검토 상태를 불러오지 못했습니다.");
       return r.json();
     }).then(function (j) {
       if (!j || ![j.excludedQuizIds, j.approvedExamQuizIds, j.approvedPracticeQuizIds].every(function (a) {
         return Array.isArray(a) && a.every(function (id) { return typeof id === "string" && id.length > 0; });
       })) throw new Error("검토 상태의 형식이 올바르지 않습니다.");
+      /* 회차(examSets)는 없어도 되고, 형식이 어긋난 회차만 버린다. */
+      j.examSets = Array.isArray(j.examSets) ? j.examSets.filter(function (g) {
+        return g && typeof g.key === "string" && g.key &&
+          typeof g.label === "string" && g.label &&
+          Array.isArray(g.ids) && g.ids.length &&
+          g.ids.every(function (id) { return typeof id === "string" && id.length > 0; });
+      }) : [];
       return j;
     });
     var timeout = new Promise(function (_, reject) {
@@ -175,9 +182,14 @@
       return Object.assign({}, j, { items: items, n: items.length });
     });
   }
-  function loadExamQuiz(slug) {
+  function loadExamQuiz(slug, setKey) {
     return Promise.all([loadQuiz(slug), loadPolicy()]).then(function (r) {
-      var items = r[0].items.filter(function (q) { return r[1].approvedExamQuizIds.indexOf(q.id) >= 0; });
+      var allow = r[1].approvedExamQuizIds;
+      if (setKey) {
+        var g = (r[1].examSets || []).filter(function (x) { return x.key === setKey; })[0];
+        if (g) allow = g.ids;
+      }
+      var items = r[0].items.filter(function (q) { return allow.indexOf(q.id) >= 0; });
       return Object.assign({}, r[0], { items: items, n: items.length });
     });
   }
@@ -196,7 +208,7 @@
   window.PPMQ = {
     SUBJECTS: SUBJECTS, MARK: MARK, esc: esc, norm: norm, shuffle: shuffle,
     maskHtml: maskHtml, maskAns: maskAns, grade: grade, srsGet: srsGet, srsPut: srsPut,
-    today: today, loadQuiz: loadQuiz, loadCards: loadCards, loadExamQuiz: loadExamQuiz, progressKey: progressKey,
+    today: today, loadQuiz: loadQuiz, loadCards: loadCards, loadExamQuiz: loadExamQuiz, loadPolicy: loadPolicy, progressKey: progressKey,
     storageOk: function () { return !memoryOnly; }
   };
 })();

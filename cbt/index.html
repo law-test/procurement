@@ -17,14 +17,15 @@
 
 <main id="main-content" class="wrap card-wrap">
   <h1>문제풀이·시간 연습</h1>
-  <p class="lede"><b>필기 80문항(30·20·30) 120분 시간 연습</b>을 시작할 수 있습니다. 모든 문항은 개념의 근거를 <b>현행 법령·계약예규 원문과 대조</b>해 검증한 뒤 작성했고, 작성자와 별개의 검수로 다시 풀어 정답을 확인했습니다. 근거 조문은 각 해설에 적어 두었습니다.</p><p class="rank-help">2026-09-16 기준 법령 대조. 기존 자동 생성 문항은 재검토 대기 상태이며 연습에서 제외합니다.</p>
+  <p class="lede"><b>필기 80문항(30·20·30) 120분 모의고사를 6회차</b> 풀 수 있습니다. 회차마다 문항이 다릅니다. 모든 문항은 개념의 근거를 <b>현행 법령·계약예규 원문과 대조</b>해 검증한 뒤 작성했고, 작성자와 별개의 검수로 다시 풀어 정답을 확인했습니다. 근거 조문은 각 해설에 적어 두었습니다.</p><p class="rank-help">2026-09-19 기준 법령 대조 · 실전 480문항 / 과목별 연습 492문항. 같은 문항을 종이로 풀려면 <a href="../library/">자료</a>에서 모의고사 PDF를 받으세요. 기존 자동 생성 문항은 재검토 대기 상태이며 연습에서 제외합니다.</p>
 
   <div class="card-setup" id="setup">
     <div class="row"><label>방식</label><select id="selKind">
-      <option value="real">검수 문항 · 필기 80문항 120분</option>
-      <option value="subject" selected>과목별 개념 확인</option>
+      <option value="real">실전 모의고사 · 필기 80문항 120분</option>
+      <option value="subject" selected>과목별 문제 연습</option>
       <option value="practice">실기 개념 확인 · 객관식</option>
     </select></div>
+    <div class="row" id="rowSet" hidden><label>회차</label><select id="selSet"></select></div>
     <div class="row" id="rowSubject" hidden><label>과목</label><select id="selSubject"></select></div>
     <div class="row" id="rowCount" hidden><label>문항</label><select id="selCount">
       <option value="10">10문항</option><option value="20" selected>20문항</option><option value="40">40문항</option>
@@ -49,7 +50,7 @@
   </div>
   <div id="result" tabindex="-1" hidden></div>
 </main>
-<script src="../assets/quiz.js?v=20260916-v007"></script>
+<script src="../assets/quiz.js?v=20260919-v008"></script>
 <script>
 var E = null, TMR = null, starting = false, startVersion = 0, lastWrong = [];
 function $(id) { return document.getElementById(id); }
@@ -60,10 +61,26 @@ document.addEventListener("DOMContentLoaded", function () {
   $("selKind").onchange = function () {
     var k = $("selKind").value;
     $("rowSubject").hidden = k !== "subject";
+    $("rowSet").hidden = k !== "real";
     $("rowCount").hidden = k === "real";
     $("stat").textContent = k === "practice" ? "실기 개념을 객관식으로 확인합니다. 실제 필답형 답안 작성·채점 연습과는 다릅니다." :
-      k === "real" ? "필기와 같은 30·20·30 구성으로 80문항을 120분 안에 풉니다." : "";
+      k === "real" ? "필기와 같은 30·20·30 구성으로 80문항을 120분 안에 풉니다. 회차마다 문항이 다릅니다." : "";
   };
+  /* 회차 목록은 검토 상태 파일에서 받아 채운다. */
+  PPMQ.loadPolicy().then(function (pol) {
+    var sel = $("selSet"), sets = (pol && pol.examSets) || [];
+    if (!sets.length) { $("rowSet").hidden = true; return; }
+    sel.innerHTML = "";
+    sets.forEach(function (g) {
+      var o = document.createElement("option");
+      o.value = g.key;
+      o.textContent = g.label + " · " + g.ids.length + "문항";
+      sel.appendChild(o);
+    });
+    var last = null;
+    try { last = localStorage.getItem("ppm.cbt.set"); } catch (e) {}
+    if (last && sets.some(function (g) { return g.key === last; })) sel.value = last;
+  }, function () { $("rowSet").hidden = true; });
   $("selKind").onchange();
 });
 
@@ -78,7 +95,9 @@ function cStart() {
     ? [["law", 30], ["plan", 20], ["contract", 30]]
     : kind === "practice" ? [["practice", +$("selCount").value]]
     : [[$("selSubject").value, +$("selCount").value]];
-  return Promise.all(plan.map(function (p) { return kind === "real" ? PPMQ.loadExamQuiz(p[0]) : PPMQ.loadQuiz(p[0]); })).then(function (res) {
+  var setKey = kind === "real" && $("selSet") ? $("selSet").value : "";
+  if (setKey) { try { localStorage.setItem("ppm.cbt.set", setKey); } catch (e) {} }
+  return Promise.all(plan.map(function (p) { return kind === "real" ? PPMQ.loadExamQuiz(p[0], setKey) : PPMQ.loadQuiz(p[0]); })).then(function (res) {
     if (version !== startVersion) return;
     var items = [], shortages = [];
     res.forEach(function (j, idx) {
@@ -90,7 +109,7 @@ function cStart() {
       pick.forEach(function (q) { items.push(q); });
     });
     if (kind === "real" && shortages.length) {
-      $("stat").textContent = "80문항 시간 연습은 준비 중입니다. 검수 문항: " + shortages.join(" · ") + ". 과목별 개념 확인을 이용해 주세요.";
+      $("stat").textContent = "이 회차는 아직 문항이 모자랍니다: " + shortages.join(" · ") + ". 다른 회차나 과목별 문제 연습을 이용해 주세요.";
       return;
     }
     if (!items.length) { $("stat").textContent = "선택한 범위에 문항이 없습니다. 다른 과목을 선택해 주세요."; return; }
@@ -98,7 +117,11 @@ function cStart() {
     E = { items: items, pick: {}, left: timed ? mins * 60 : 0, timed: timed,
       deadline: timed ? Date.now() + mins * 60000 : 0, kind: kind, submitted: false };
     lastWrong = [];
-    $("rangeNote").textContent = (kind === "practice" ? "실기 개념 객관식 연습 · " : kind === "real" ? "검수 문항 시간 연습 · " : "선택 범위 개념 확인 · ") + items.length + "문항" +
+    var setName = "";
+    if (kind === "real" && $("selSet") && $("selSet").selectedIndex >= 0 && $("selSet").options.length) {
+      setName = ($("selSet").options[$("selSet").selectedIndex].textContent || "").split(" · ")[0] + " ";
+    }
+    $("rangeNote").textContent = (kind === "practice" ? "실기 개념 객관식 연습 · " : kind === "real" ? setName + "실전 모의고사 · " : "선택 범위 문제 연습 · ") + items.length + "문항" +
       (shortages.length ? " (요청한 분량보다 적어 현재 문항만 제공합니다)" : "") + (timed ? " · " + mins + "분" : "");
     if (TMR !== null) { clearInterval(TMR); TMR = null; }
     $("setup").hidden = true; $("exam").hidden = false; $("result").hidden = true;
