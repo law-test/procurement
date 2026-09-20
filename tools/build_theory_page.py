@@ -19,7 +19,7 @@ def build(gid):
     ids = {i['id'] for i in d['items']}
     o = []
     o.append('<main id="main-content" class="body theory">')
-    o.append('<div class="crumb"><a href="../">이론</a> · %s · %s</div>'
+    o.append('<div class="crumb"><a href="../">교과서</a> · %s · %s</div>'
              % (E(d['subject']), E(d['major'])))
     o.append('<h1>%s</h1>' % E(d['minor']))
     o.append('<p class="pg-meta">개념 %d개 <span class="gid">%s</span></p>'

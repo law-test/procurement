@@ -94,7 +94,7 @@
     if (DATA[slug]) return Promise.resolve(DATA[slug]);
     if (pending[slug]) return pending[slug];
     var controller = typeof AbortController === "function" ? new AbortController() : null, timer;
-    var request = fetch("../data/cards." + slug + ".json?v=20260920", controller ? { signal: controller.signal } : {}).then(function (r) {
+    var request = fetch("../data/cards." + slug + ".json?v=20260920b", controller ? { signal: controller.signal } : {}).then(function (r) {
       if (!r.ok) throw new Error("카드 응답 오류");
       return r.json();
     }).then(function (j) {
