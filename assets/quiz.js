@@ -112,7 +112,7 @@
     if (pending[key]) return pending[key];
     var controller = typeof AbortController === "function" ? new AbortController() : null;
     var timer;
-    var request = fetch("../data/" + key + ".json?v=20260920b", controller ? { signal: controller.signal } : {}).then(function (r) {
+    var request = fetch("../data/" + key + ".json?v=20260920c", controller ? { signal: controller.signal } : {}).then(function (r) {
       if (!r.ok) throw new Error("데이터 응답 오류: " + r.status);
       return r.json();
     }).then(function (j) {
@@ -146,7 +146,7 @@
     if (policy) return Promise.resolve(policy);
     if (policyRequest) return policyRequest;
     var controller = typeof AbortController === "function" ? new AbortController() : null, timer;
-    var request = fetch("../data/review-policy.json?v=20260920b", controller ? { signal: controller.signal } : {}).then(function (r) {
+    var request = fetch("../data/review-policy.json?v=20260920c", controller ? { signal: controller.signal } : {}).then(function (r) {
       if (!r.ok) throw new Error("검토 상태를 불러오지 못했습니다.");
       return r.json();
     }).then(function (j) {
